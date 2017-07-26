@@ -1,0 +1,357 @@
+# eigen.ndf
+
+# This file contains an implementation of the standard eigenvalue
+  techniques using Householder transformations from the literature.
+  It is based on the algorithms published originally in Numerische Mathematik
+  in the late 60's and later in the Handbook of Linear Algebra. The original
+  algorithms were published in Algol 60.  Mike Jenkins translated
+  these to APL in the early 70's.  The routines below are translations
+  of the APL versions.  This library file was developed by Peter Larsen from the
+  Danish Technical University while on a study leave at Queen's in 1987.  
+
+# This library uses the operation "solve".
+
+library "solve
+
+# There are two main routines:
+
+#  eig A S    A is an N by N real matrix, S is a truth-value.
+              If S = l, eig returns a pair consisting of a
+              list of eigenvalues and a matrix of corresponding
+              eigenvectors (as columns). The eigen vectors can
+              be found only if all the eigenvalues are real.
+              If S = o, eig returns the list of eigenvalues.
+
+# If you need to compute eigenvalues and some of the eigenvalues are complex,
+  you can use Q'Nial Version 4.1 which implements complex arithmetic. For
+  price and availability information, contact Nial Systems Limited.
+
+#  eigv A Ev  A is a real matrix and Ev is a real eigenvalue. The
+              result is the corresponding eigenvector.
+
+
+# Given the asymmetric matrix A of the shape n * n this
+  procedure reduces the matrix to Hessenberg Form H, by
+  non-orthogonal elementary transformations. The matrix
+  H is overwritten on A.
+  The algorithm is taken from "Numerische mathematik 12,
+  pp. 349 - 368 (1968)"
+
+Eps := 1e-15;
+
+hess IS OPERATION A N {
+    I := 1 ;
+    J := 0 ;
+    WHILE N > I DO
+       D := abs ( ( J + 1 ) drop A | [ , J ] ) ;
+       K := J + 1 + first ( ( max D ) find D ) ;
+       IF K ~= I THEN
+  % Interchange rows and columns of array a;
+          A | [ I K , ] := A | [ K I , ] ;
+          A | [ , I K ] := A | [ , K I ] ;
+       ENDIF ;
+       X := A @ ( I ( I - 1 ) ) ;
+       IF X ~= 0. THEN
+          Im := I + 1 ;
+          Y := Im drop A | [ , J ] / X ;
+          P := Im drop tell N ;
+          A | [ P , P ] := ( ( Im Im ) drop A ) - ( OUTER times Y (
+          Im drop A | [ I , ] ) ) ;
+          A | [ P , I ] := ( Im drop A | [ , I ] ) + ( ( ( Im Im )
+          drop A ) innerproduct Y ) - ( Y * A @ ( I I ) ) ;
+          Temp := Im N take A ;
+          Temp := Im ( Im - N ) take Temp ;
+          A | [ tell Im , I ] := ( Im take A | [ , I ] ) + ( Temp
+          innerproduct Y ) ;
+       ENDIF ;
+       J := I ;
+       I := J + 1 ;
+    ENDWHILE ;
+    A }
+
+
+# Given a real upper Hessenberg matrix A of shape n * n this
+  procedure will try to find all the eigenvalues of A.
+  The algorithm is taken from "Numerische mathematik 14,
+  pp. 219 - 231 (1970)
+
+hqr IS OPERATION A N {
+    Ev := ( 2 N ) reshape 0 ;
+    Its := 0 ;
+    Failed := False ;
+    WHILE ( ( N ~= 0 ) or Failed ) DO
+       A := ( N N ) take A ;
+       Ni := N - 1 ;
+       Na := Ni - 1 ;
+       Found := False ;
+       REPEAT
+          D := abs ( [ 0 1 ] fuse A ) ;
+          Rhs := Eps * ( ( 1 drop D ) + ( -1 drop D ) ) ;
+          Am := 1 0 drop A ;
+          Am := 0 -1 drop Am ;
+          Lhs := abs ( [ 0 1 ] fuse Am ) ;
+  % Lm is index of a small sub-diagonal element;
+          Lm := N - 1 - first ( l find ( reverse ( Lhs <= Rhs ) ) ) ;
+          X := A @ ( Ni Ni ) ;
+          IF Lm ~= Ni THEN
+             Y := A @ ( Na Na ) ;
+             R := A @ ( Ni Na ) * A @ ( Na Ni ) ;
+             IF Lm ~= Na THEN
+                CASE Its FROM
+                      10 :
+                         Y := abs A @ ( Ni Na ) + abs A @ ( Na ( Ni -
+                         2 ) ) ;
+                         S := 1.5 * Y ;
+                         Y := Y power 2 ;
+                         END
+                      20 :
+                         Y := abs A @ ( Ni Na ) + abs A @ ( Na ( Ni -
+                         2 ) ) ;
+                         S := 1.5 * Y ;
+                         Y := Y power 2 ;
+                         END
+                      30 :
+                         write (
+ 'Failed to converge. Returns eigenvalues found so far.' ) ;
+                         Ev := ( 0 N ) drop Ev ;
+                         Failed := Truth ;
+                         EXIT Ev ;
+                         END
+                      ELSE
+                         S := X + Y ;
+  % form shift;
+                         Y := ( X * Y ) - R ;
+                ENDCASE ;
+                Its := Its + 1 ;
+                Cont2 := Truth ;
+                M := Ni - 2 ;
+  % Look for two consecutive small sub-diagonal elements;
+                WHILE ( ( M >= Lm ) and Cont2 ) DO
+  % Start of loop1;
+                   X := A @ ( M M ) ;
+                   R := A @ ( ( M + 1 ) M ) ;
+                   Z := A @ ( ( M + 1 ) ( M + 1 ) ) ;
+                   Pqr := ( X * ( X - S ) + Y + ( R * A @ ( M ( M + 1
+                   ) ) ) ) ( R * ( X + Z - S ) ) ( R * A @ ( ( M + 2
+                   ) ( M + 1 ) ) ) ;
+                   Pqr := Pqr / sum abs Pqr ;
+                   IF M = Lm THEN
+                      Cont2 := False ;
+                   ELSE
+                      Lhs := abs ( A @ ( M ( M - 1 ) ) * sum abs ( 1
+                      drop Pqr ) ) ;
+                      Rhs := Eps * abs first ( Pqr ) * ( abs ( A @ (
+                      ( M - 1 ) ( M - 1 ) ) ) + abs X + abs Z ) ;
+                      IF Lhs <= Rhs THEN
+                         Cont2 := False ;
+                      ELSE
+                         M := M - 1 ;
+                      ENDIF ;
+                   ENDIF ;
+                ENDWHILE ;
+  % End of loop1;
+                I := M + 3 ;
+                A @ ( ( I - 1 ) M ) := 0. ;
+                WHILE Ni >= I DO
+  % Start of loop2;
+                   A | [ I , ( I - 2 3 ) ] := 0. ;
+                   I := I + 1 ;
+                ENDWHILE ;
+  % End of loop2;
+                K := M ;
+  % Double QR step involving rows Lm to n and columns m to n;
+                WHILE Na >= K DO
+  % Start of loop3;
+                   Kpn := K + tell ( 2 + ( K ~= Na ) ) ;
+                   IF K ~= M THEN
+                      Pqr := A | [ Kpn , ( K - 1 ) ] ;
+                      X := sum abs Pqr ;
+                      IF X ~= 0 THEN
+                         Pqr := Pqr / X ;
+                      ENDIF ;
+                   ENDIF ;
+                   IF ( K = M ) or ( X ~= 0 ) THEN
+                      S := sqrt ( sum ( Pqr power 2 ) ) ;
+                      IF first ( Pqr ) < 0 THEN
+                         S := opp ( S ) ;
+                      ENDIF ;
+                      IF K ~= M THEN
+                         A @ ( K ( K - 1 ) ) := opp ( S * X ) ;
+                      ELSEIF Lm ~= M THEN
+                         A @ ( K ( K - 1 ) ) := opp ( A @ ( K ( K - 1
+                         ) ) ) ;
+                      ENDIF ;
+                      Pqr @ ( 0 ) := S + first Pqr ;
+                      Xyz := Pqr / S ;
+                      Pqr := Pqr / first Pqr ;
+                      J := K + tell ( Ni - K + 1 ) ;
+                      Temp1 := transpose ( ( ( tally J ) ( tally Pqr
+                      ) ) reshape Pqr ) ;
+                      Temp2 := sum rows ( A | [ Kpn , J ] * Temp1 ) ;
+                      A | [ Kpn , J ] := A | [ Kpn , J ] - OUTER
+                      times Xyz Temp2 ;
+                      I := Lm + tell ( 1 + min ( Ni ( K + 3 ) ) - Lm
+                      ) ;
+                      Temp3 := ( ( tally I ) ( tally Pqr ) ) reshape
+                      Xyz ;
+                      A | [ I , Kpn ] := A | [ I , Kpn ] - ( ( sum
+                      cols ( A | [ I , Kpn ] * Temp3 ) ) OUTER * Pqr
+                      ) ;
+                   ENDIF ;
+                   K := K + 1 ;
+                ENDWHILE ;
+  % End of loop3;
+             ELSE
+  % Two roots found;
+                Found := Truth ;
+                P := ( Y - X ) / 2 ;
+                Q := R + ( P power 2 ) ;
+                Y := sqrt abs Q ;
+                IF Q > 0 THEN
+  % Real pair;
+                   IF P < 0 THEN
+                      Y := P - Y ;
+                   ELSE
+                      Y := P + Y ;
+                   ENDIF ;
+                   Ev | [ , Na Ni ] := ( 2 2 ) reshape ( ( X + Y ) (
+                   X - ( R / Y ) ) 0.0 0.0 ) ;
+                ELSE
+  % Complex pair;
+                   Ev | [ , Na Ni ] := ( 2 2 ) reshape ( ( X + P ) (
+                   X + P ) ( Y ) ( opp ( Y ) ) ) ;
+                ENDIF ;
+                N := N - 2 ;
+             ENDIF ;
+          ELSE
+  % One root found;
+             Ev | [ , Ni ] := X 0. ;
+             N := N - 1 ;
+             Found := Truth ;
+          ENDIF ;
+       UNTIL Found
+       ENDREPEAT ;
+    ENDWHILE ;
+    Ev }
+
+
+#  "eig" is the main function in the eigenvalue-problem. It is
+  able to find both eigenvalues and eigenvectors provided the
+  eigenvalues all are real.
+
+# Given the matrix a and the boolean value vek this operation
+  finds the eigenvalue of matrix a and optionally the corresponding
+  eigenvectors. If vek is false then just the eigenvalues are
+  found but if vek is equal to truth then both the eigenvalues and
+  eigenvectors (provided the eigenvalues are all real) are found.
+  The result is of shape n only if the eigenvalues are wanted.
+  If the eigenvectors are also wanted the result is a pair where
+  the first element is a vector of the eigenvalues and the second
+  element is a matrix containing the eigenvectors as columns.
+
+eig IS OPERATION A Vek {
+  %a:= real a;
+    N := first shape A ;
+    Ah := hess A N ;
+    Ev := hqr Ah N ;
+    Lhs := max Ev | [ 1 , ] ;
+    Rhs := Eps * sum abs link Ev ;
+    IF Lhs >= Rhs THEN
+  % There are complex eigenvalues;
+       write 'Some of the eigenvalues are complex.' ;
+  % ev|[0,]+(0j1*ev|[1,]) ;
+       A := Null ;
+       Ev := Null
+    ELSEIF not Vek THEN
+  % Vectors are not wanted and the eigenvalues are real;
+       Ev | [ 0 , ]
+    ELSE
+  % Vectors are wanted and there are only real eigenvalues;
+       In := tell N ;
+       Id := In OUTER = In ;
+       Ev := Ev | [ 0 , ] ;
+       I := 0 ;
+       J := 0 ;
+       Z := [ ] ;
+       WHILE I <= ( ( tally Ev ) - 1 ) DO
+          M := sum ( ( 1000 * Eps ) > abs ( Ev - Ev @ I ) ) ;
+          Ran := ( M N ) reshape random ( N + 1 ) ;
+          B := mix ( rows ( A - ( Ev @ I * Id ) ) link ( rows Ran ) )
+          ;
+          Lv := ( N reshape 0 ) link ( M reshape 1 ) ;
+          Tb := transpose B ;
+          V := solve ( Tb innerproduct B ) ( Tb innerproduct Lv ) ;
+          IF isfault V THEN
+             J := J + 1 ;
+             IF J = 5 THEN
+                I := I + 1 ;
+                Z := Z append ( N reshape 0 ) ;
+                J := 0 ;
+             ENDIF ;
+          ELSE
+             Z := Z append ( V / max abs V ) ;
+             I := I + 1 ;
+          ENDIF ;
+       ENDWHILE ;
+       ( Ev ( mix flip Z ) )
+    ENDIF }
+
+
+# Given a real matrix a and a real eigenvalue of matrix a this
+  procedure finds the corresponding eigenvector. This routine
+  is provided in case only a few of the eigenvectors are required.
+
+eigv IS OPERATION A E {
+    N := 0 pick shape A ;
+    Lv := N reshape 1. ;
+  %id:=real OUTER = (tell n) (tell n);
+    Id := OUTER = ( tell N ) ( tell N ) ;
+    Cnt := 0 ;
+    Scale := False ;
+    Ugh := False ;
+    REPEAT
+       IF ( abs E ) >= 1 THEN
+          Pm := E * Eps * 100 ;
+  % to avoid singular matrix in solve ;
+       ELSE
+          Pm := Eps * 100 ;
+       ENDIF ;
+       V := solve ( A - ( Id * ( E + Pm ) ) ) Lv ;
+       IF ( recip ( Eps * 1000 ) ) < sqrt ( sum ( V power 2 ) ) THEN
+          Scale := Truth ;
+  % There it is;
+       ELSE
+          Cnt := Cnt + 1 ;
+          IF Cnt > 5 THEN
+  % We give up;
+             Ugh := Truth ;
+          ELSE
+             Lv := 3 * random N ;
+          ENDIF ;
+       ENDIF ;
+    UNTIL Scale or Ugh
+    ENDREPEAT ;
+    IF Scale THEN
+       ( V / max abs V )
+    ELSEIF Ugh THEN
+       write (
+       'Unable to find eigenvector corresponding to eigenvalue ' E )
+       ;
+       N reshape 0
+    ENDIF }
+
+# test using a random symmetric matrix of size N by N, which will have real eigenvalues.
+
+#
+test is OP N { NONLOCAL a b c d e f;
+   a gets random N N ;
+   a gets a ip transpose a;
+   write "hess (b gets hess A N) ;
+   write "hqr (c gets hqr A N) ;
+   write "eig (d gets eig A l) ;
+   write "eigv (f gets eigv A (e gets first eig A o));
+}
+
+  
+#
+test 5

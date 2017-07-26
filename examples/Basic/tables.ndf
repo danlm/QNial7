@@ -1,0 +1,52 @@
+# Simple example of using tables/asscoiative-arrays
+
+# Add an item to the table both as the key and the value
+# and return the number of probes to perform the insert
+ 
+probe_add2 is OP T M {
+      	   T _tset M;
+	   tprobes T
+      }
+
+
+# Add the integers from 1 to N to the table and
+# print some statistics. The second argument M is the 
+# initial table size
+#
+
+ntables_test1 is OP N M {
+      write 'trying' N M;
+      % Create a table of the nominated size;
+      t := _tcreate M;
+      % Build the name/value pairs for insertion using an atlas;
+      entries := (each [(phrase string), pass] (count N));
+      st := time;
+      p := t eachright probe_add2 entries;
+      durn := time - st;
+      if durn > 0 then
+        write ('Insertions/sec: ' link string (N/durn));
+      endif;
+      avg_p := (sum p)/(tally p);
+      write ('Entries in table: ' link string (tcount t));
+      write ('Size of table: ' link string (tsize t));
+      write ('Average probes per insertion: ' link string avg_p);
+      write ('Maximum probes per insertion: ' link string (max p));
+      "ok
+}
+ 
+
+# Test inserting entries with different initial table sizes.
+# The table will increase in size automatically whenever it
+# is more than 70% full.
+#
+# First choose minimum table size and allow to grow by insertion
+# and the table will be rehashed every time it expands.
+#
+# Secondly choose size so that no increases will occur. 
+
+ntables_test1 100000 1;
+ntables_test1 100000 200000;
+
+bye
+
+		    

@@ -1,0 +1,42 @@
+# evaluation tests that test out various kinds of recursion
+
+# recursive expression
+
+cnt is external variable;ex is {NONLOCAL cnt; if cnt = 0 then cnt else cnt := cnt - 1;ex endif};cnt := 5;ex = 0
+
+# recursive operations
+
+fact is op n(if n<=0 then 1 else n * fact (n - 1) endif);fact 5 = 120
+fact1 is FORK[0<,* [pass,fact1 - [pass,1 first]],1 first];fact1 5 = 120
+fib is op n(if n<=2 then 1 else fib (n - 1) + fib (n - 2)endif);fib 10 = 55
+fib1 is FORK[2<,sum [fib1 - [pass,1 first],fib1 - [pass,2 first]],1 first];fib1 10 = 55
+lftally is FORK [atomic, tally, EACH lftally]; lftally 1 (2 3) = 1 (1 1)
+
+
+# recursive transformers
+
+LEAF1 is tr f op a(if atomic a then f a else each leaf1 f a endif);leaf1 abs [-1,[-2,[-3,-4]]] = [1,[2,[3,4]]]
+LEAF1 is tr f(FORK[atomic,f,each leaf1 f]);leaf1 abs [-1,[-2,[-3,-4]]] = [1,[2,[3,4]]]
+NIX is tr f(0 FOLD f);ONCE is tr f (1 FOLD f);LEAF1 is tr f (FORK[atomic NIX f,ONCE f,EACH LEAF1 f] f);LEAF1 abs [-1,[-2,[-3,-4]]] = [1,[2,[3,4]]]
+
+# difficult transformer recursions from the past
+
+# first example supplied by Nils Jacobsen
+
+inn is tr f g op a b{ if valence a <= 2 then inner[f,g] a b else inn[inner[f,g],g] (rows a) b endif}; inn[+,*] (3 2 2 reshape count 12) (3 4) = 132 996 2628
+
+FORK1 is tr f g h op a(if f a then g a else h a endif); LF1 is tr f (FORK1 [atomic NIX f, ONCE f, EACH LF1 f]); LF1 tally 1 (2 3) = 1 (1 1)
+
+eachn is tr f op n a(if n = 0 then f a else n - 1 eachn each f a endif); eachn tally 1 (1 (2 3)) = 1 2
+
+twig1 is tr f op a(if simple a then f a else each twig1 f a endif);twig1 tally 1 (2 3) = 1 2
+
+dbl is tr f op a{ f1 is f f; if atomic A then f A else each dbl f1 a endif}; dbl 1+ 3 (4 5) = 5 (8 9)
+
+# The following example used to make the implementation go into
+# a loop. It was fixed by handling the closure of a curried
+# expression differently.
+
+curry1  is tr f op a { f1  is (f 5) f; if atomic a then f a else each curry1 f1 a endif}; curry1 1+ 3 (4 5) = (7 4) ((7 ( (8 7) 5))(7((8 7) 6)))
+
+curry2 is tr f op a{ if atomic a then f a else each curry2 ((f 5) f) a endif};curry2 1+ 3 (4 5) = (7 4) ((7 ( (8 7) 5))(7((8 7) 6)))

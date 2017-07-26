@@ -1,0 +1,118 @@
+# Simulated Annealing in Nial
+# ===========================
+#
+# The code revolves around a couple of functions and 
+# one data structure
+#
+# Functions/Transformers
+# ----------------------
+#
+# sa_tweak    - tweak the current solution to produce an alternative
+# sa_cost     - the energy/cost function of a solution
+# sa_run      - run the simulated annealing process (a transformer)
+# sa_cool     - function to lower the temperature
+# sa_finished - check if process finished
+#
+#
+# Data Structure
+# --------------
+#
+#  1. initial solution
+#  2. initial temperature
+#  3. final temperature
+#  4. number of iterations per pass
+# 
+#
+
+
+# sa_cool
+# -------
+#
+# Reduce the temperature by a scale factor.
+#
+
+sa_cool is op alpha t {
+	alpha*t}
+
+
+
+# sa_finished
+# -----------
+#
+# Dummy finished solution
+#
+
+sa_finished is op cost soln model {
+	%write 'sa_finished called';
+	o}
+
+
+
+# sa_new_model
+# ------------
+# Wrapper to create a model. Allows for change in code.
+#
+
+sa_new_model is op init_soln init_temp fin_temp niter {
+	[init_soln, init_temp, fin_temp, niter]}
+
+
+
+# sa_run
+# ------
+#
+# Run the simulated annealing process using the supplied 
+# functions and data.
+#
+
+sa_run IS TR tweak cost cool finis OP model {
+	npass := 0;
+	init_soln init_temp fin_temp niter := model;
+	% Initialise the annealing process;
+	best_soln := curr_soln := init_soln;
+	best_cost := curr_cost := cost init_soln;
+	curr_temp := init_temp;
+	finished := o;
+	% start the process;
+	iter := -1;
+	hist := [];
+	while not finished do
+	  iter := iter + 1;
+	  if iter = niter then
+	    iter := 0; 
+	    curr_temp := cool curr_temp;
+	    npass := npass + 1;
+	  endif;
+	  % Check for termination;
+	  if ((curr_temp <= fin_temp) or (finis best_cost best_soln model)) then
+        %write 'Setting finished to true' npass iter;
+	    finished := l;
+	  else
+	    % Run a pass of the process;
+        work := tweak curr_soln;
+        wcost := cost work;
+        if wcost <= curr_cost then
+          % Replace the current solution;
+          curr_cost := wcost;
+          curr_soln := work;
+          if curr_cost <= best_cost then
+            % Replace the best solution;
+            best_cost := curr_cost;
+            best_soln := curr_soln;
+          endif 
+        else
+          % Perhaps replace the current solution;
+          p := exp ((curr_cost - wcost)/curr_temp);
+          r := first random 1;
+          if r < p then
+            swaps := swaps + 1;
+            curr_cost := wcost;
+            curr_soln := work;
+          endif
+        endif
+	  endif
+	endwhile;
+	% Return the best value;
+	[npass, best_cost, best_soln]}
+
+

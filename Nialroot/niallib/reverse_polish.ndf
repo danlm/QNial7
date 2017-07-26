@@ -1,0 +1,85 @@
+# reverse_polish.ndf
+
+# Simulates a calculator which takes input in reverse polish notation.
+
+Stack IS EXTERNAL VARIABLE
+
+push IS OPERATION Item {
+   NONLOCAL Stack ;
+   Stack := link Item Stack ; }
+
+pop IS {
+   NONLOCAL Stack ;
+   Item Stack := [first,rest] Stack ;
+   Item }
+
+reverse_polish IS OPERATION Line {
+   NONLOCAL Stack ;
+   Svtrigger := settrigger o;
+   Stack := Null ;
+   Items := ` match Line cut Line ;
+   FOR Item WITH Items DO
+      IF first Item in '+-*/' THEN
+         write link 'Operation: ' Item ;
+      ENDIF ;
+      CASE first Item FROM
+         `+ : push sum Pop Pop ; END
+         `- : push sum ( opp Pop ) Pop ; END
+         `* : push prod Pop Pop ; END
+         `/ : push prod ( recip Pop ) Pop ; END
+      ELSE
+         push ( execute Item ) ;
+      ENDCASE ;
+      write link ( phrase ' Stack: ' )       Stack ;
+   ENDFOR ;
+   settrigger Svtrigger;
+   first Stack }
+
+#Examples:
+     setformat '%6.2f' ;
+     reverse_polish '3.14 2. * 7.6 3.2 - - 6.1 2.2 - *'
+ Stack:    3.14
+ Stack:    2.00   3.14
+Operation: *
+ Stack:    6.28
+ Stack:    7.60   6.28
+ Stack:    3.20   7.60   6.28
+Operation: -
+ Stack:    4.40   6.28
+Operation: -
+ Stack:    1.88
+ Stack:    6.10   1.88
+ Stack:    2.20   6.10   1.88
+Operation: -
+ Stack:    3.90   1.88
+Operation: *
+ Stack:    7.33
+  7.33
+
+#
+     reverse_polish '32.5 0. / 7. 9. * +'
+ Stack:   32.50
+ Stack:    0.00  32.50
+Operation: /
+ Stack:  ?div
+ Stack:    7.00 ?div
+ Stack:    9.00   7.00 ?div
+Operation: *
+ Stack:   63.00 ?div
+Operation: +
+ Stack:  ?div
+?div
+
+#
+     reverse_polish '32.5 0.1 / 7. 9. / +'
+ Stack:   32.50
+ Stack:    0.10  32.50
+Operation: /
+ Stack:  325.00
+ Stack:    7.00 325.00
+ Stack:    9.00   7.00 325.00
+Operation: /
+ Stack:    0.78 325.00
+Operation: +
+ Stack:  325.78
+325.78

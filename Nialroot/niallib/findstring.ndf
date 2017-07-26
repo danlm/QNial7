@@ -1,0 +1,29 @@
+#
+Operations: findstring Substr Str
+            findstrings Substr Str
+File: findstring.ndf
+
+# Findstring is an operation that compares two strings to see if one is
+  contained in the other.  Substr is a string.  If Substr is in Str, True
+  is returned.
+
+findstring IS OPERATION Substr Str {
+   Position := first Substr findall Str ;
+   Substr in ( tally Substr EACHRIGHT take ( Position EACHLEFT drop Str ) ) }
+
+# Findstrings is an operation that compares a group of strings to see if any
+  of them is contained in another string. Substrs is a list of strings. If any
+  string in Substrs is in Str, True is returned.
+
+findstrings IS OPERATION Substrs Str {
+  or (Substrs EACHLEFT findstring Str) }
+
+
+# Example:
+#        'the' findstring 'Is that their cat?'
+l
+
+
+#       ['the','and'] EACHRIGHT findstrings ['There is a way','and you have','it']
+olo
+

@@ -1,0 +1,18 @@
+#
+Transformer: replace Predicate Array Value
+File: replace.ndf
+
+# The replace transformer replaces the items in the given array that satisfy
+  the predicate by the given value.
+
+REPLACE IS TRANSFORMER test
+   OPERATION Array Value {
+      ( single Value ) ( EACH test Array sublist grid Array ) placeall Array }
+
+# Examples:
+
+#        REPLACE (` =) 'The cat and the mouse' `*
+The*cat*and*the*mouse
+
+#        REPLACE isfault (3 ??error 4) "****
+3 **** 4

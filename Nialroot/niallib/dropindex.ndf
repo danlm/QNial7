@@ -1,0 +1,19 @@
+#
+Operation: dropindex A Indices
+File: dropinde.ndf
+
+# This operation drops items with the specified indices from the given
+  array A.
+
+dropindex IS OPERATION A Indices {
+   grid A except Indices choose A }
+
+# Example:
+
+#        'abcdef' dropindex 0 2 4
+bdf
+
+#        tell 3 4 dropindex [0 0,1 1,2 2]
++---+---+---+---+---+---+---+---+---+
+|0 1|0 2|0 3|1 0|1 2|1 3|2 0|2 1|2 3|
++---+---+---+---+---+---+---+---+---+

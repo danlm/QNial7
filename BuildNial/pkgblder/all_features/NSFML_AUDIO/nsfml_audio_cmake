@@ -1,0 +1,3 @@
+include_directories($ENV{NIAL_SFML_INCLUDE})
+link_directories($ENV{NIAL_SFML_LIB})
+set(NIAL_LIBS ${NIAL_LIBS} csfml-audio)

@@ -1,0 +1,8 @@
+
+
+ IF isfault (2 power 32) THEN
+  write 'Skipping large int tests';
+ ELSE
+  testid 'largintids1' Largeintargs;
+  testid 'largintids2' Largeintpairargs;
+ ENDIF;

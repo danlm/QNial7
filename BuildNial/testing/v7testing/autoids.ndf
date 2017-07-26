@@ -1,0 +1,48 @@
+
+# Identity Testing Program.
+
+
+# This program drives the testing of the identity given as an
+# argument string. It is expected to be run by loading
+# a file like "idtests.ndf" that gives a call to the operation
+# "idtest" with arguments the description of the id and the list of
+# names of data sets to which it is to be applied.
+
+  Quiet := l;
+  settrigger o;
+
+loaddefs "datagen
+
+   setlogname "ids.log; set "log;
+
+write status;
+
+spacelost := 0;
+
+   loaddefs "testid
+
+   loaddefs "ids
+
+   loaddefs "largeintids 
+
+   loaddefs "idtests l
+
+   loaddefs "pervdefs
+
+   loaddefs "pervtsts l
+
+   loaddefs "consist
+
+   loaddefs "conststs l
+
+   loaddefs "trdefs  
+
+   loaddefs "trtests l
+
+   write "Done;
+
+write status;
+
+ write link 'total space lost: '(string spacelost);
+
+   Bye

@@ -1,0 +1,94 @@
+
+# A generic cmake for building Q'Nial versions for Linux and Mac OSX. 
+# Both 32 and 64 bit versions on Intel processors.
+#
+
+cmake_minimum_required (VERSION 2.8)
+project(Nial)
+
+# Ensure relative names are handled correctly in libraries
+cmake_policy(SET CMP0015 NEW)
+
+include_directories("${PROJECT_BINARY_DIR}")
+
+
+#--------------------  Build Options -------------------------
+
+option(USE_INTS32 "Build a 32 bit system" OFF)
+option(USE_INTS64 "Build a 64 bit system" ON)
+option(USE_FASTMATH "Utilise compiler options to speed up maths" ON)  
+option(USE_GCC_LTO "Use link time optimisation" OFF)
+
+
+set (OPTFLAGS "-O2")
+if (USE_FASTMATH)
+  set (OPTFLAGS "${OPTFLAGS} -ffast-math")
+endif (USE_FASTMATH)
+
+if (USE_GCC_LTO)
+   set (OPTFLAGS "${OPTFLAGS} -flto")
+endif (USE_GCC_LTO)
+
+
+
+# ------------------- System Specific -----------------------
+
+set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${OPTFLAGS}")
+
+# Linux specific settings
+if (CMAKE_SYSTEM_NAME MATCHES "Linux")
+  set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -DLINUX -DUNIXSYS")
+endif (CMAKE_SYSTEM_NAME MATCHES "Linux")
+
+# CYGWIN specific settings
+if (CMAKE_SYSTEM_NAME MATCHES "CYGWIN")
+  set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -DLINUX -DUNIXSYS")
+endif (CMAKE_SYSTEM_NAME MATCHES "CYGWIN")
+
+# OSX specific flags
+if (CMAKE_SYSTEM_NAME MATCHES "Darwin")
+  set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -DOSX -DOSX_INTEL -DUNIXSYS")
+endif (CMAKE_SYSTEM_NAME MATCHES "Darwin")
+
+# Windows specific flags
+if (CMAKE_SYSTEM_NAME MATCHES "Windows")
+  set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -DWINDOWS -DWINNIAL")
+endif (CMAKE_SYSTEM_NAME MATCHES "Windows")
+
+
+
+# -------------------- Standard sources ---------------------
+
+# Source files for Nial
+# Note that these are also influenced by the switches file generated when
+# the package builder is run.
+set (NIAL_SRCS absmach.c
+          arith.c 
+          atops.c 
+	  basics.c 
+          blders.c
+          compare.c
+          eval.c
+          insel.c
+          lib_main.c
+          linalg.c
+          logicops.c
+          main_stu.c
+          linenoise.c
+          parse.c
+          picture.c
+          profile.c
+          scan.c
+          symtab.c
+          systemops.c
+          trig.c
+          trs.c
+          unixif.c
+          windowsif.c
+          utils.c
+          wsmanage.c
+	   bitops.c
+          fileio.c
+
+
+

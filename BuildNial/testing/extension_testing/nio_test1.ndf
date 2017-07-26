@@ -1,0 +1,16 @@
+# Very simple test to block and unblock an array 
+
+s := nio_open -1 0;
+
+write 'writing array to stream';
+d := 2 3 4 5 reshape count 120; 
+nio_block_array s d;
+
+write 'unblocking array from stream';
+r := nio_unblock_array s;
+
+write 'comparing';
+write (r = d);
+
+bye;
+

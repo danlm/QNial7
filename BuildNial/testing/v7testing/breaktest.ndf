@@ -1,0 +1,20 @@
+
+
+  f is op A {A := A + 1; tell A}
+
+breaktest is op A {
+  write 'started operation';
+  break;
+  write 'use stepv, then nextv, and then toend in the following loop';
+  FOR I WITH count 3 DO
+     y gets f 5 6;
+     x gets (3 + 4) * y;
+     write 'still in loop';
+  ENDFOR;
+  write 'after loop';
+  if a = 1 then 
+    breaktest 2; 
+    write 'after breaktest inner call';
+  endif;
+  write 'after breaktest outer call';
+}

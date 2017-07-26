@@ -1,0 +1,783 @@
+
+
+<HTML>
+<HEAD>
+<TITLE>About Nial</TITLE>
+</HEAD>
+
+<!-- Background white, links blue (unvisited), navy (visited), red
+(active) -->
+<body bgcolor="white" text="black" link="blue" vlink="green" alink="red">
+
+<div align="left">
+<table  border="0" cellpadding="0" cellspacing="0" width="670">
+  <tr>
+    <td valign="top"> 
+       
+       <table border="0" cellpadding="0" cellspacing="0" width="668">
+	    <tr>
+        <td width=600 valign=top
+<FONT FACE="ariel"><FONT FACE="Helvetica"><FONT SIZE=3> 
+
+<!-- Insert page content here -->
+<p>
+<br>
+
+
+</a>
+<dir>
+ <IMG ALIGN=BOTTOM SRC="small_bullet.gif"> <a href="#INFO">Information on Nial </a><br>
+ <IMG ALIGN=BOTTOM SRC="small_bullet.gif"> <a href="#LECTURE">Brief Lecture on Nial </a><br>
+ <IMG ALIGN=BOTTOM SRC="small_bullet.gif"> <a href="#SIMPLE_EXAMPLE">Simple Examples </a><br>
+ <IMG ALIGN=BOTTOM SRC="small_bullet.gif"> <a href="#ADVANCED_EXAMPLE">Advanced Examples </a><br>
+ <IMG ALIGN=BOTTOM SRC="small_bullet.gif"> <a href="#USES_OF_NIAL">Uses of Nial</a><br>
+ <IMG ALIGN=BOTTOM SRC="small_bullet.gif"> <a href="#SIMPLE_SYNTAX">Simple Syntax </a><br>
+ <IMG ALIGN=BOTTOM SRC="small_bullet.gif"> <a href="#HYBRID_LANGUAGE">Hybrid Language </a><br>
+ <IMG ALIGN=BOTTOM SRC="small_bullet.gif"> <a href="#EXTENSIBILITY">Extending the Language </a><br>
+ <IMG ALIGN=BOTTOM SRC="small_bullet.gif"> <a href="#REFERENCES">Bibliography</a><br>
+</dir>
+
+<br>
+<a name="INFO">
+
+<b>Nial Information</b>
+</a>
+<p>
+NIAL stands for the Nested Interactive Array Language. It is 
+a multi-paradigm language that combines aspects of both
+functional and procedural languages. The story of its name is found at
+<a href="NialSaga.html">The Name of the Language</a>.
+  
+<p>
+Nial is a hybrid language combining a functional array language based on
+Trenchard More's mathematical treatment of
+<i>nested arrays</i> called Array Theory, 
+with a procedural language with familiar control structures.
+It has a rich set of language primitives 
+that make it easy to rapidly develop loop-free data-driven algorithms.
+<p> Nial and its implementation were designed by a team led by
+  Mike Jenkins while he worked at Queen's University in Canada and refined within the company after his retirement. 
+
+<P>
+Q'Nial has been used for applications in decision support, knowledge
+based systems, scientific computing, and data analysis. 
+Mike Jenkins continues to use it to support rapid prototyping of 
+web based applications.
+<p>
+
+<a name="LECTURE">
+<b>Brief Lecture on Nial</b>
+</a>
+
+<p>
+Click on the link <a href="NialLecture.html"> Lecture on Nial</a> to view a 3 unit lecture
+on Nial prepared for a talk at NYU in April 2009.
+
+<p>
+<a name="SIMPLE_EXAMPLE">
+<b>Simple Examples</b>
+</a>
+
+<P>
+
+Nial is designed to allow easy construction and manipulation of data
+structures. For example, the statement
+<pre>
+	A := 3 18 27 45 7 23;
+</pre>
+
+constructs a list of 6 numbers and assigns it to the variable A. The
+expression 
+<pre>
+	sum A
+</pre>
+adds the list of numbers to yield 123. The average of the
+list of numbers can be  found by the expression
+<pre>
+	sum A / tally A
+</pre>
+to be 20.5. A new operation to compute the average of an arbitrary list
+of numbers can be defined by
+<pre>
+	average IS OPERATION Numbers {
+            sum Numbers / tally Numbers }
+</pre>
+and then the expression
+<pre>
+	average A
+</pre>
+returns 20.5.
+
+The data structures of Nial can have data of different type and can
+nest data structures. For example, a student
+record consisting of a name, a student number and a list of course marks
+can be stored as the list
+<pre>
+	Record1 := ['Helen Jones', "345-1467 , 87 76 92 57 65 88];
+</pre>
+Nial uses a diagraming technique to display data objects. The above
+record displays as
+<pre>
+     Record
++-----------+--------+-----------------+
+|Helen Jones|354-1467|87 76 92 57 65 88|
++-----------+--------+-----------------+
+</pre>
+The above display is what you see when you use Q'Nial interactively. The
+system provides an interactive interface in which a prompt of 5 spaces
+is given and then an input expression is typed. On a carriage return the
+system analyzes the expression, evaluates it and then displays a "picture"
+of the result starting at the left margin.
+
+<P>
+A pair of student records would be displayed as:
+
+<pre>
+     [Record1, Record2]
++----------------------------------------+-------------------------------------
+|+-----------+--------+-----------------+|+------------+---------+-------------
+||Helen Jones|354-1467|87 76 92 57 65 88|||Adam Trudeau|216 -2975|56 85 42 13 7
+|+-----------+--------+-----------------+|+------------+---------+-------------
++----------------------------------------+-------------------------------------
+
+-----+
+----+|
+7 56||
+----+|
+-----+
+</pre>
+<P>
+
+The language contains many operations that manipulate data structures
+in one operation: For example, the the operation "pack" combines
+the above two records item by item into a list of pairs:
+
+<pre>
+     pack [Record1, Record2]
++--------------------------+--------------------+------------------------------
+|+-----------+------------+|+--------+---------+|+-----------------+-----------
+||Helen Jones|Adam Trudeau|||354-1467|216 -2975|||87 76 92 57 65 88|56 85 42 13
+|+-----------+------------+|+--------+---------+|+-----------------+-----------
++--------------------------+--------------------+------------------------------
+
+-------+
+------+|
+ 77 56||
+------+|
+-------+
+</pre>
+<P>
+
+Programming is done by defining operations that manipulate the data
+structures. For example, we saw the definition of "average" above.
+Another example is:
+
+<pre>
+	get_averages IS OPERATION Records {
+		Nms Stnos Marks := pack Records;
+		Avgs := EACH average Marks;
+		pack Nms Avgs }
+</pre>
+
+which can be used to compute the averages for all the students in a list of 
+records and return the student names and average as pairs.
+
+<pre>
+     get_averages [Record1, Record2]
++------------------+----------------------+
+|+-----------+----+|+------------+-------+|
+||Helen Jones|77.5|||Adam Trudeau|54.8333||
+|+-----------+----+|+------------+-------+|
++------------------+----------------------+
+</pre>
+<P>
+
+For programmers who wish to express algorithms succinctly,
+Nial supports several functional combinators that build
+operations from simpler components. For example average can
+be defined by
+<pre>
+	average is / [sum, tally]
+</pre>
+Here "[sum, tally]" is an operation pair that computes the pair of numbers
+formed by applying each operation to the argument:
+<pre>
+	[sum, tally] 3 18 27 45 7 23
+123 6
+</pre>
+By placing "/" before "[sum, tally]" we are composing the division function 
+with "[sum, tally]"
+causing the division to be applied to the pair of numbers that results
+from "[sum, tally]", e.g.
+<pre>
+ 	/ 123 6
+20.5
+</pre>
+While this alternative style of programming operations is elegant for
+small examples, the explicit argument form of definition is what is
+used in practice by most Nial programmers because it is easier to
+comprehend and can provide better documentation of the
+algorithm by choosing the names appropriately.
+
+<p>
+<a name="ADVANCED_EXAMPLE">
+<b>Advanced Examples</b>
+</a>
+
+<p>
+In this section we present three examples that illustrate the power of
+Nial as a language for data manipulation.
+<p>
+
+<b><i> Finding the position and text of tags in an HTML file.</i> </b>
+<p>
+Tags in an HTML file are surrounded by "<" and ">" characters. For simplicity
+in the example we will assume no other uses of these symbols are present.
+The algorithm we will use is:
+<ul>
+  <li> Read the file into memory as one string,
+  <li> Find the positions of the markers.
+  <li> Using address arithmetic, select out the fields corresponding
+     to the text of the tags,
+  <li> Return the posns and text for the tags as a pair of lists.
+</ul>
+<p>
+The following two routines do the work:
+<p>
+&#35; routine to look for html tags in text stored as a long string.
+<pre>
+findtagtext IS OPERATION Text {
+   Hdposns := `< findall Text; 
+   Tlposns := `> findall Text;
+   Lengths := Tlposns - Hdposns + 1;
+   Tags := Hdposns EACHBOTH + EACH tell Lengths EACHLEFT choose Text;
+   Hdposns Tags }
+</pre>
+&#35; test routine to read in a complete file and find its tags
+<pre>
+  test is op fnm {
+    findtagtext readfield fnm 0 (filelength fnm) }
+</pre>
+<p> 
+Here is an example of the use of the test operation:
+<pre>
+     Posns Tags := test "intro.htm;
+
+     tally Posns
+1978
+
+     first Tags
+&#60;!DOCTYPE HTML PUBLIC "-//SQ//DTD HTML 2.0 HoTMetaL + extensions//EN"&#62;
+</pre>
+
+<b> <i>Adding computation to a textual table</i></b>
+<p>
+There are situations in dealing with textual documents where there is
+a need to do computation on tabular data stored in textual form.
+We make the assumption that the lines of the document that contain the
+file have been isolated into a separate file by a previous step.
+The computation we want to do to the table is to add two extra rows
+holding the sums and averages of the columns. The algorithm we use is:
+<ul>
+<li> Read in the rows of the table as a list of strings,
+<li> For each row find the numbers in the line by
+tokenizing the row using <i>scan</i>,
+selecting the tokens that correspond to numbers, and
+converting the tokens to real numbers,
+<li> Check that the number of numbers in each row is the same, 
+otherwise return a fault,
+<li> Use <i>pack</i> to get the columns of numbers,
+<li> Compute the sums and averages, and
+<li> Extend the table with the new data and compute its picture as the result.
+</ul>
+<p>
+The following routines implement the algorithm.
+
+<p>
+&#35; operation to select the numbers from a line of text.
+<pre>
+linetonums IS OPERATION Line {
+   Tkns := lo cutall rest scan Line;
+   Numtkns := EACH first Tkns EACHLEFT in  16 18 sublist Tkns;
+   EACH (1.0 * tonumber string second) Numtkns }
+</pre>
+<p>
+&#35; routine to read in data compute sums and average of columns
+and display it.
+<pre>
+tblcomp IS OPERATION Filenm {
+   Svtrigger := settrigger o;
+   Svfmt := setformat '%5.2f';
+   Lines := getfile Filenm;
+   IF isfault Lines THEN
+      Res := Lines;
+   ELSE
+      Nums := EACH linetonums Lines;
+      IF not equal EACH tally Nums THEN
+         Res := fault '?tbl not valid for tblcomp';
+      ELSE
+         C := pack Nums;
+         Sums := EACH sum C;
+         Avgs := Sums / tally Nums;
+         Res := picture mix (Nums link Sums Avgs);
+      ENDIF;
+   ENDIF;
+   settrigger Svtrigger;
+   setformat Svfmt;
+   Res }
+</pre>
+<p>
+We use the file tab.data to test the example:
+<p>
+&#35; show the data in the file:
+<pre>
+     getfile "tbl.dat
++----------------+---------------+--------------+
+|3.5,2.7,22,18,24|18,5,16.2,19,30|13,45,23,17,14|
++----------------+---------------+--------------+
+</pre>
+&#35; run the algorithm:
+<pre>
+     tblcomp "tbl.dat
+ 3.50  2.70 22.00 18.00 24.00
+18.00  5.00 16.20 19.00 30.00
+13.00 45.00 23.00 17.00 14.00
+34.50 52.70 61.20 54.00 68.00
+11.50 17.57 20.40 18.00 22.67
+</pre>
+<p>
+<b> <i>Efficient field selection from legacy system data files </i></b>
+
+<p>
+A common need in data processing is to access data stored in files
+that have been created by a legacy information system. These are usually 
+stored as flat files with fixed length records made up of preassigned
+fields. The record layout is known and can be described in terms of
+a sequence of quadruples: [Field_name,Offset,Length,Type]. Several
+kinds of selection might be wanted:
+<ul>
+<li>selecting one field from one record
+<li>selecting all fields from a block of records
+<li>selecting one field from a block of records
+</ul>
+
+<p>
+The routines that follow provide support for doing the selections. 
+
+<p>
+&#35; support routines for accessing fixed length records
+<pre>
+&#35; record descriptor file format:
+  Record_Name
+  Record_size (in bytes including space for 1 or 2 newline
+               characters if they are present)
+  A field descriptor for each selected field in the format:
+     Field_Name StartPos Length Datatype
+
+&#35; the above field descriptor is deliberately redundant so that
+ fields may be omitted. The Datatype is either A for alphanumeric
+ or N for numeric.
+
+&#35; routine to read a record descriptor from a file and store
+the information internally as numbers or strings.
+
+get_record_descriptor IS OPERATION Fname {
+  % routine to split one field descriptor into its parts;
+  convert_field_descriptor IS OPERATION Str {
+    Tokens := EACH (string second) (lo cutall rest scan Str);
+    Field_Name := phrase first Tokens;
+    StartPos := tonumber second Tokens;
+    Length := tonumber third Tokens;
+    Datatype := 3 pick Tokens;
+    Field_Name StartPos Length Datatype } ;
+  % get the lines of the file;
+    Lines := getfile Fname;
+  % select the record name from the first line;
+    Record_Name := second scan first Lines;
+  % select the record size from the second line;
+    Record_size := tonumber second Lines;
+  % split the field descriptors in the remaining lines;
+    Field_descriptors := EACH convert_field_descriptor (2 drop Lines);
+  Record_Name Record_size Field_descriptors }
+
+&#35; routine to use the field descriptors to produce a list of list of
+  indices for the items of the fields for a record. The list can be
+  used by EACHLEFT choose to select the list of fields.
+  
+field_selectors IS OPERATION Field_descriptors {
+  Posns  := EACH second Field_descriptors;
+  Lengths := EACH third Field_descriptors;
+  Posns EACHBOTH + EACH tell Lengths }
+  
+&#35; routine to get a block of N records from a file Fname
+   starting at record J as a list of lists of fields.
+
+get_block IS OPERATION Fname Record_descriptor N J {
+  % decompose the record descriptor;
+    Record_Name Record_size Field_descriptors := Record_descriptor;
+  % get the block of data for the N records;
+    Datablock := readfield Fname (J*Record_size) (N*Record_size);
+  % compute all the field selectors for all the records in the block;
+    All_selectors :=  (field_selectors Field_descriptors
+      EACHRIGHT + (Record_size * tell N));
+  % choose all the fields of the selected records;
+  All_selectors EACHLEFT EACHLEFT choose Datablock }
+
+&#35; routine to get one field from a block of N records starting at
+  record J.
+  
+get_field IS OPERATION Field_Name Filename Record_descriptor N J {
+ % split the recod descriptor into its parts;
+    Record_Name Record_size Field_descriptors := Record_descriptor;
+ % find the field descriptor for the named field;
+    Field_desc := Field_Name find EACH first Field_descriptors pick 
+      Field_descriptors;
+ % compute the indices to select all the fields;
+    Startpos length := [second, third] Field_desc;
+    Selectors := tell N * Record_size + Startpos EACHLEFT + tell Length;
+ % read the block of records and select the fields;
+    Datablock := readfield Filename (J*Record_size) (N*Record_size);
+    Fields := Selectors EACHLEFT choose Datablock;
+ % convert the field to numbers if numeric;
+    IF Field_desc@3 = 'N' THEN
+       EACH tonumber Fields
+    ELSE
+       Fields
+    ENDIF }
+ </pre>
+<p>
+We illustrate the effectiveness of this approach by doing a single record
+selection and by timing large selections
+from a file with 10,000 records with record format:
+<pre>
+   Name 0 - 19
+   Age  20 - 22
+   unused 23 - 24
+   Job 25 - 44
+   unused 45 - 49
+</pre>
+It has three active fields and two unused ones. The tests were done using
+the Q'Nial for Windows on a Pentium P120 notebook.
+
+<pre>
+&#35; The record descriptor for this file is:
+     Record_Foo
+     50
+     Name 0 20 A
+     Age 20 3 N
+     Job 25 20 A
+
+&#35; get record description
+
+recdesc := get_record_descriptor "foorec.dsc;
+
+&#35; test to read and decompose one record;
+
+     write first get_block "lgfile Recdesc 1 0;
++--------------------+---+--------------------+
+|Sam                 | 45|Steward             |
++--------------------+---+--------------------+
+
+timeit get_block "lgfile Recdesc 10000 0;
+2.1
+
+timeit get_field "AGE "lgdata Recdesc 10000 0;
+3.43
+</pre>
+<p>
+<a name="USES_OF_NIAL">
+
+<b>Uses of Nial </b>
+</a>
+<P>
+Nial is convenient for rapid design of data manipulation programs because
+it builds into its predefined operations many of the loops that are required
+in a conventional programming language. For example, you have seen in the
+simple examples that "sum" adds all the items in a list, and that "pack"
+reorganizes the data in a list of lists.
+
+<P>
+This automatic looping is also done for defined operations by using
+built-in second order functions (called transformers in Nial) that
+apply an operation to each item of a list. The use
+of the transformer EACH is demonstrated in the definition of
+"get_averages" above.
+
+<P> 
+Nial is an effective tool for doing data intensive computations
+on large amounts of data. Using the file access operations of the
+language, large data arrays can be loaded into the working memory
+and various computations performed. Because the primitive operations
+are implemented by compiled "C" code, the running time of such
+data manipulations is comparable with doing the same computations
+directly in a C program (usually within a factor of two or so), and hence
+using Nial for such problems allows for rapid development with only a small
+speed penalty.
+
+<P>
+Nial has been used in a number of commercial applications in 
+a variety of
+fields. These include: insurance underwriting, statistical computations,
+database construction, graphics animation and machine learning in protein
+crystallography knowledge bases.
+
+<P>
+Nial has been used as a prototyping tool in research projects in AI, 
+databases, and textual information systems at several universities.
+At Queen's it has been used for teaching concepts in AI and functional
+programming.
+
+<p>
+<a name="SIMPLE_SYNTAX">
+<b>Simple Syntax</b>
+</a>
+<p>
+The syntax of Nial been designed to be easy to use. It is based on a few
+principles:
+<ul>
+<li> The syntax of expressions uses juxtaposition rules to provide a
+straightforward functional notation that matches the semantic intent.
+<li> All operations are inherently unary, but infix use is permitted
+and results in a left-to-right interpretation.
+<li> There is no precedence rules for operations in infix usage (a consequence
+of the interpretation that it is the unary function applied to a pair)
+<li> All valid program constructs denote either an array expression, an
+operation or a transformer.
+<li> All the control constructs denote expressions and have a corresponding
+value.
+<li> All the control constructs are bracketed.
+<li> Parentheses, "(" and ")", are only used for grouping and can be placed
+around any valid program construct.
+</ul>
+<p>
+<b> <i>Juxtapositional Syntax of Expressions</i></b>
+<p>
+The following juxtapositions are supported:
+<ul>
+<li> List formation (array expression): 3 (4+5) 18 'abc'       
+<li> Operation application (array expression): f A
+<li> Left Currying (operation): A f
+<li> Operation composition (operation): f g
+<li> Transformer application (operation): T f
+</ul>
+In general sequences of symbols are interpreted left-to-right except that
+lists formed by the first rule (called strands) are gathered first. 
+The interpretation
+of infix usage such as "3+4" is that "3+" is an operation being applied to "4".
+The interpretation of "exp sum A" is that "exp sum" is an operation being 
+applied to "A". The meaning is the same as "exp (sum A)" by the composition
+of functions rule.
+The interpretation of "EACH sum A" is that "EACH sum" is an operation
+being applied to "A".
+<p>
+
+<b> <i>Bracket Comma Lists of Expressions and Operations</i> </b>
+<p>
+The syntax is extended with an alternative list forming notation.
+The expression <br>
+<pre>
+    [3,4+5,18,'abc'] 
+</pre>
+denotes the same list as the one given in the strand example.
+The two notations can be mixed together, for example
+<pre>
+    [3,4 5,7 8 9]
+</pre>
+
+<p>
+A similar notation can be used for a list of operations, which is called
+an <i> atlas </i>. For example, in the expression:
+<pre>
+     [first,rest] count 10
++-+------------------+
+|1|2 3 4 5 6 7 8 9 10|
++-+------------------+
+</pre>
+the result is the pair obtained by applying the two operations to the list
+of the first 10 integers starting at 1.
+
+<p>
+<b><i>User Definitions</i> </b>
+<p>
+The language is extended by naming program fragments using the keyword IS.
+The definition mechanism can name either array expressions, operations or
+transformers. Examples of each of these are:
+<pre>
+     Getname IS { readscreen 'Please enter your name: ' }
+
+     median IS OPERATION A {  tally A quotient 2 pick sortup A }
+
+     TWICE IS TRANSFORMER f OPERATION A { f f A }
+</pre>
+<p>
+The body of the operations and array expression defined above are <i> blocks
+</i> consisting of a single expression. In general a block can have local
+definitions followed by an expression sequence of one or more expressions.
+<p>
+User defined names can be used in exactly the same way as predefined ones.
+For example, the operation median can be applied to a list of numbers Nums
+by 
+<pre>
+     median Nums
+</pre>
+and ca be the argument of a transformer, e.g.
+<pre>
+     EACH median Lists_of_nums
+</pre>
+
+<a name="HYBRID_LANGUAGE">
+
+<b>Hybrid Language</b>
+</a>
+
+<p> Nial is a hybrid language in that it supports both both functional
+programming using the array expressions, operations and transformers discussed 
+above and imperative programming, in which assignments can be made to variables
+and control structures for selection and iteration are used for flow of
+control.
+<p>
+This hybrid nature of the language shows up in the advanced examples above.
+Consider the definition:
+<pre>
+findtagtext IS OPERATION Text {
+   Hdposns := `< findall Text; 
+   Tlposns := `> findall Text;
+   Lengths := Tlposns - Hdposns + 1;
+   Tags := Hdposns EACHBOTH + EACH tell Lengths EACHLEFT choose Text;
+   Hdposns Tags }
+</pre>
+The first line of the definition assigns the positions of the "<" in the
+string held in variable "Text" as a list of integers in variable "Hdposns".
+There is an implicit loop over the string "text" in the the use of "findall" 
+in the computation of these positions.
+<p>
+The fourth line of the definition uses the powerful functional notation to
+select all the Tags in one step. The final line of the definition is the
+result expression, in this case a pair of lists.
+<p>
+The control structures provided in Nial are:
+<ul>
+<li>	if-then-else conditional expressions (with elseif subclauses)
+<li>    case selection expression
+<li>    for-loop definite iteration expression
+<li>    while-do-loop indefinite iteration expression
+<li>    repeat-until-loop indefinite iteration expression
+</ul>
+	
+<br>
+<br>
+<br>
+
+<a name="EXTENSIBILITY">
+<b>Extending the Language</b>
+
+</a>
+<p>
+In most programming languages there is a core language and extensions
+are achieved using a separate procedure or function call mechanism. In
+Nial, user definitions that extend the capability of the system are invoked 
+in exactly the same way as predefined ones. Thus, Nial is inherently
+extensible in a simpler way than most languages. A library of commonly used
+definitions is provided with the system. 
+
+<p>
+A second area of extensibility is the connection of Nial to programs written
+in another language. Different versions of Nial provide this in different
+ways. In the Windows versions of both Q'Nial and the Data Engine, a facility
+to invoke arbitrary routines in a dynamic load library (DLL) has been added.
+
+<p>
+<a name="REFERENCES">
+<b> Bibliography</b>
+
+</a>
+
+<P>
+Further information on Nial and Q'Nial can be found in the following references:
+
+<P>
+Franksen, O.I., Jenkins, M.A., " On Axis Restructuring Operations
+for Nested Arrays", <i>Proceedings of the 2nd International Workshop on
+Array Structures</i> ATABLE-92, Montreal, June 1992.
+
+<P>
+Glasgow, J., Jenkins, M., Blevis, E., Feret, M.,"Logic Programming With 
+Arrays",  <i>IEEE Transactions on Knowledge and Data Engineering</i>, 3 3
+307-319 1991.
+
+<P>
+Glasgow, J.I., Lawson, D., Jenkins, M.A., Feret, M., "An Architecture for
+Real-Time Diagnostics Systems",  <i>Proceedings of The Third International
+Conference on Industrial and Engineering Applications of Artificial
+Intelligence and Expert Systems</i> IEA/AIE-90, August 1990.
+
+<P>
+Glasgow, J.I., Jenkins, M.A., McCrosky, Carl, Meijer, H, "Expressing
+Parallel Algorithms in Nial",  <i>Parallel Computing Journal</i>, 11 3 331-347 1989.
+
+<P>
+Jenkins, M.A., "Q'Nial: A Portable Interpreter for the Nested Interactive
+Array Language, Nial",  <i>Software Practice & Experience</i>, 19 2 111-126 1989.
+
+<P>
+Jenkins, M.A., Glasgow, J.I., "A Logical Basis For Nested Array Data
+Structures",  <i>Computer Languages Journal</i>, 14 1 35-51 1989.
+
+<P>
+Jenkins, M.A., Glasgow, J.I., Blevis, E., Hache, E., Lawson, D., The Nial
+AI Toolkit,  <i>Proceedings of the Avignon 8th International Workshop on Expert
+Systems and their Applications</i>, June 88. Available as Tech Rept 88-212.
+
+<P>
+Chau, R., Glasgow, J.I. and Jenkins, M.A.,
+"Fuzzy Information Management Using the Roster Model",
+" <i>Proceedings of 21st Hawaii International Conference on System Sciences</i>,"
+(HICSS-21), January 1988.
+
+<P>
+Chau, R., Glasgow, J.I., Jenkins, M.A., "A Framework for Knowledge Based
+systems in Nial", 1987  <i>Phoenix Conference on Computers
+and Communications</i> Feb. 1987.
+
+<P>
+Glasgow, J.I., Jenkins, M.A., Hendren, L.J., "A programming language for
+learning environments",  <i>Computational Intelligence</i>, 2 1 68-75 1986.
+
+<P>
+Jenkins, M.A., Glasgow, J.I., McCrosky, Carl, "Programming Styles in Nial",
+<i>IEEE Software</i>, January 1986.
+
+<P>
+Glasgow, J.I., Jenkins, M.A., Blevis, E., Chau, R.,
+Hache, E., Whybra, J., "Experience with A.I. Programming in Nial",
+ " <i>Proceedings of STeP-86 Finnish Artificial Intelligence Symposium</i>,"
+Epsola, August 1986.
+
+<P>
+Glasgow, J.I., Jenkins, M.A., McCrosky, Carl,  User Defined Parallel
+Control Strategies in Nial, 
+<i>Proceedings of the Symposium on Logic Programming</i> pp 22-28, Boston, July 1985.
+
+<P>
+McCrosky, Carl, Glasgow, J.I., Jenkins, M.A., Nial: A Candidate Language
+for Fifth Generation Computing Systems,
+ <i>Proceedings of the ACM Annual Conference</i>, San Francisco, October 1984.
+
+<br>
+<!-- End of page content  -->
+
+<p> <font size="2" face="ariel"><i>Last Modified: Nov 2006</i></font> 
+
+
+ </FONT></FONT></FONT>
+
+         </td>
+      </tr>
+    </table>
+  </td>
+ </tr>
+</table>
+<map name="0001BottomBarb5ecde22"></map>
+</div>
+</BODY>
+</HTML>

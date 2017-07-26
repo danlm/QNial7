@@ -1,0 +1,37 @@
+# definitions for consistency checks
+
+Zeros is o 0 0.0
+
+Ones is l 1 1.0
+
+Args is Zeros Ones
+
+Zzpairs is list cart Zeros Zeros
+
+Zopairs is list cart Zeros Ones
+
+Ozpairs is list cart Ones Zeros
+
+Oopairs is list cart Ones Ones
+
+Binargs is ZZpairs Zopairs Ozpairs Oopairs
+
+CHECK IS TRANSFORMER f ( and OUTER mate (2 reshape [EACH f]) )
+
+loaddefs "fuzzyeq
+
+CHECK1 IS TRANSFORMER f ( and OUTER fuzzyeq (2 reshape [EACH f]) )
+
+Zeros1 is o 0;
+
+Ones1 is l 1;
+
+Zzpairs1 is list cart Zeros1 Zeros1
+
+Zopairs1 is list cart Zeros1 Ones1
+
+Ozpairs1 is list cart Ones1 Zeros1
+
+Oopairs1 is list cart Ones1 Ones1
+
+Binargs1 is ZZpairs1 Zopairs1 Ozpairs1 Oopairs1

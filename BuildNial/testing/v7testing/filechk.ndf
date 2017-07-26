@@ -1,0 +1,191 @@
+# This file contains to programs that check the semantics of file access.
+
+seqfiletest is {
+  %start with the files not there;
+  host 'rm f1 f2';
+  f1 gets open "f1 "w;
+  f2 gets open "f2 "a;
+  %check file status;
+  if filestatus ~= [0 "stdin `r,1 "stdout `w,2 "stderr `w,3 "f1 `w,4 "f2 `a]
+  then write 'filestatus 1 not correct'; write filestatus; endif;
+  % test writing;
+  msg1 := 'this is a test file';
+  msg2 := 'with two lines in it';
+  writefile f1 msg1;
+  writefile f1 msg2;
+  writefile f1 '';
+  %test closure;
+  close f1;
+  %check file status after closure;
+  if filestatus ~= [0 "stdin `r,1 "stdout `w,2 "stderr `w,4 "f2 `a]
+  then write 'filestatus 2 not correct'; write filestatus; endif;
+  f1 gets open "f1 "r;
+  %check file status after reopening the file;
+  if filestatus ~= [0 "stdin `r,1 "stdout `w,2 "stderr `w,3 "f1 `r,4 "f2 `a]
+  then write 'filestatus 3 not correct'; write filestatus; endif;
+  % test reading;
+  ans1 gets readfile f1;
+  ans2 gets readfile f1;
+  ans3 gets readfile f1;
+  if ans1~=msg1 or (ans2~=msg2) or (ans3~='') then
+    write 'sequential file failure'; endif;
+  if readfile f1 ~= ??eof then
+    write 'end of file expected'; endif;
+  %check that writing to a file opened to read fails;
+  if not isfault writefile f1 msg1 then 
+  write 'writing to a read only file fault is missing'; endif;
+  close f1;
+  % check that double closure fails;
+  if not isfault close f1 then 
+  write 'file closed fault is missing'; endif;
+  % check that writing to a closed file fails;
+  if not isfault writefile f1 msg1 then 
+  write 'writing to a closed fault is missing'; endif;
+  % check that writing fails with no data;
+  if not isfault writefile f2 then 
+  write 'writing with no data fault is missing'; endif;
+  % check that reading to a write only file fails;
+  if not isfault readfile f2 then 
+  write 'reading from a write only file fault is missing'; endif;
+  close f2;
+  %remove testfiles;
+  host 'rm f1 f2';
+  write 'sequential access file tests are complete';
+}
+
+# tests for 2 kinds of direct access;
+
+directfiletest is {
+  % start with no files present;
+  host'rm f1.* f2.*';
+  f1 gets open "f1 "d;
+  f2 gets open "f2 "d;
+  %check file status;
+  if filestatus ~= [0 "stdin `r,1 "stdout `w,2 "stderr `w,3 "f1 `d,4 "f2 `d]
+  then write 'filestatus 1 not correct'; write filestatus; endif;
+  % use f1 as an array file and f2 as a record file;
+  writearray f1 0 (tell 2 3);
+  writearray f1 5 'a string of a few words';
+  writearray f1 10 (l -235 3.14159 3 -4 `z "abc ??fault);
+  writearray f1 8 Null;
+  writearray f1 9 '';
+  writerecord f2 25 'this can only be a string';
+  writerecord f2 1 'another string';
+  writerecord f2 9 '';
+  % testing reading before closure;
+  if readarray f1 0 ~= tell 2 3 then
+    write 'readarray failure on record 0'; endif;
+  if readrecord f2 1 ~= 'another string' then
+    write 'readrecord failure on record 1'; endif;
+  % testing filetally;
+  if (filetally f1 ~= 11) then
+    write 'filetally is wrong on f1'; endif;
+  if (filetally f2 ~= 26) then
+    write 'filetally is wrong on f2'; endif;
+  %test closure;
+  close f1;
+  close f2;
+  %check file status;
+  if filestatus ~= [0 "stdin `r,1 "stdout `w,2 "stderr `w]
+  then write 'filestatus 2 not correct'; write filestatus; endif;
+  f2 gets open "f2 "d;
+  f1 gets open "f1 "d;
+  %check file status;
+  if filestatus ~= [0 "stdin `r,1 "stdout `w,2 "stderr `w,3 "f2 `d,4 "f1 `d]
+  then write 'filestatus 3 not correct'; write filestatus; endif;
+  % test reading on re-opening;
+  if readarray f1 10 ~= (l -235 3.14159 3 -4 `z "abc ??fault) then
+    write 'readarray failure on record 10'; endif;
+  if readrecord f2 25 ~= 'this can only be a string' then
+    write 'readrecord failure on record 25'; endif;
+  % test reading empties;
+  if readarray f1 8 ~= Null then
+   write 'readarray failed on Null '; endif;
+  if readarray f1 9 ~= '' then
+   write 'readarray failed on Null string'; endif;
+  if readrecord f2 9 ~= '' then
+   write 'readrecord failed on Null string'; write diagram readrecord f2 9; 
+  endif;
+  % test cross use is not allowed;
+  if not isfault readrecord f1 10 then
+    write 'fault in trying to use readrecord on array file missing'; endif;
+  if not isfault writerecord f1 10 'hello' then
+    write 'fault in trying to use readrecord on array file missing'; endif;
+  if not isfault readarray f2 1 then
+    write 'fault in trying to use readarray on record file missing'; endif;
+  if not isfault writearray f1 10 (3 4 5) then
+    write 'fault in trying to use writearray on record file missing'; endif;
+  % check multiple reads and writes work;
+  writearray f1 (2 3 4 5 6 7) (list count 2 3);
+  if readarray f1 (2 3 4 5 6 7) ~= (list count 2 3) then
+    write 'multiple read write for f1 failed'; endif;
+  writerecord f2 (3 4 5) ('hat' 'cat' 'seuss');
+  if readrecord f2 (3 4 5) ~= ('hat' 'cat' 'seuss') then
+    write 'multiple read write for f2 failed'; endif;
+  % check for misuse of operations;
+  if not isfault readarray f1 then
+    write 'incorrect use of readarray fault is missing'; endif;
+  if not isfault writearray f1 5 then
+    write 'incorrect use of writearray fault is missing'; endif;
+  if not isfault readrecord f2 then
+    write 'incorrect use of readrecord fault is missing'; endif;
+  if not isfault writerecord f2 5 then
+    write 'incorrect use of writerecord fault is missing'; endif;
+  % test use of eraserecord;
+  eraserecord f1 10;
+  if readarray f1 10 ~= ??eof then
+    write'eraserecord error on f1'; endif;
+  eraserecord f1 8;
+  if readarray f1 8 ~= ??missing then
+    write'eraserecord error on f1'; endif;
+  eraserecord f2 4;
+  if readrecord f2 4 ~= '' then
+    write'eraserecord error on f2'; write readrecord f2 4; endif;
+  % testing filetally after erasure;
+  if (filetally f1 ~= 10) then
+    write 'filetally is wrong on f1'; endif;
+  if (filetally f2 ~= 26) then
+    write 'filetally is wrong on f2'; write filetally f2; endif;
+  % test file compression;
+  writerecord f2 2 (1500 reshape `a);
+  writerecord f2 2 (1501 reshape `a);
+  writerecord f2 3 (2000 reshape `a);
+  writerecord f2 3 (2001 reshape `a);
+  writerecord f2 2 ' ';
+  eraserecord f2 3;
+  if readrecord f2 1 ~= 'another string' then
+    write'failure of readrecord after forced compression'; endif;
+  close f1;
+  close f2;
+  host'rm f1.* f2.*';
+  write 'direct access file tests are complete';
+}
+
+# a check on the semantics of putdef and getdef.
+
+_putfile is op Fname X {
+   Fnm := open Fname "w;
+   ITERATE (Fnm writefile) (link EACH rows X);
+   close Fnm; }
+
+putgettest is {
+  Lines gets descan deparse getdef "_putfile;
+  putfile "F1 Lines;
+  _putfile "F2 Lines;
+  x1 gets getfile "F1;
+  x2 gets getfile "F2;
+  if (x1 ~= Lines or (x1 ~= x2)) then
+    write 'error in putfile or getfile semantics on Lines';
+  endif;
+  Chararrays gets [`z,'abc','',2 3 reshape 'uvwxyz',3 0 reshape '',
+    2 3 2 reshape 'abcdefghijkl',2 2 2 2 2 reshape 'a'];
+  putfile "F1 Chararrays;
+  _putfile "F2 Chararrays;
+  x1 gets getfile "F1;
+  x2 gets getfile "F2;
+  if (x1 ~= x2) then
+    write 'error in putfile or getfile semantics on Chararrays';
+  endif;
+  host'rm f1.* f2.*';
+  write 'getfile and putfile tests completed';
+}

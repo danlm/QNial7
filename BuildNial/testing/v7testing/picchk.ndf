@@ -1,0 +1,35 @@
+# this file checks the semantics of the picture operations. It assumes
+that sketch and display work as expected on atoms, and tests that the pictures
+are built up correctly.
+
+loaddefs "picdefs
+
+dcheck is equal[diagram,_diagram]
+
+scheck is equal[sketch,_sketch]
+
+loaddefs "datagen
+
+piccheck is op a {
+ for setting with "nodecor "decor do
+  set setting;
+  for i with grid a do
+    write link 'testing diagram on ' a@i ' with setting ' (string setting);
+    res := each dcheck execute a@i;
+    IF not and res THEN
+       appendfile "pic.out  (link 'diagram check failed on ' a@i);
+       appendfile "pic.out (sketch res);
+       write 'failed';
+       write res;
+    ENDIF;
+    write link 'testing sketch on ' a@i;
+    res := each scheck execute a@i;
+    IF not and res THEN
+       appendfile "pic.out  (link 'sketch check failed on ' a@i);
+       appendfile "pic.out (sketch res);
+       write 'failed';
+       write res;
+    ENDIF;
+  endfor;
+ endfor;
+}

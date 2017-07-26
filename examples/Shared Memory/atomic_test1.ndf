@@ -1,0 +1,89 @@
+library "sprocess;
+library "memspaces;
+
+# Test of atomic compare using two child processes
+# 
+
+# The worker function
+
+cas_worker is op chan args {
+       sh_space init_val := args;
+       inc_val := init_val;
+       tries := 1000;
+       waits := 0;
+       increment  := 2;
+       ipc_write_array chan [init_val, inc_val, increment];
+       while (tries > 0) do
+         while (msp_atomic_cas [sh_space, 0, inc_val, (inc_val+1)]) = o do
+	   % nano_sleep 0 1;
+	   waits := waits + 1;
+	 endwhile;
+	 ipc_write_array chan ['matched', inc_val];
+	 inc_val := inc_val + increment;
+	 tries := tries - 1;
+       endwhile;
+       ipc_write_array chan "done;
+       l
+}
+
+write 'Starting compare and swap';
+
+# create the shared space
+
+sh_space := msp_map_local [(4096*4096), 0];
+if isfault sh_space then
+   write 'Creation of local space failed' sh_space;
+   bye;
+endif;
+
+write 'Shared space' sh_space;
+
+msp_put_raw sh_space [0] 0 1;
+
+# Create two worker processes to test atomic_cas
+
+chan1 io_chan1 proc1 := create_worker [(!cas_worker), [sh_space, 0]];
+chan2 io_chan2 proc2 := create_worker [(!cas_worker), [sh_space, 1]];
+
+write 'Processes' proc1 proc2;
+
+# loop reading the output of the two children until both finished
+
+complete := 0;
+while (complete < 2) do
+      if (channel_is_readable io_chan1) then
+        inp := nio_readln io_chan1;
+	if inp != Null then 
+          write inp;
+        endif;
+      endif;
+      if (channel_is_readable io_chan2) then
+        inp := nio_readln io_chan2;
+	if inp != Null then 
+          write inp;
+        endif;
+      endif;
+      if (channel_is_readable chan1) then
+        res := ipc_read_array chan1;
+	write res;
+	if res = "done then
+	  complete := complete + 1;
+        endif;
+      endif;
+      if (channel_is_readable chan2) then
+        res := ipc_read_array chan2;
+	write res;
+	if res = "done then
+	  complete := complete + 1;
+        endif;
+      endif;
+      nano_sleep 0 10;
+endwhile;
+
+write 'Ending test';
+
+# Terminate the child process to avoid zombies
+
+interrupt_child proc1 -1;
+interrupt_child proc2 -1;
+bye

@@ -1,0 +1,24 @@
+#
+Operation: unitarray Sh
+File: unitarra.ndf
+
+# Unitarray builds the unit array for a given shape. If the shape is of length
+  two and both items of the shape are the same, then the result is the
+  identity matrix of that shape.
+
+unitarray IS OPERATION Sh { abs OUTER = EACH tell Sh }
+
+# Examples:
+
+#
+        unitarray 3 3
+1 0 0
+0 1 0
+0 0 1
+
+#
+        unitarray 4 4 4
+1 0 0 0   0 0 0 0   0 0 0 0   0 0 0 0
+0 0 0 0   0 1 0 0   0 0 0 0   0 0 0 0
+0 0 0 0   0 0 0 0   0 0 1 0   0 0 0 0
+0 0 0 0   0 0 0 0   0 0 0 0   0 0 0 1

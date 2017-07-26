@@ -1,0 +1,14 @@
+# test cases for evaluator on assignment
+
+(v gets 3;v) = 3
+(v gets 3 4 5;v) = 3 4 5
+(v b c gets 3 4 5;v b c) = 3 4 5
+(v b c gets 3 4 5;v) = 3
+(v b c gets 3 4 5;b) = 4
+(v b c gets 3 4 5;c) = 5
+(v:=b:=3 4;v b) = (3 4) (3 4)
+(v:=3;5+(v:=v+2;10)+v) = 20
+(v:=3;(v:=v+2)+v) = 10
+(v:=3;(v:=v+2)+v;v) = 5
+(v:=3;v+(v:=v+2)) = 8
+(v:=3;v+(v:=v+2);v) = 5

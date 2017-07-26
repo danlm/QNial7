@@ -1,0 +1,129 @@
+The Control examples describe ways of changing the sequence in which
+expressions are executed. Normally, Q'Nial executes one expression after
+another until it comes to the end of the expression sequence. Expressions that
+change the order of execution are: if, case, for, while, repeat, exit.
+
+The "IF" construct is used to decide between choices based on the value
+of a comparison. The form is as follows:
+
+   IF     <expr> THEN <expr sequence>
+   ELSEIF <expr> THEN <expr sequence>
+   ELSEIF <expr> THEN <expr sequence>
+     ...
+   ELSE               <expr sequence>
+   ENDIF
+
+.b Age := 17;
+   IF Age >= 18 THEN "Army
+   ELSEIF Age < 16 THEN "Minor
+   ELSE "Juvenile
+.e ENDIF
+.p
+The CASE construct has the following form:
+
+   CASE   <expr> FROM
+     L0:  <expr sequence> END
+     L1:  <expr sequence> END
+     L2:  <expr sequence> END
+     ELSE <expr sequence>
+   ENDCASE
+
+.n Month := 3;
+
+.b CASE Month FROM
+      1: Month_name := "January; END
+      2: Month_name := "February;END
+      3: Month_name := "March;   END
+   ELSE  Month_name := phrase 'April through December';
+   ENDCASE;
+.e Month_name
+
+In this case, the CASE statement labels are 1,2,3. They could equally
+well be "Jan "Feb "Mar.
+.p
+The "WHILE" construct is used to execute an expression sequence repeatedly
+as long as the result of a comparison remains true.
+
+   WHILE  <expr>  DO   <expr sequence>   ENDWHILE
+
+.b whileexample IS OPERATION Win {
+      Sequence := Null;
+      WHILE last Sequence ~= Win DO
+         D1 D2 := each ceiling (6 * random 2);
+         Toss := sum D1 D2;
+         Sequence := Sequence append Toss;
+      ENDWHILE;
+.e    Sequence }
+
+.n whileexample 11
+
+The parameter for whileexample is "Win". "Sequence is created as
+an empty list. The WHILE loop continues as long as the last value
+of the list is not equal to the value of "Win". At the end, the
+value of "Sequence" is displayed.
+.p
+The "REPEAT" construct is used to execute an expression sequence repeatedly
+until the result of a comparison is true.
+
+   REPEAT   <expr sequence>   UNTIL <expr>   ENDREPEAT
+
+.b repeatexample IS OPERATION Win {
+      Sequence := Null ;
+      REPEAT
+        Sequence := Sequence append sum (EACH ceiling (6 * random 2))
+      UNTIL last Sequence = Win
+      ENDREPEAT ;
+.e    Sequence }
+
+.n repeatexample 3
+
+The parameter for repeatexample is "Win". "Sequence is created as an empty
+list. The body of the loop is executed at least once. The REPEAT loop
+continues until the last value of the list is equal to the value of "Win".
+At the end, the value of "Sequence" is displayed.
+.p
+The "FOR" construct is used to execute an expression sequence repeatedly
+while a variable takes on successive values of the items of an expression.
+
+   FOR  <variable>  WITH  <expr>  DO  <expr sequence>  ENDFOR
+
+.s Mode := setformat 1 0 1;
+.b Numbers := 2. 3. 5. 7. 11.;
+   FOR X WITH Numbers DO
+      write (X) (X*X) (X power X)
+.e ENDFOR
+
+X takes on values in Numbers in successive executions of the body of the
+loop. The values of X, X squared and X to the power X are displayed.
+.s set Mode; set "sketch;
+.p
+Result of a Loop expression
+
+A loop expression is often used to repeat a sequence a certain number of
+times and return a result. It is also used to repeat some side-effect of
+the repeated sequence. A side-effect might be the writing of a record to a
+file, for example.
+
+If the intention is to return a value, the loop expression can be part of
+an assignment expression.
+
+.b List1 := 1 1 ;
+   Fibonacci := FOR I WITH count 10 DO
+      List1 := List1 append (sum (last List1) (second reverse List1))
+   ENDFOR ;
+.e write "Fib Fibonacci ;
+
+.p
+The EXIT expression can be used to exit from a repeat, while or for loop.
+
+If an EXIT expression is evaluated, the loop terminates early and returns
+with the value of the simple expression following the reserved word EXIT.
+
+.b List1 := 1 1 ;
+   Fibonacci := FOR I WITH count 10 DO
+      IF last List1 > 10 THEN EXIT List1 ; ENDIF ;
+      List1 := List1 append (sum (last List1) (second reverse List1))
+   ENDFOR ;
+.e write "Fib Fibonacci ;
+.p
+

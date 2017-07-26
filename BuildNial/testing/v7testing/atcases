@@ -1,0 +1,58 @@
+# tests of the 3 by 3 juxtaposition table
+
+a a = 3 3
+a f a = 4 4
+a T f a = 5 5
+f a = 4
+f f a = 5
+T f a = 5
+T a f a = 4 (5 5)
+T f a = 5
+T T f a = 7
+
+# tests of sequences of AT objects up to length 5
+
+a a a a a = 3 3 3 3 3
+a a a f a = (4 4 4) 4
+a a f a a = (4 4)(4 4)
+a f a a a = 4 (4 4 4)
+f a a a a = 4 4 4 4
+a a f f a = (4 4) 5
+a f a f a = (5 5) 4
+f a a f a = (5 5) 4
+a f f f a = 4 6
+f f a f a = 6 4
+f a f f a = 5 5
+f f f f a = 7
+a a T f a = (5 5) 5
+a T a f a = 4 (5 (5 5))
+T a a f a = (4 4) ((5 5) 5)
+a f T f a = 4 6
+f a T f a = 6 5
+f T a f a = 5 (6 6)
+T a f f a = 4 (5 6)
+T f a f a = 6 4
+a T T f a = 7 7
+T a T f a = 5 (7 7)
+T T a f a = 4 (5 (6 (7 7)))
+T T T f a = 11
+
+# tests of list constructs
+
+[] = Null
+[a] = solitary 3
+[a,a] = 3 3
+[a,a,a] = 3 3 3
+[a a] = solitary 3 3
+[a,a a] = 3 (3 3)
+[a a,a] = (3 3) 3
+[,] = ??noexpr ??noexpr
+[a,] = 3 ??noexpr
+[,a] = ??noexpr 3
+[[a,a],a] = (3 3) 3
+[f] a = solitary 4
+[f,f] a = 4 4
+[f,[f,f]] a = 4 (4 4)
+[f f] a = solitary 5
+[T f] a = solitary 5
+

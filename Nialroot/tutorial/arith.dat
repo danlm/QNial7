@@ -1,0 +1,182 @@
+.s setformat '%5.2f' ; set "sketch ;
+Arithmetic Operations
+
+There are many equivalent ways of adding two or more numbers.
+
+.n 23 + 45
+.n 23 plus 45
+.n sum 23 45
+.n + 23 45
+
+.n sum 234 345 456 567 678 789 232 343 454 565 676 787 898 736 592
+
+An operation between two values is said to be in infix notation.
+If it precedes the values, it is said to be in prefix notation.
+.p
+Q'Nial can add a list or a table of numbers.
+
+.n Numbers := 234 345 456 567 678 789 232 343 454 565 676 787 898 736 592;
+
+.n Table := 3 5 reshape Numbers
+
+.n (sum Numbers) (sum Table)
+
+If numbers are grouped in lists, those in corresponding positions are added.
+
+.n sum (2 5 8) (5 3 7)
+.n sum (2 5 8) (5 3 7) (3 2 1)
+.n sum (2 5 8) (5 3 7) (3 2 1) (1 2 3)
+.p
+To add the individual lists, the transformer EACH is used.
+
+.n EACH sum (2 5 8) (5 3 7)
+.n EACH sum (2 5 8) (5 3 7) (3 2 1)
+.n EACH sum (2 5 8) (5 3 7) (3 2 1) (1 2 3)
+
+Q Nial cannot add a number to an alphabetic character. The result is ?A.
+The fault ?A indicates that an error in arithmetic has occurred.
+
+.n 23 + `X
+
+Q'Nial can add integers to real (decimal point) numbers.
+.s Fmt := setformat '%10.6f' ;
+
+.n sum .0003 3 30
+.p
+Although the internal operations of arithmetic on real number are 
+done to 15 digits of precision, the number of digits displayed is 
+under program control.
+
+The operation that sets the precision of numeric displays is "setformat".
+It is described under the topic "data" in the main menu.
+
+The operation "setformat '%10.6f'" sets the display to a 10 character wide
+field having 6 digits after the decimal point.
+
+.n setformat '%10.6f' ;  1.23456789012345
+
+
+.n setformat '%20.14f' ; 1.23456789012345
+
+
+.n setformat '%5.2f' ;   1.23456789012345
+
+The result is rounded to the requested precision.
+.p
+We reset the display of relas to the default value.
+.n setformat '%g';
+
+The operation "opp" or "opposite" returns the number of opposite sign.
+
+.n Numbers gets 3 7 -5 16
+
+.n opposite Numbers
+
+The operation "divide" or "div" or the symbol / performs division.
+
+.n (72. div 9.)  (72. divide 9.)  (72./9.)
+
+Several numbers can be divided by the same value at once.
+
+.n 72.   13.69   22.77   / 9.
+.p
+The operation "recip" returns the reciprocal of a Number.
+
+.n count 10
+
+.n recip count 10
+
+The operation "mix pack" makes a table out of a pair of lists of the same
+length. We can use it to create a table of the integers and their reciprocals.
+
+.n mix pack (count 10) (recip count 10)
+.p
+The operations "quotient" and "mod" are used for whole number arithmetic.
+
+"quotient" returns the whole part of (Number1 divided by Number2).
+"mod"      returns the remainder  of (Number1 divided by Number2).
+For example, 14 divided by 3 gives 4 with 2 left over.
+
+.n 14 quotient 3
+.n 14 mod 3
+
+The above two expressions could be combined as follows where [quotient,mod]
+is called an atlas.
+
+.n 14 [quotient,mod] 3
+.p
+.c Multiplication
+
+The operations "times", "*" and "prod" all mean multiplication.
+
+.n (8. times 9.) (8. * 9.) (prod 8. 9.)
+
+The product of the list of numbers 3 4 5 is 3*4*5 or 60.
+
+.n prod 3 4 5
+
+Factorial 5 is the same as prod count 5
+
+.n count 5
+
+.n prod count 5
+.p
+Angles are expressed in radian measure. Pi radians = 180 degrees.
+
+.n Fmt := setformat '%10.5f' ;
+
+.n Angle gets Pi / 6 ;  % Pi / 6 = 30 degrees.
+
+.n sin Angle
+
+.n cos Angle
+
+.n tan Angle
+
+.s setformat Fmt ;
+.p
+In Q'Nial boolean arithmetic, "l" represents true and "o" represents false.
+
+A predicate is a test for true. In the following examples, the first
+returns true and the next two return false.
+
+.n 7 = 7
+
+.n 1 = 2
+
+.n 4 < 3
+
+The operation "=" considers the two items and returns "l" only if they are
+identical; whereas "match" compares corresponding items of two arrays.
+
+.n (2 3 1 4 5 3 7 5)   =   (1 2 3 4 5 6 7 8)
+.n (2 3 1 4 5 3 7 5) match (1 2 3 4 5 6 7 8)
+.p
+The operations "and", "or", "not" and "sum" all apply to boolean values.
+
+The operation "and" returns true if all the items are true.
+The operation "or"  returns True if any item is true.
+The operation "not" returns the opposite boolean value.
+The operation "sum" returns the number of true's in the array.
+
+.n list1 := llolloool
+.n and list1
+.n or  list1
+.n post ((list1) (not list1))
+.n sum list1
+.p
+If there are several lists of truthvalues ( called bitstrings), then
+the operations "and" and "or" consider items in corresponding positions.
+
+.n list1 := (llol)(loll)(lolo)
+
+.n and list1
+
+.n or  list1
+
+The operation "not" applies to each truthvalue.
+
+.n not list1
+
+.n sum list1
+.p

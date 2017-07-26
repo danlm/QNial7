@@ -1,0 +1,19 @@
+loaddefs "ntable
+
+probecount is op T A {
+	   T tset A;
+	   tprobes T
+}
+
+ 
+ttest1 is op N {
+	t := tcreate 0;
+	v := count N;
+	a := each phrase ('a' eachright link (each string v));
+	e := a eachboth pair v;
+	p := t eachright probecount e;
+	p
+}
+
+
+	

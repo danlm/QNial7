@@ -1,0 +1,155 @@
+atoms is { o -12 3.14 `x "abc ??fault }
+
+atoms1 is { l 2 0.7 `a (phrase 'a b') (fault '? ?') }
+
+allatompairs is list cart atoms atoms1
+
+empties is Null (2 0 reshape 5) (0 2 0 reshape 5) (0 0 reshape 5) (0 2 reshape 5)
+
+singles is each single allatompairs
+
+solitaries is each solitary (flip atoms (reverse atoms))  link each list atoms
+
+lists IS (count 3) [tell 2,tell 3,count 3]
+
+#routine to sample a vector at every nth item with ofset k.
+
+sample is op a n k {
+   b gets grid a;
+   (b + k) mod n match 0 sublist b choose a }
+
+tv is o l
+
+ints is 0 1 2 -1 45 90 257
+
+smposints is 1 2 20 7
+
+reals is 0. 1. 3.001 -.9999 62.49876
+
+chars is `a `Z `  (char 1) (char 100)
+
+strings is '' 'a' ':' 'ab' 'abc' 'w blks'
+
+phrases is "" "abc " (phrase 'a longer one')
+
+faults is ?? ?! ?other (fault '?an error msg')
+
+bits is  lol link (15 16 17 31 32 33 eachleft reshape lol)
+
+smbits is (2 reshape l o) (3 reshape o l) (5 reshape l o o)
+
+inttables is (tell 2 3) eachleft take (3 4 reshape count 12)
+
+bittables is (inttables match 1)
+
+nested is [] [[]] [[[]]] [[[[]]]] [1] [[1]] [[[1]]] [[[[1]]]] 
+     [1[2[3[4[3[2[1[]]]]]]]] [[[[[[[[]1]2]3]4]3]2]1]
+
+nestedbits is nested match 2
+
+nestedints is TWIG tally nested
+
+valent is link ([] [5] [3,2] [2,1,2] [1,2,1,2] [2,1,2,1,2] eachleft eachright 
+    reshape ([2 3] lol 'abcdef' (3 2 1) (3.5 4.5) ("" ??) [[1,[2,3]]]))
+
+valentints is { N gets EACH EACH tally valent;
+                EACH prod N < 500 sublist N }
+
+valentbits is valent match 3
+
+# a collection of pairs that varies due to different sampling. Use
+one of these to get a smaller sample of pairs, all of them to get
+more complete coverage.
+
+pairs0 IS {
+   X := link Empties (10 take Singles) Solitaries Strings Smbits Inttables ;
+   X := sample X 5 0;
+   list cart X X }
+
+pairs IS {
+   X := link Empties (5 take Singles) (5 take Solitaries) Strings Smbits (3 drop list Inttables) ;
+   list cart X X }
+
+Sn is single Null
+
+cipher is ?? 
+
+funny is 0 1 2 (list 0) (list 1) (list 2) (single list 0) (single list 1)
+       (single list 2) Null Sn (list Sn) (single Sn) 
+        cipher (list cipher)(single list cipher)
+
+funnypairs is (flip (2 reshape [funny]) link [ [tell 2, count 3] , [tell 1 2,count 2 1] ])
+
+unaryargs gets 'atoms' 'allatompairs' 'empties'  'singles'
+ 'solitaries' 'lists' 'strings' 'inttables' 'bittables' 'nested' 'valent' 
+  'pairs0' 'funny' 'funnypairs'
+
+binaryargs gets 'allatompairs' 'pairs' 'funnypairs'
+
+otherargs gets 'tv' 'ints' 'smposints' 'reals' 'chars' 'strings'
+  'phrases' 'faults' 'smbits' 'bits'  
+
+allargs gets link unaryargs otherargs ['pairs']
+
+Someargs is ('atoms' 'smallints' 'nestedints' 'valentints' 'funny')
+
+Bitargs is ('tv' 'bits' 'bittables' 'nestedbits' 'valentbits' 'atoms')
+
+Numargs is ('ints' 'lists' 'inttables' 'reals' 
+  'nestedints' 'valentints' 'atoms' 'allatompairs')
+
+Mixedargs is ('tv' 'ints' 'reals' 'chars' 
+   'atoms' 'nested' 'valent' 'funny')
+
+Multiargs is ('tv' 'ints' 'reals' 'chars' 
+   'atoms' 'nested' 'valent' 'funny' 'pairs' 'funnypairs' )
+
+# generate address-like arrays to test pick related operations
+
+pickargs is {
+  a gets link each execute allargs;
+  t gets tell tally a ;
+  a gets t mod 19 match 0 sublist t choose a;
+  v gets each valence a;
+  b gets v eachleft eachright reshape [2,1 2,0 2 1,2 1 1 2];
+  link (b EACHBOTH EACHLEFT pair a) }
+
+chooseargs is {
+  a gets link each execute allargs;
+  t gets tell tally a ;
+  a gets t mod 19 match 0 sublist t choose a;
+  v gets each valence a;
+  b gets v eachleft EACHRIGHT EACHRIGHT reshape [0 2 1 3 4,3 2 0 1,0,1 2];
+  link (b EACHBOTH EACHLEFT pair a) }
+
+reachargs is {
+  a gets link each execute allargs;
+  t gets tell tally a ;
+  a gets t mod 19 match 0 sublist t choose a;
+  b gets tally a reshape single [null,[0],[0,1],[1,0],[0,0,0],[0,0,0,0]];
+  link (b EACHBOTH EACHLEFT pair a) }
+
+picktriples is { EACH first pickargs EACHBOTH hitch chooseargs }
+
+# generate data for largeint testing if 64-bit system
+
+genlargeints is op N {
+  IF not isfault (2 power 32) THEN
+    largenos := 7263906806364612 4481694570035531 3840638587177097 92598926319088;
+    X gets floor (100 * random N);
+    X + (N reshape largenos)
+  ELSE
+    Null
+  ENDIF
+  }
+
+
+largeints := genlargeints 10000;
+largeintspair := [genlargeints 10000,genlargeints 10000];
+
+Largeintargs := ['largeints'];
+Largeintpairargs := ['largeintspair'];
+
+
+
+

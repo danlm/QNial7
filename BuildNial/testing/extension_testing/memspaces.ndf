@@ -1,0 +1,58 @@
+# memory spaces
+# -------------
+#
+# Nial memory spaces are a way to connect two Nial processes
+# via shared memory or connect Nial to another system.
+#
+# 
+#
+# space := msp_map_shared size flags
+#
+#   Creates an anonymous read/write shared mapped memory space
+#   for the process and any children.
+#
+# msp_put_raw space object offset count
+#
+#   Stores the data from object into the shared space at the 
+#   nominated offset. The count is of entries.
+#
+# msp_get_raw space type   offset count
+#
+#   Fetches data from the shared memory space at the supplied 
+#   offset as a Nial object of the nominated type
+#
+# msp_atomic_cas space offset oldval newval
+#
+#   Performs an atomic compare and swap operation on a nial 
+#   integer stored in the nominated space at the supplied
+#   offset (which must be aligned on a nial integer boundary).
+#   It returns true if the operation succeeds.
+#  
+
+# Types of Nial objects
+
+msp_inttype  := 1;
+msp_booltype := 2;
+msp_chartype := 3;
+msp_realtype := 4;
+
+
+# flags
+
+msp_private  := 1;
+msp_shared   := 0;
+
+
+# Sizes of basic types
+
+msp_intsize  := msp_msize msp_inttype 1;
+msp_realsize := msp_msize msp_realtype 1;
+
+
+#
+
+msp_wsize is op num {
+    num/msp_intsize
+}
+
+

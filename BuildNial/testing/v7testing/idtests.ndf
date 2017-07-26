@@ -1,0 +1,92 @@
+
+  IF isfault (2 power 32) THEN
+  write 'Skipping large int tests';
+ ELSE
+  testid 'largintids1' Largeintargs;
+  testid 'largintids2' Largeintpairargs;
+ ENDIF;
+
+testid 'cartids' Allargs
+
+
+testid 'linkids' Allargs
+
+
+testid 'reshapeids' Allargs
+
+
+testid 'reshapeids1' (Binaryargs append 'pickargs')
+
+
+testid 'singleids' Allargs
+
+
+testid 'rowcolids' Allargs
+
+
+testid 'fuseids' Allargs
+
+
+testid 'packids' Allargs
+
+
+testid 'splitblendids' (Binaryargs append 'pickargs')
+
+
+testid 'measureids' Allargs
+
+
+testid 'pickids' Allargs
+
+
+testid 'selectionids' ['pickargs' , 'chooseargs' , 'reachargs']
+
+
+testid 'selectids1' ['picktriples']
+
+
+testid 'arithids' Numargs
+
+testid 'arithids1' Binaryargs
+
+testid 'logicids' Bitargs
+
+testid 'logicids1' Binaryargs
+
+
+testid 'compareids' Binaryargs
+
+
+testid 'equalityids' Allargs
+
+
+testid 'cullids' Allargs
+
+
+testid 'seekids' Binaryargs
+
+
+testid 'listids' Allargs
+
+testid 'listids1' Binaryargs
+
+testid 'simpleids' Allargs
+
+testid 'eachids' Allargs
+
+testid 'eachids1' Binaryargs
+
+testid 'maxminids' Allargs
+
+testid 'maxminids1' Binaryargs
+
+testid 'reverseids' Allargs
+
+testid 'rotateids' (Binaryargs append 'pickargs')
+
+testid 'sublistids' Binaryargs
+
+testid 'exceptids' Binaryargs
+
+testid 'takedropids' (Binaryargs append 'pickargs')
+

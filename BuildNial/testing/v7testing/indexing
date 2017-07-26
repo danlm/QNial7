@@ -1,0 +1,59 @@
+# test cases for evaluator on indexing syntax on both sides
+
+# indexed variables
+
+(v gets 5;v@Null) = 5
+(v gets 5;v@0) = ??address
+(v gets 5;v#Null) = Null
+(v gets 5;v#[Null]) = solitary 5
+(v gets 5;v|[Null]) = ??slice
+(v gets 5;v|Null) = 5
+(v gets 5;v@@Null) = 5
+(v gets 5;v@@[Null]) = 5
+(v gets 5;v@@[Null,Null]) = 5
+(v gets count 5;v@3) = 4
+(v gets count 5;v@[3]) = 4
+(v gets count 5;v#(3 2)) = 4 3
+(v gets count 5;v#[3,2]) = 4 3
+(v gets count 5;v|[??noexpr]) = 1 2 3 4 5
+(v gets tell 2 3;v@(1 1)) = 1 1
+(v gets tell 2 3;v@(1 5)) = ??address
+(v gets tell 2 3;v#[1 1,0 0]) = (1 1)(0 0)
+(v gets tell 2 3;v#[1 1,5 5]) = ??addresses
+(v gets tell 2 3;v@@[1 1,0]) = 1
+(v gets tell 2 3;v@@[1 1,0,Null]) = 1
+(v gets tell 2 3;v@@[1 1,0,0]) = ??path
+(v gets tell 2 3;v|[,]) = tell 2 3
+(v gets tell 2 3;v|[1,]) = (1 0)(1 1)(1 2)
+(v gets tell 2 3;v|[,2]) = (0 2)(1 2)
+(v gets tell 2 3;v|[,3]) = ??address
+
+# indexed assignment
+
+(v gets 5;v@Null:= 100) = 100
+(v gets 5;v@0 := 100) = ??address
+(v gets 5;v#Null := 100) = 5
+(v gets 5;v#[Null] := 100) = 100
+(v gets 5;v|Null := 100) = 100
+(v gets 5;v|[Null] := 100) = ??slice
+(v gets 5;v@@Null := 100) = 100
+(v gets 5;v@@[Null]:= 100) = 100
+(v gets 5;v@@[Null,Null] := (100 200)) = single single 100 200
+(v gets count 5;v@3 := 100) = 1 2 3 100 5
+(v gets count 5;v@[3] := 100) = 1 2 3 100 5
+(v gets count 5;v#(3 2) := 100 200) = 1 2 200 100 5
+(v gets count 5;v#(3 3) := 100 200) = 1 2 3 200 5
+(v gets count 5;v#[3,2] := 100 200) = 1 2 200 100 5
+(v gets count 5;v|[??noexpr] := 100 200 300 400 500) = 100 200 300 400 500
+(v gets tell 2 3;v@(1 1):= 10 20) = (2 3 reshape [0 0,0 1,0 2,1 0,10 20,1 2])
+(v gets tell 2 3;v@(1 5):=10 20) = ??address
+(v gets tell 2 3;v#[1 1,0 0]:= 10 20) = (2 3 reshape [20,0 1,0 2,1 0,10,1 2])
+(v gets tell 2 3;v#[1 1,5 5]:= 10 20) = ??addresses
+(v gets tell 2 3;v#[1 1,5 5]:= 10 20;v) = (2 3 reshape [0 0,0 1,0 2,1 0,10,1 2])
+(v gets tell 2 3;v@@[1 1,0] := "abc) = (2 3 reshape [0 0,0 1,0 2,1 0,"abc 1,1 2])
+(v gets tell 2 3;v@@[1 1,0,Null]:='cat') = (2 3 reshape [0 0,0 1,0 2,1 0,(single 'cat') 1,1 2])
+(v gets tell 2 3;v@@[1 1,0,0]:= 'dog') = ??path
+(v gets tell 2 3;v|[,]:=2 3 reshape count 6) = (2 3 reshape 1 2 3 4 5 6)
+(v gets tell 2 3;v|[1,]:= 'abc') = (2 3 reshape [0 0,0 1,0 2,`a,`b,`c])
+(v gets tell 2 3;v|[,2]:="hello "world) = (2 3 reshape [0 0,0 1,"hello,1 0,1 1,"world])
+(v gets tell 2 3;v|[,3]:=[1,2,3]) = ??addresses

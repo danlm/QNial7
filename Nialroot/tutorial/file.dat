@@ -1,0 +1,145 @@
+This section discusses the file access operations supported by Q'Nial.
+
+Q'Nial supports three types of array access:
+- sequential file access where access is one record at a time,
+- direct access where Q'Nial manages a file, and a corresponding index 
+  and allows selection and writing at arbitrary places,
+- access to host fields within a host file by position.
+
+Sequential and direct file access requires a file to be opened in an 
+appropriate mode. The operation call: 
+   open Fn Mode 
+opens the file Fn for use in mode Mode, where Mode is
+ "r for read, "w for write, "a for append, "d for direct, and
+ "c for communications. 
+The call returns an integer, F that refers to the active file handle.
+
+When access is finished the file is closed using the file handle integer
+with operation call:
+   close Fn
+.p
+The operations "readfile" is used to read records one at a time from a
+file that has been opened in "r mode.
+
+   Rec := readfile F
+
+returns the next available record as a string.
+
+The operation "writefile is used to write strings to a file opened 
+in "w or "a mode.
+
+   writefile F Rec
+
+writes the string Rec to the file with handle F.
+.p
+Example 1 - open a file called "tempfile"" in "w mode, 
+            write 2 records and close it.
+
+.n Fout := open "tempfile "w
+.n writefile Fout 'First record'
+.n writefile Fout 'Second record'
+.n close Fout
+
+Example 2 - open the file "tempfile" in "r mode, 
+            read 3 records and close it"
+.n Fin := open "tempfile "r
+.n Rec gets readfile Fin
+.n Rec gets readfile Fin
+.n Rec gets readfile Fin
+.n close Fin
+
+When there are no more records, the result is the fault ?eof for end-of-file.
+.p
+Q'Nial has 3 operations to make it convenient to read, write, or append to
+complete files in one step. The calls:
+
+    getfile Fn
+             
+  - returns the records of file with name Fn,
+
+    putfile Fn Recs        
+
+  - writes the strings in array Recs to file with name Fn, and
+
+    appendfile Filename Recs     
+
+  - appends the strings in Recs to the end of file with name Fn.
+
+getfile, putfile and appendfile do the work to open and close the files.
+.p
+Example 3 - use of the operations on complete files
+
+.n recs := getfile "tempfile
+
+.n appendfile "tempfile 'Third record'
+.n recs gets getfile "tempfile
+
+Example 4 - use getfile to replace the contents of a file
+
+.n putfile "tempfile ['Another record','More still']
+.n getfile "tempfile
+.p
+Direct access files are constructed by Q'Nial using the host OS file system.
+
+A direct access file has two physical files; one contains an index, the other 
+contains the records. The mechanism supports two types of component files
+having either strings as components or arbitrary arrays as components.
+To access a direct file you need to open it with Mode "d.
+
+A component is indexed by an integer. 
+The following operations are avallable:
+
+writearray F N A 
+   - writes array A as component N to the file with handle F.
+readarray F N        
+   - returns the array component N from the file with handle F.
+eraserecord F N      
+   - erases the  N in the file with handle F.
+filetally F          
+   - returns the the largest component number for the file
+     with handle F.
+.p
+Example 5 - open a direct access file "tempdirfile" that uses
+arrays as components
+
+.n F := open "tempdirfile "d
+
+.n writearray F 0 'This is the first record'
+.n writearray F (count 3) ['abc', tell 2 3,3.5 4.5]
+.n filetally F
+
+.n readarray F 2
+.n eraserecord F 2
+.n readarray F 2
+.n readarray F (tell filetally F)
+.n close F
+.p
+To read and write to a component file that has strings Q'Nial
+provides the operations:
+
+readrecord F N 
+- read the component N of the direct file with handle F
+
+writerecord F  Str N
+- write  the string Str as component N of the direct file 
+  with handle F
+
+If the first use of a direct access file is to write it 
+using writerecord, then the components are strings,
+not arbitrary arrays.  All subsequent usage of that file must 
+use readrecord or writerecord. You cannot use readarray 
+and readrecord operations on the same file.
+.p
+In addition to the file input/output operations described so far, 
+there are two operations that directly access host files by
+name and position.
+
+   readfile Filename Start Size
+returns Size "bytes" of the file with name Filename
+starting at position Start as a Nial string.
+
+   writefield Filename Start Str
+writes the "bytes" of the string Str to the file with name
+Filename starting at position Start, overwriting whatever
+content was there.
+.p

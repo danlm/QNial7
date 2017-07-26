@@ -1,0 +1,140 @@
+# =============================================================
+# routines to support process manipulation 
+
+
+# Process flags
+
+PRC_MANAGED       := 0;
+PRC_UNMANAGED     := 1;
+
+
+# Definitions from the C primitives
+
+IPC_INTERNAL_STREAM  := 0;
+IPC_PROTOCOL_STREAM  := 1;
+
+IPC_BLOCKING         := -1;
+IPC_NONBLOCKING      := 0;
+
+
+
+# ------------------ Channels --------------------------------
+#
+# Channels are an IPC mechanism to suport communcation
+# between processes created in Nial. Channels are bidirectional
+# connected pairs of endpoints each of which is an 
+# array containing a reader and a writer.
+#
+n
+
+# Create a pair of connected pipes
+
+local_channelpair is op flags {
+	 p1 := nio_newpipe ipc_nonblocking;
+	 p2 := nio_newpipe ipc_nonblocking;
+	 r1 := nio_open (p1@0) IPC_INTERNAL_STREAM; 
+         w1 := nio_open (p1@1) IPC_INTERNAL_STREAM;      
+	 r2 := nio_open (p2@0) IPC_INTERNAL_STREAM;
+	 w2 := nio_open (p2@1) IPC_INTERNAL_STREAM;
+	 c1 := [r1, w2];
+	 c2 := [r2, w1];
+	 res := [c1, c2];
+	 res
+}
+
+
+# A channel is readable if it has data to be served
+
+channel_is_readable is op chan {
+        r := chan@0;
+        (nio_read_stream r -1 ipc_nonblocking) > 0
+}
+
+
+
+# ---------- Transferring Nial Arrays across a channel ---------
+
+# Serialise an array and send it over a channel. Note that 
+# there may need to be multple calls to nio_write_stream 
+# in order to send all the data.
+
+ipc_write_array is op chan array {
+     w := chan@1;
+	nio_block_array w array;
+	res := nio_count w;
+	while (0 ~= nio_count w) and (not isfault res) do
+	  r := nio_write_stream w ipc_blocking;
+	  if isfault r then res := r; endif;
+	endwhile;
+	res}
+
+
+# Read a serialised array from a channel
+
+ipc_read_array is op chan {
+	   r := chan@0;
+	   res := nio_unblock_array r;
+	   res
+}
+
+
+# --------------------- Process Control ----------------------
+
+# The following routine runs the cast 'fun' with the supplied arguments
+# in a child process. When the function terminates the child process 
+# exits.
+#
+# The supplied 'fun' should take two arguments. 
+#
+#     arg 1 - the comms channel to the parent 
+#     arg 2 - the args array passed to the create_worker call
+# 
+# In the parent an array of 3 values is returned
+#
+#       1. The comms channel to the child
+#       2. The standard input/output channel of the child
+#       3. The child process
+#
+
+create_worker is op fun args {
+           c1 c2 := local_channelpair 0;
+	   proc := spawn_child PRC_MANAGED;
+	   write 'Create worker' c1 c2 proc;
+	   if proc = Null then
+	       chan := c1;
+	       settrigger o;
+	       res := fun apply chan args;
+	       ipc_write_array chan res;
+	       bye;
+	   else 
+               chan := c2;
+	       io_chan := [child_reader proc, child_writer proc];
+	       res := [chan, io_chan, proc];
+           endif;
+           res
+}
+
+
+# run_detached id fun args
+# ========================
+#
+# The following routine runs the cast 'fun' with the supplied arguments
+# in a child process. When the function terminates the child process 
+# exits.
+#
+
+run_detached is op fun args {
+	   proc := spawn_child PRC_UNMANAGED;
+	   if proc = Null then
+               % Code in child;
+	       res := fun apply args;
+	       bye;
+	   else 
+               % code in parent;
+               write 'Detached child started' proc;
+           endif;
+	   [proc, child_reader proc, child_writer proc]
+}
+
+
+

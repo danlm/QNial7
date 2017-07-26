@@ -1,0 +1,47 @@
+# file to do automatic testing of operation semantics
+
+# Operation Semantics Checking Test Program.
+
+# This program complements the checking done with ids by testing
+# that specific operations result in the values expected from
+# specific results. The goal is to have a case in here for each major
+# code segment in the C routines that implement the operations.
+
+loaddefs "datagen 
+
+loaddefs "fuzzyeq 
+
+testop is op Opname Arg Answer {
+ Result gets apply Opname Arg;
+  if not (Result fuzzyeq Answer) then
+    appendfile "testops.out (link 'operation is: ' (string Opname));
+    appendfile "testops.out (link 'argument is: ' (display Arg));
+    appendfile "testops.out (link 'result is: ' (display Result));
+    appendfile "testops.out (link 'Answer should be: ' (display Answer));
+    appendfile "testops.out (display first status);
+    appendfile "testops.out ' ';
+  endif;
+}
+
+Init is op filenm {
+  NONLOCAL fnm;
+  fnm gets open filenm "r;
+  if isfault fnm then
+    write fnm;
+    write 'Leaving Nial.';
+    bye;
+  endif;
+}
+
+Run is {
+ Str := '';
+ while not isfault Str do
+  Str gets readfile Fnm;
+  write Str;
+  execute Str;
+ endwhile;
+ write 'Done autoops.ndf from Run';
+ Bye;
+}
+
+Run

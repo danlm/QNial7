@@ -1,0 +1,1239 @@
+#testing of unary ops
+
+testop "abs 9999.9999 9999.9999
+
+testop "abs -4537 4537
+
+testop "abs atoms (0 12 3.14 ??A ??A ??fault)
+
+testop "and (l l l) l
+
+testop "and (l o l) o
+
+testop "and (l o) o
+
+testop "and (o o) o
+
+testop "and (lloo lolo) looo
+
+testop "and atoms ??L
+
+testop "and 2 ??L
+
+testop "and ??fault ??fault
+
+testop "and Null l
+
+testop "arccos 1 0.
+
+testop "arccos 0. (Pi / 2)
+
+testop "arccos (1.0 1.0) (0. 0.)
+
+testop "arcsin 0. 0.
+
+testop "arcsin 45.6 1.57079632679490-4.51293464609054
+
+testop "arcsin 1 (Pi / 2.0)
+
+testop "arcsin [1.,1.] [Pi / 2.0,Pi / 2.0]
+
+testop "arctan 1 (Pi / 4.0)
+
+testop "arctan 0. 0.
+
+testop "arctan 45.6 1.548870016696097
+
+testop "arctan [1.,1.] [Pi / 4.0,Pi / 4.0]
+
+testop "atomic atoms o
+
+testop "atomic o l
+
+testop "atomic 12 l
+
+testop "atomic 3.14 l
+
+testop "atomic `z l
+
+testop "atomic ""abc l
+
+testop "atomic ??fault l
+
+testop "atomic Null o
+
+testop "atomic [1,2] o
+
+testop "atomic [1,3.5] o
+
+testop "axes 3 Null
+
+testop "axes [1,2,3] [0]
+
+testop "axes (tell 2 3 4) [0,1,2]
+
+testop "cart 1 1
+
+testop "cart Null (single Null)
+
+testop "cart [1,2]  (single [1,2])
+
+testop "cart [1,2,3 4] [1 2 3,1 2 4]
+
+testop "cart ((1 2) (3. 4)) (2 2 reshape ((1 3. )(1 4 )(2 3. )(2 4 )))
+
+testop  "catenate [0,[1,2,3] [4,5,6,7]] [1,2,3,4,5,6,7]
+
+testop "catenate [1,(tell 4 2)(tell 4 3 + [0 2])] (tell 4 5)
+
+testop "ceiling atoms (0 -12 4 ??A ??A ??fault)
+
+testop "ceiling -3.2 -3
+
+testop "char 86 `V
+
+testop "charrep `A 65
+
+testop "charrep 'ABC' (65 66 67)
+
+testop "cols (2 3 reshape count 6) [1 4,2 5,3 6]
+
+testop "cols (8 9 10) (single 8 9 10)
+
+testop "cols (2 2 2 reshape count 8) (2 2 reshape [1 3,2 4,5 7,6 8])
+
+testop "cols 1 1
+
+testop "cols Null (single Null)
+
+atoms is { o -12 3.14 `x "abc ??fault }
+
+testop "content atoms atoms
+
+testop "content 3 [3]
+
+testop "content Null Null
+
+testop "content empties Null
+
+testop "content [[[]]] []
+
+testop "content [1[2[3[4]]]] (1 2 3 4)
+
+testop "content [[[[1.]2]3]4] (1. 2 3 4)
+
+testop "content (tell 0 0 0 0) Null
+
+testop "content (count 2 2) (1 1 1 2 2 1 2 2)
+
+testop "cos 0. 1.
+
+testop "cos (Pi/2.0) 0.
+
+testop "cos (0. Pi) (1. -1.)
+
+testop "cosh 0. 1.
+
+testop "cosh Pi 11.591953275521519
+
+testop "cosh (0. Pi) (1. 11.591953275521519)
+
+testop "count (2 3) (2 3 reshape ((1 1 )(1 2 )(1 3 )(2 1 )(2 2 )(2 3 )))
+
+testop "count 10 (1 2 3 4 5 6 7 8 9 10 )
+
+testop "count 0 Null
+
+testop "cull 'abba' 'ab'
+
+testop "cull [[],[1],[]] [[],[1]]
+
+testop "cull 23 [23]
+
+testop "cull [] []
+
+testop "cull (count 1 2) (list count 1 2)
+
+testop "diverse atoms l
+
+testop "diverse 23 l
+
+testop "diverse Null l
+
+testop "diverse [2,3,2] o
+
+testop "diverse (tell 2 3) l
+
+testop "diverse (content tell 2 3) o
+
+testop "empty 23 o
+
+testop "empty [] l
+
+testop "empty (link empties) l
+
+testop "empty Null l
+
+testop "empty (1 2 3 4 5 4 3 2 0 reshape 5) l
+
+testop "equal (1 1 1 1 1 ) l
+
+testop "equal loll o
+
+testop "equal (tell 2 3) o
+
+testop "equal (tell 1 1 1 1) l
+
+testop "equal Null l
+
+testop "exp 1 2.718281828459045
+
+testop "exp 3.0 20.08553692318767
+
+testop "exp 0. 1.
+
+testop "fault '?fault' ??fault
+
+testop "fault '?noexpr' (first [,])
+
+testop "first atoms o
+
+testop "first 23 23
+
+testop "first lo l
+
+testop "first 'abc' `a
+
+testop "first [[2]] [2]
+
+testop "first (tell 2 3) [0,0]
+
+testop "first Null ??address
+
+testop "floor atoms (0 -12 3 ??A ??A ??fault)
+
+testop "floor -3.2 -4
+
+testop "front [2,3,4] [2,3]
+
+testop "front (count 2 2) [1 1,1 2,2 1]
+
+testop "front 'abcd' 'abc'
+
+testop "front [2,Pi] [2]
+
+testop "front Null Null
+
+testop "grid (count 2 1 3) (tell 2 1 3)
+
+testop "grid atoms (tell 6)
+
+testop "grid Null Null
+
+testop "grid 1 (single Null)
+
+testop "inverse (2 2 reshape 1. 0. 0. 1.) (2 2 reshape 1. 0. 0. 1.) 
+
+testop "inverse (1 1 reshape 10.0) (1 1 reshape 0.1)
+
+testop "isboolean l l
+
+testop "isboolean o l
+
+testop "isboolean atoms o
+
+testop "isboolean loll o
+
+testop "isboolean Null o
+
+testop "ischar `z l
+
+testop "ischar 'abc' o
+
+testop "ischar atoms o
+
+testop "ischar '' o
+
+testop "isfault ?? l
+
+testop "isfault (fault 'one with spaces') l
+
+testop "isfault Null o
+
+testop "isfault atoms o
+
+testop "isinteger 4567 l
+
+testop "isinteger Null o
+
+testop "isinteger (count 5) o
+
+testop "isphrase "" l
+
+testop "isphrase (phrase 'try it') l
+
+testop "isphrase Null o
+
+testop "isphrase atoms o
+
+testop "isreal Pi l
+
+testop "isreal (reciprocal 3) l
+
+testop "isreal atoms o
+
+testop "isreal Null o
+
+testop "isstring 'abc' l
+
+testop "isstring '' l
+
+testop "isstring `z o
+
+testop "isstring ('abc' 'def') o
+
+testop "isstring Null l
+
+testop "laminate (0 (2 3)) [2,3]
+
+testop "laminate (0 [2 3 4,5 6 7]) (2 3 reshape 2 3 4 5 6 7)
+
+testop "laminate (1 [2 3 4,5 6 7]) (3 2 reshape 2 5 3 6 4 7)
+
+testop "last 1 1
+
+testop "last Null ??address
+
+testop "last loloo o
+
+testop "last 'abcde' `e
+
+testop "last (tell 2 3 4) (1 2 3)
+
+testop "last [[1]] [1]
+
+testop "link 1 [1]
+
+testop "link Null Null
+
+testop "link (Null (1 2 3)) (1 2 3)
+
+testop "link ('abc' '' 'defg') 'abcdefg'
+
+testop "link (tell 2 3) (0 0 0 1 0 2 1 0 1 1 1 2)
+
+testop "link [[[]]] [[]]
+
+testop "link atoms atoms
+
+testop "link (atoms atoms) (2 * tally atoms reshape atoms)
+
+testop "list atoms atoms
+
+testop "list 23 [23]
+
+testop "list (tell 2 3) [0 0,0 1,0 2,1 0,1 1,1 2]
+
+testop "list Null Null
+
+testop "list [[[]]] [[[]]]
+
+testop "ln 1 0.
+
+testop "ln (exp Pi) Pi
+
+testop "ln "junk ??ln
+
+testop "log  1 0.
+
+testop "log (10.0 power Pi) Pi
+
+testop "log "junk ??log
+
+testop "max 23 23
+
+testop "max (-12 23 42 -5) 42
+
+testop "max (25 26.) 26.
+
+testop "max (26 25.) 26
+
+testop "max lol l
+
+testop "max 'abc' `c
+
+testop "max ("abc "ab "abcd) "abcd
+
+testop "max ("abc 'xyz') (??I ??I ??I)
+
+testop "max Null ??O
+
+testop "max ('abc' 'cba') 'cbc'
+
+testop "min 23 23
+
+testop "min (-12 23 42 -5) -12
+
+testop "min (25 26.) 25
+
+testop "min (26 25.) 25.
+
+testop "min lol o
+
+testop "min 'abc' `a
+
+testop "min ("abc 'xyz') (??O ??O ??O)
+
+testop "min ("abc "ab "abcd) "ab
+
+testop "min Null ??I
+
+testop "min ('abc' 'cba') 'aba'
+
+testop "mix 1 1
+
+testop "mix Null (0 0 reshape Null)
+
+testop "mix [1,2] [1,2]
+
+testop "mix [1 2,3 4,5 6] (3 2 reshape count 6)
+
+testop "mix ('abc' 'defgh') ??conform
+
+testop "not o l
+
+testop "not l o
+
+testop "not lo ol
+
+testop "not 1 ??L
+
+testop "not Null Null
+
+testop "opposite atoms (0 12 -3.14 ??A ??A ??fault)
+
+testop "opposite Null Null
+
+testop "opposite (tell 2 3) (1 - count 2 3)
+
+testop "or ooo o
+
+testop "or olo l 
+
+testop "or (l o) l
+
+testop "or o o
+
+testop "or (lloo lolo) lllo
+
+testop "or atoms ??L
+
+testop "or 2 ??L
+
+testop "or Null o
+
+testop "or ??fault ??fault
+
+testop "pack 23 23
+
+testop "pack [2 3 4,5 6 7] [2 5,3 6,4 7]
+
+testop "pack 'abc' (single 'abc')
+
+testop "pack [2 3,4 5 6] ??conform
+
+testop "pack [2 3 4,5 6] ??conform
+
+testop "pack Null (single Null)
+
+testop "pass atoms atoms
+
+testop "pass 23 23
+
+testop "pass Null Null
+
+testop "phrase 'hello' "hello
+
+testop "phrase "ok "ok
+
+testop "phrase `z "z
+
+testop "phrase 3 "3
+
+testop "post [2,3] (2 1 reshape 2 3)
+
+testop "post 'hello' (5 1 reshape 'hello')
+
+testop "post 23 (1 1 reshape 23)
+
+testop "post Null (0 1 reshape 0)
+
+testop "product l 1
+
+testop "product lo 0
+
+testop "product 23 23
+
+testop "product (count 5) 120
+
+testop "product atoms ??A
+
+testop "product 'abc' ??A
+
+testop "product ??fault ??fault
+
+testop "random 0 Null
+
+testop "reciprocal 10 0.1
+
+testop "reciprocal atoms (??div (1/-12) (1/3.14) ??A ??A ??fault)
+
+testop "reciprocal Null Null
+
+testop "rest 0 Null
+
+testop "rest Null Null
+
+testop "rest (tell 5) (count 4)
+
+testop "rest '' ''
+
+testop "rest `z Null
+
+testop "rest (tell 2 3) [0 1,0 2,1 0,1 1,1 2]
+
+testop "rest llol lol
+
+testop "reverse 23 23
+
+testop "reverse Null Null
+
+testop "reverse [1,2,3] [3,2,1]
+
+testop "reverse 'abcde' 'edcba'
+
+testop "reverse (tell 2 3) (2 3 reshape [1 2,1 1,1 0,0 2,0 1,0 0])
+
+testop "rows (2 3 reshape count 6) [1 2 3,4 5 6]
+
+testop "rows (8 9 10) (single 8 9 10)
+
+testop "rows (2 2 2 reshape count 8) (2 2 reshape [1 2,3 4,5 6,7 8])
+
+testop "second atoms -12
+
+testop "second 23 ??address
+
+testop "second lo o
+
+testop "second 'abc' `b
+
+testop "second [[2]] ??address
+
+testop "second (tell 2 3) [0,1]
+
+testop "second Null ??address
+
+testop "shape atoms [6]
+
+testop "shape 23 Null
+
+testop "shape lol [3]
+
+testop "shape Null 0 14
+
+testop "shape (tell 2 1 3 2) (2 1 3 2)
+
+testop "shape [[]] [1]
+
+testop "simple atoms l
+
+testop "simple o l
+
+testop "simple 12 l
+
+testop "simple 3.14 l
+
+testop "simple `z l
+
+testop "simple ""abc l
+
+testop "simple ??fault l
+
+testop "simple Null l
+
+testop "simple [1,2] l
+
+testop "simple [1,3.5] l
+
+testop "simple [1 [2,3]] o
+
+testop "simple ['abc'] o
+
+testop "sin 0. 0.
+
+testop "sin (Pi/2.0) 1.0
+
+testop "sin 45.6 0.9989000907450209
+
+testop "single 23 23
+
+testop "single [2,3,4] (Null reshape [[2,3,4]])
+
+testop "single 'abcd' (Null reshape ['abcd'])
+
+testop "single Null (Null reshape [Null])
+
+testop "sinh 0. 0.
+
+testop "sinh Pi 11.548739357257746
+
+testop "sinh (0. Pi) (0. 11.548739357257746)
+
+testop "solitary atoms [atoms]
+
+testop "solitary `z 'z'
+
+testop "solitary 2 [2]
+
+testop "solitary "hello (1 reshape "hello)
+
+testop "solitary Null (1 reshape single Null)
+
+testop "sqrt 25 5.
+
+testop "sqrt (Pi * Pi) Pi
+
+testop "sqrt 16.0 4.
+
+testop "sqrt 1. 1.
+
+testop "sqrt 0. 0.
+
+testop "string 67 '67'
+
+#MAJ to decide if string on a real should strip blanks. Otherwise
+the test below depends on setformat setting.
+
+
+testop "string "jump 'jump'
+
+testop "string 'abc' 'abc'
+
+testop "string `z 'z'
+
+testop "string Null Null
+
+testop "string [1,2,3] ( fault '?argument to string must be an atom or string' )
+
+testop "sum l 1
+
+testop "sum 23 23
+
+testop "sum Null 0
+
+testop "sum [2,3,4] 9
+
+testop "sum atoms ??A
+
+testop "sum (2.5 3.5 6.0) 12.0
+
+testop "sum ([2,3,4] [5,6,7]) [7,9,11]
+
+testop "tally 23 1
+
+testop "tally Null 0
+
+testop "tally (tell 2 3) 6
+
+testop "tally [[[2 3]]] 1
+
+testop "tally (2 3 4 0 reshape 4) 0
+
+testop "tan 0. 0.
+
+testop "tan (Pi/4.0) 1.
+
+testop "tanh 0. 0.
+
+testop "tanh Pi 0.99627207622074998
+
+testop "tanh (0. Pi) (0. 0.99627207622074998)
+
+testop "tell 10 (0 1 2 3 4 5 6 7 8 9 )
+
+testop "tell (2 3) (2 3 reshape ((0 0 )(0 1 )(0 2 )(1 0 )(1 1 )(1 2 )))
+
+testop "tell 0 Null
+
+testop "tell 1 [0]
+
+testop "tell [1] [[0]]
+
+testop "tell [1,1 1] ??shape
+
+testop "third atoms 3.14
+
+testop "third 23 ??address
+
+testop "third lo ??address
+
+testop "third 'abc' `c
+
+testop "third [[2]] ??address
+
+testop "third (tell 2 3) [0,2]
+
+testop "third Null ??address
+
+testop "tolower `A `a
+
+testop "tolower 'AbC' 'abc'
+
+testop "tolower '' ''
+
+testop "tolower Null Null
+
+testop "tonumber '345' 345
+
+testop "tonumber '35.6' 35.6
+
+testop "tonumber 'l' l
+
+testop "tonumber '"abc' ( fault '?not a number' )
+
+testop "toupper `z `Z
+
+testop "toupper 'AbC' 'ABC'
+
+testop "toupper '' ''
+
+testop "toupper Null Null
+
+testop "transpose 23 23
+
+testop "transpose 'abc' 'abc'
+
+testop "transpose (2 2 reshape 3 4 5 6) (2 2 reshape 3 5 4 6)
+
+testop "transpose (2 3 4 reshape 0.) (4 3 2 reshape 0.)
+
+testop "transpose (tell 2 3) (mix cols tell 2 3)
+
+testop "type atoms (o 0 0. ` "" ??)
+
+testop "type lo oo
+
+testop "type Null Null
+
+testop "unequal (1 1 1 1 1 ) o
+ 
+testop "unequal loll l
+
+testop "unequal (tell 2 3) l
+
+testop "unequal (tell 1 1 1 1) o
+
+testop "unequal Null o
+
+testop "valence 23 0
+
+testop "valence [1,2] 1
+
+testop "valence [1,2.5] 1
+
+testop "valence (tell 2 3) 2
+
+testop "valence (20 reshape 1 reshape 5) 20
+
+#testing binary operations
+
+testop "allin (Null Null) l
+
+testop "allin (23 23) l
+
+testop "allin ([23,23] 23) l
+
+testop "allin ((count 5) (tell 5)) o
+
+testop "allin ((tell 2 3) (tell 4 5)) l
+
+testop "allin ([`a,`d] 'abcdef') l
+
+testop "allin ('' Null) l
+
+testop "append (Null 1) [1]
+
+testop "append (Null Null) [Null]
+
+testop "append ([2,3,4] [5,6]) [2,3,4,[5,6]]
+
+testop "append ('abc' `z) 'abcz'
+
+testop "append ((tell 1 2) 'xxx') [0 0,0 1,'xxx']
+
+testop "blend (Null Null) Null
+
+testop "blend (0 [2 3 4,5 6 7]) (3 2 reshape 2 5 3 6 4 7)
+
+testop "blend (Null 1) 1
+
+testop "blend (Null [single 2 3,single 4 5,single 6 7]) [2 3,4 5,6 7]
+
+testop "blend (Null 'abc') 'abc'
+
+testop "choose ((0 3) 'abcde') 'ad'
+
+testop "choose (Null 3) Null
+
+testop "choose (Null [2,3,4]) Null
+
+testop "choose ([0 0,2 3] (count 5 6)) [1 1,3 4]
+
+testop "choose ((tell 2 3) (count 2 3)) (count 2 3)
+
+testop "cut (loloo 'abcde') ('b' 'de')
+
+testop "cut (oololoo 'abcdefg') ('ab' 'd' 'fg')
+
+testop "cut (Null (1 2)) (fault '?first arg of cut is empty')
+
+testop "cut (Null Null) Null
+
+testop "cut (l 'a') ''
+
+testop "cut (o 'a') ['a']
+
+testop "cutall (loloo 'abcde') ('ab' 'cde')
+
+testop "cutall (oololoo 'abcdefg') ('ab' 'cd' 'efg')
+
+testop "cutall (Null (1 2)) (fault '?first arg of cutall is empty')
+
+testop "cutall (Null Null) Null
+
+testop "cutall (l 'a') ['a']
+
+testop "cutall (o 'a') ['a']
+
+testop "deepplace ((100 [3,1]) (list count 1 5)) [1 1,1 2,1 3,1 100,1 5]
+
+testop "deepplace ((3 [100,1]) (list count 1 5)) ??path
+
+testop "deepplace (('abc' Null) (count 5)) 'abc'
+
+testop "divide (6 2) 3.
+
+testop "divide (9 2) 4.5
+
+testop "divide (100011.0 3) 33337.0
+
+testop "divide (9999.99 3) 3333.33
+
+testop "divide (-28 9) -3.111111111111111
+
+testop "divide ((5 10) (10 5)) (.5 2.)
+
+testop "divide (atoms atoms) (??div 1. 1. ??A ??A ??fault)
+
+testop "drop (1 (tell 5)) (count 4)
+
+testop "drop ((2 2) (tell 5 6)) (count 3 4 + 1)
+
+testop "drop (2 'abcd') 'cd'
+
+testop "drop (5 (tell 3)) Null
+
+testop "dropright (1 (tell 5)) (tell 4)
+
+testop "dropright ((2 2) (tell 5 6)) (tell 3 4)
+
+testop "dropright (2 'abcd') 'ab'
+
+testop "dropright (5 (tell 3)) Null
+
+testop "except (("horse 3 4.5) "horse) (3 4.5 )
+
+testop "except ('abcabcd' 'ac') 'bbd'
+
+testop "except ('abcabcd' `a) 'bcbcd'
+
+testop "except ([0 0,1 1,2 2] (0 0)) [0 0,1 1,2 2]
+
+testop "except ([0 0,1 1,2 2] [0 0]) [1 1,2 2]
+
+testop "except ((count 2 3) (tell 2 3)) [1 3,2 1,2 2,2 3]
+
+testop "find (0 (tell 5)) 0
+
+testop "find (`c 'abcde') 2
+
+testop "find ([2,4] (count 5 6)) [1,3]
+
+testop "find (3 3) Null
+
+testop "find (3 4) Null
+
+testop "find (5 (count 2)) 2
+
+testop "find (3 "abc) Null
+
+testop "find ("abc (count 5 6)) (5 6)
+
+testop "findall (0 [2,0,3,2,0,1]) [1,4]
+
+testop "findall (`a 'bcdef') Null
+
+testop "findall (3 3) [Null]
+
+testop "fuse (Null 3) 3
+
+testop "fuse ((2 1 0) (tell 3 4 5)) (transpose (tell 3 4 5))
+
+testop "fuse (0 (tell 5)) (tell 5)
+
+testop "fuse ((1 0) (2 2 reshape 3 4 5 6)) (2 2 reshape 3 5 4 6)
+
+testop "fuse ([0 1] (2 2 reshape 3 4 5 6)) (3 6)
+
+testop "fuse ([[0 1]] (2 2 reshape 3 4 5 6)) ( fault '?invalid fuse' )
+
+testop "fuse ((0 (1 2)) (2 2 2 reshape 'abcdefgh')) (2 2 reshape 'adeh')
+
+testop "fuse (0 Null) Null
+
+testop "hitch (`z 'abc') 'zabc'
+
+testop "hitch ('zz' 'abc') ('zz' `a `b `c)
+
+testop "hitch (1 Null) [1]
+
+testop "hitch (Null 1) [Null,1]
+
+testop "hitch (1 Null) [1]
+
+testop "hitch ([0,0] (count 2 3)) [0 0,1 1,1 2,1 3,2 1,2 2,2 3]
+
+testop "in (2 (tell 5)) l
+
+testop "in ('a' 'abc') o
+
+testop "in (`a 'abc') l
+
+testop "in (0 Null) o
+
+testop "in ([0,0] (tell 4 5)) l
+
+testop "in (Null Null) o
+
+testop "innerproduct (2 3) 6.
+
+testop "innerproduct ([2,3] (2 3 reshape count 6)) [14,19,24]
+
+testop "innerproduct ((2 3 reshape tell 6) [2,3,4]) [11,38]
+
+testop "innerproduct ((2 2 reshape 2 1 3 2) (2 2 reshape 4 2 1 3)) (2 2 reshape 
+     9 7 14 12)
+
+testop "innerproduct (Null Null) 0.
+
+testop "like ((1 3 4) (3 4 4 3 1 1)) l
+
+testop "like (("dog "cat "pig) ("pig "dog "cat)) l
+
+testop "like (23 23) l
+
+testop "like (Null Null) l
+
+testop "like ((tell 5) (count 5)) o
+
+testop "match (1.0 1) o
+
+testop "match (((1) (4 5)) (1 4 5)) ??conform
+
+testop "match (Null Null) Null
+
+testop "match (`a `a) l
+
+testop "match (3 3.) o
+
+testop "mate (1.0 1) l
+
+testop "mate ((1.0 "dog) (1 'dog')) (l (o o o ))
+
+testop "mate (Null Null) Null
+
+testop "mate (Null '') Null
+
+testop "mate (`z `z) l
+
+testop "mate (3 3.) l
+
+testop "max ("abc "def) "def
+
+testop "minus (10280 39) 10241
+
+testop "min ("abc "def) "abc
+
+testop "minus (2. 9753) -9751
+
+testop "minus (-123 45) -168
+
+testop "minus (4 1) 3
+
+testop "minus (atoms atoms) (0 0 0. ??A ??A ??fault)
+
+testop "minus ([2,[3,4]] [1,[2,3]]) [1,[1,1]]
+
+testop "minus (Null Null) Null
+
+testop "mod (6 2) 0
+
+testop "mod (9 2) 1
+
+testop "mod (10012 3) 1
+
+testop "mod (-28 9) 8
+
+testop "mod (atoms atoms) (0 ( fault '?negative divisor' ) ??A ??A ??A ??fault)
+
+testop "mod (Null  Null) Null
+
+testop "notin ('zeta' 'alphabetagamma') l
+
+testop "notin (2 [4,5,6]) l
+
+testop "notin (Null Null) l
+
+testop "notin (0 Null) l
+
+testop "notin (5 (count 20)) o
+
+testop "pair (2 3) (2 3)
+
+testop "pair (Null Null) [Null,Null]
+
+testop "pair 'ab' 'ab'
+
+testop "pair 3 (3 3)
+
+testop "pick (3 atoms) `x
+
+testop "pick (-1 (tell 5)) ??address
+
+testop "pick (5 atoms) ??fault
+
+testop "pick ('xxx' atoms) ??address
+
+testop "pick (Null 23) 23
+
+testop "pick (Null Null) ??address
+
+testop "place ((100 3) (count 5)) [1,2,3,100,5]
+
+testop "place ((3 100) (count 5)) ??address
+
+testop "place (('abc' Null) (count 5)) ??address
+
+testop "place ((100 [1,1]) (tell 2 3)) (2 3 reshape [0 0,0 1,0 2,1 0,100,1 2])
+
+testop "place ((23 Null) 45) 23
+
+testop "place ((Null Null) Null) ??address
+
+testop "placeall (([100,200] [2,4]) (count 10)) (1 2 100 4 200 6 7 8 9 10)
+
+testop "placeall (('abc'[1,2,3]) (tell 5)) [0,`a,`b,`c,4]
+
+testop "plus (14567 89) 14656
+
+testop "plus (1. 2) 3.
+
+testop "plus (-123 -45) -168
+
+testop "plus (-123 45) -78
+
+testop "plus (Null Null) Null
+
+testop "plus (atoms atoms) (0 -24 6.28 ??A ??A ??fault)
+
+testop "plus (atoms atoms) (atoms * 2)
+
+testop "plus (Null '') Null
+
+testop "power (2 4) 16
+
+testop "power (5 -2) 0.04
+
+testop "power (98. -3) 1.062482469039261e-006
+
+testop "power (3. 0) 1.
+
+testop "power (5 0) 1
+
+testop "power (0. 5) 0.
+
+testop "power (o o) 1
+
+testop "power (0 0) 1
+
+testop "power (0. 0.) 1.
+
+testop "power (2 0.5) (sqrt 2)
+
+testop "quotient (10012 3) 3337
+
+testop "quotient (9 2) 4
+
+testop "quotient (6 2) 3
+
+testop "quotient (Null Null) Null
+
+testop "quotient ([5,10] [1,2]) [5,5]
+
+testop "raise (0 (tell 2 3)) (single tell 2 3)
+
+testop "raise (1 (2 3 reshape count 6)) [1 2 3,4 5 6]
+
+testop "raise (2 (tell 2 3)) (EACH single (tell 2 3))
+
+testop "reach (1 atoms) -12
+
+testop "reach (([2,1] 1) (count 4 5)) 2
+
+testop "reach (Null 'abcd') 'abcd'
+
+testop "reach ([1,Null,Null,Null] (count 5)) 2
+
+testop "reshape ((2 3) 7) (2 3 reshape 7 7 7 7 7 7)
+
+testop "reshape (Null 3) 3
+
+testop "reshape (10 'abc') 'abcabcabca'
+
+testop "reshape ((2 3) (list count 2 3)) (count 2 3)
+
+testop "rotate (3 23) 23
+
+testop "rotate (5 Null) Null
+
+testop "rotate (3 (count 7)) (4 5 6 7 1 2 3)
+
+testop "rotate (2 (3 4 reshape count 12)) (3 4 reshape 3 4 5 6 7 8 9 10 11 12 1 2)
+
+testop "seek (-12 atoms) [l,1]
+
+testop "seek (10 (count 5)) [o,5]
+
+testop "seek ([20,20] (count 3 4)) [o,3 4]
+
+testop "solve (10. 5.) ( fault '?incorrect valence in solve' )
+
+testop "solve ((1 1 reshape 10.) [5.]) [0.5]
+
+testop "solve ((2 2 reshape 3. 4. 5. 7.) (11. 19.)) (1. 2.)
+
+testop "solve (Null Null) ( fault '?incorrect valence in solve' )
+
+testop "split (Null (count 5)) (count 5)
+
+testop "split (0 (2 3 reshape count 6)) [1 4,2 5,3 6]
+
+testop "split (1 (2 3 reshape count 6)) [1 2 3,4 5 6]
+
+testop "split ((1 2) (2 3 4 reshape count 24)) [3 4 reshape count 12,
+        3 4 reshape (count 12 + 12)]
+
+testop "split (Null 23) 23
+
+testop "split (Null Null) (fault '?empty right arg in split')
+
+testop "sublist (loll 'abcd') 'acd'
+
+testop "sublist (l (count 2 3)) (list count 2 3)
+
+testop "sublist ((count 2 3 EACHLEFT= [2,2]) (count 2 3)) [[2,2]]
+
+testop "sublist (Null 'abc') (fault '?first arg of sublist is empty')
+
+testop "sublist (lo (count 10)) (1 3 5 7 9)
+
+testop "take (1 (tell 5)) [0]
+
+testop "take ((2 2) (tell 5 6)) (tell 2 2)
+
+testop "take (2 'abcd') 'ab'
+
+testop "take (5 (tell 3)) (0 1 2 0 0)
+
+testop "takeright (1 (tell 5)) [4]
+
+testop "takeright ((2 2) (tell 5 6)) (2 2 reshape [3 4,3 5,4 4,4 5])
+
+testop "takeright (2 'abcd') 'cd'
+
+testop "takeright (5 (tell 3)) (0 0 0 1 2)
+
+testop "times (2 4) 8
+
+testop "times (-8. -10) 80.
+
+testop "times (-8 12) -96
+
+testop "times (10248 2) 20496
+
+testop "times ([1,[2,3]] [2,[3,4]]) [2,[6,12]]
+
+testop "times (Null Null) Null
+
+testop "times (atoms atoms) (0 144 9.8596 ??A ??A ??fault)
+
+testop "times (atoms atoms) (atoms power 2)
+
+testop "times (Null '') Null
+
+testop "< (2 4) l
+
+testop "< (10892 11894) l
+
+testop "< (-12 -7) l
+
+testop "< (Null Null) Null
+
+testop "< ([2,[1,3]] 2) [o,[l,o]]
+
+testop "< ("ape "apple) l
+
+testop "<= (2 4) l
+
+testop "<= (-12 -8) l
+
+testop "<= (10386 11245) l
+
+testop "<= (Null Null) Null
+
+testop "<= ([2,[1,3]] 2) [l,[l,o]]
+
+testop "<= ('ape' 'apple') ??conform
+
+testop "> ( 2 4) o
+
+testop "> (8989 8988.999) l
+
+testop "> (-8 -12) l
+
+testop "> (Null Null) Null
+
+testop "> ([2,[1,3]] 2) [o,[o,l]]
+
+testop "> ('ape' 'apple') ??conform
+
+testop ">= (2 4) o
+
+testop ">= (8989 8988.9999) l
+
+testop ">= (-8 -10) l
+
+testop ">= ([2,[1,3]] 2) [l,[o,l]]
+
+testop ">= (Null Null) Null

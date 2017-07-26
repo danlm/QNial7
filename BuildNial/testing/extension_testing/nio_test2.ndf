@@ -1,0 +1,33 @@
+# Very simple test to block and unblock an array 
+
+s := nio_open -1 0;
+
+d := 2 3 4 5 reshape count 120; 
+
+ntries := 100000;
+
+# Get the number of bytes after encoding
+
+nio_block_array s d;
+e_bytes := nio_count s;
+nio_unblock_array s;
+
+
+write 'Testing';
+i := 0;
+t_start := time;
+while i < ntries do
+  nio_block_array s d;
+  r := nio_unblock_array s;
+  i := i + 1;
+  if r ~= d then
+    write 'Invalid result at ' i;
+    bye;
+  endif;
+endwhile;
+t_end := time;
+
+write 'Performance' ((ntries*e_bytes)/(t_end - t_start));
+
+bye;
+

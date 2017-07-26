@@ -1,0 +1,29 @@
+# add&count.ndf
+
+# two versions of a routine to count and add the values one per line in a file.
+  The first uses a loop and reads one line of the file at a time.
+  The second uses the power of arrays to read all the data and do the computation.
+
+add_and_count1 IS OPERATION Filename {
+   Total Counter := 0. 0 ;
+   File_num := open Filename "r ;
+   Record := readfile File_num ;
+   % As long as the record is not the fault ?eof do the loop expressions ;
+   WHILE Record ~= ??eof DO
+      % Add the number obtained by executing string Record to the total;
+      Total := Total + (execute Record) ;
+      % Add one to the counter ;
+      Counter := Counter + 1 ;
+      % Read the next record ;
+      Record := readfile File_num ;
+   ENDWHILE ;
+   close File_num ;
+   Counter Total}
+
+# An alternative way of doing this is as follows:
+
+add_and_count2 IS OPERATION Filename {
+   % Read the records of the file and convert each to a number ;
+   Records := EACH tonumber getfile Filename ;
+   % Return the tally and the sum of the records ;
+   [tally,sum] Records }

@@ -1,0 +1,6 @@
+REGEXP U re_compile iregexp_c
+REGEXP U re_test iregexp_t
+REGEXP U re_match iregexp_m
+REGEXP U re_extract iregexp_extract
+REGEXP U re_split iregexp_split
+REGEXP U re_splice iregexp_splice

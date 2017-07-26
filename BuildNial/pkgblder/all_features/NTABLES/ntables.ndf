@@ -1,0 +1,118 @@
+# Support code for hash tables in Nial viewed as associative arrays
+#
+# A hash table is a Nial data structure consisting of an array
+# of 5 entries 
+#
+#    0 - a standard phrase to identify a hash table
+#    1 - an array of keys
+#    2 - an array of values ( of the same size as keys)
+#    3 - some statistics on the array
+#    4 - a metadata slot for programmer use
+#
+# The code uses linear hashing with rehashing to handle collisions.
+# A table is automatically expanded if it becomes more than 70% full.
+# A hash table is not intended to be viewed. The definitions below
+# avoid returning the hash table as a value.
+# 
+# This code wraps a set of primitives with additional functionality
+#
+# The primitives are:
+#                  _tcreate count;     creates and return a new table
+#                  t  _tset key value  add a key/value pair 
+#                  t  _tget key        retrieve a value
+#                  istable t           test for a table
+#                  t  _tsetm mdata     set the metadata value
+#                  t  _tgetm           get the metadata value
+#                  t _tdel key         remove this key/value pair from t 
+#		           _getkeys t		   get the set of keys in use in t (new)
+#			
+
+
+# associatve array versions for adding pairs
+
+aupdate IS op AA KeyValpair {
+   AA _tset KeyValPair; }
+
+aupdateall IS op AA KeyValpairs {
+   AA EACHRIGHT aupdate KeyValpairs;
+  }
+
+
+# associative array versions for retrieving items
+
+apick IS OP Key AA {
+  AA _tget Key
+}
+
+achoose IS OP Keys AA {
+  Keys EACHLEFT apick AA }
+
+
+atell IS OP AA {
+  _getkeys AA }
+
+apickall IS OP AA {
+   atell AA achoose AA }
+
+
+# associative array version  of _tdel returns a Boolean value
+
+aremove IS OP AA Key {
+  AA _tdel Key = 1 }
+
+# ---------------------------
+# return the number of entries in a hash table
+
+tCount is OP T {
+	  3 0 reach T
+}
+
+# associative array version
+
+atally IS OP AA {
+   3 0 reach AA }
+
+# --------------------------
+# return the capacity of a hash table
+
+tsize is OP T {
+	 tally (1 pick T)
+}
+
+# associative array version
+
+acapacity IS OP AA {
+  tally (1 pick AA) }
+
+
+# --------------------------
+# return the number of probes in the last insertion
+
+tProbes is OP T {
+	   3 1 reach T
+}
+
+# omitted for associative arrays
+
+
+# ---------------------------
+# create a hash table from a list of key value pairs
+
+tnew is OP A {
+	t := _tcreate tally A;
+	t eachright _tset A;
+	t
+}
+
+# associative array version
+
+acreate IS OP Nm KeyValpairs {
+   AA :=  _tcreate tally KeyValpairs;
+   AA EACHRIGHT _tset KeyValpairs;
+   Nm assign AA; }
+
+ #----------------------
+# equality test for associative arrays	
+
+aequal IS OP AA BB {
+  apickall AA = apickall BB }

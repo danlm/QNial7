@@ -1,0 +1,75 @@
+# Example of running an echo interaction over a TCP/IP 
+# connection. This is the client process to test the server. 
+# It opens a connection to a remote server and runs an
+# echo client.
+#
+
+# Load routines in 'sprocess' module
+
+library "sprocess;
+write 'Starting client';
+
+# Open a socket to the server.
+
+sock := socket_connect 'localhost' 5000;
+write ['connected', sock];
+
+# Create a pair of streams to handle the interaction
+
+chan := [nio_open sock 0, nio_open sock 0];
+
+# Set the parameters of the interaction
+
+n_success := 0;
+
+# Use one of the following pairs for testing
+
+%ntries := 5000;
+%ndata := 2 3 4 5 reshape count 120;
+
+ntries := 500;
+ndata := 2 3 4 5 6 reshape count 720;
+
+# Start the data transmission
+
+iter := 0;
+t_start := time;
+while iter < ntries do
+  % Send the array;
+  ipc_write_array chan ndata;
+  % Read the response;
+  res := ipc_read_array chan;
+  % Check the response;
+  if res = ndata then
+    n_success := n_success + 1;
+  else
+    write 'failed';
+    write res;
+    bye;
+  endif;
+  iter := iter + 1;
+endwhile;
+t_end := time;
+
+% disconnect;
+ipc_write_array chan "done;
+write (ipc_read_array chan);
+
+# Determine the number of bytes in each send by
+# writing to an internal stream
+
+s := nio_open -1 0;
+nio_block_array s ndata;
+e_bytes := nio_count s;
+
+# Write out the results. Note that we have transferred
+# each message in two directions.
+
+write ['Success count ', n_success];
+write 'Messages/sec ' ((2*ntries)/(t_end - t_start));
+write 'Bytes/sec ' ((2*ntries*e_bytes)/(t_end - t_start));
+
+write 'Thats all folks';
+
+bye;
+    

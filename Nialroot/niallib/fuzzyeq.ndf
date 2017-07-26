@@ -1,0 +1,35 @@
+#
+Operation: fuzzyeq A B
+File: fuzzyeq.ndf
+
+# Fuzzyeq tests the equality of two arrays.  It is useful for testing the
+  equality of real numbers that differ by a small amount in their internal
+  representations.
+
+fuzzyeq IS OPERATION A B {
+   numeric IS OPERATION N {
+      type N in o 0 0. } ;
+   Fuzz := 1.e-13 ;
+   % Test for exact equality;
+   IF A = B THEN
+     True
+   ELSEIF atomic A and atomic B THEN
+      % if both are numeric atoms then do the fuzzy test;
+      IF numeric A and numeric B THEN
+         % Return true if difference <= 1.e-13 in relative absolute value ;
+         abs ( A - B ) <= ( Fuzz * abs A )
+      ELSE
+         % Must be different atoms;
+         False
+      ENDIF
+   ELSEIF shape A = shape B THEN
+      % If A and B are non-atomic and have the same shape;
+      and EACHBOTH fuzzyeq A B
+   ELSE
+      False
+   ENDIF }
+
+# Example:
+
+#        sqrt 2. power 2 fuzzyeq 2.
+l

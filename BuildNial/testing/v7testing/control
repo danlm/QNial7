@@ -1,0 +1,63 @@
+# predicates to test control constructs
+
+# expression sequences
+
+(3;) = ??noexpr
+(2;3) = 3
+(2;fault '??') = ???
+(2;3;4;5) = 5
+
+# if then else
+
+(if a=3 then 1 endif) = 1
+(if a~=3 then 1 endif) = ??noexpr
+(if a then 1 endif) = ??L
+(if a=3 then 1 else 2 endif) = 1
+(if a~=3 then 1 else 2 endif) = 2
+(if a=3 then 1 elseif a=4 then 2 endif) = 1
+(if a~=3 then 1 elseif a=3 then 2 endif) = 2
+(if a~=3 then 1 elseif a=4 then 2 endif) = ??noexpr
+(if a~=3 then 1 elseif a=4 then 2 else -1 endif) = -1
+(if a~=3 then 1 elseif a=4 then 2 elseif a=3 then -2 endif) = -2
+(if a~=3 then 1 elseif a=4 then 2 elseif a~=3 then -2 endif) = ??noexpr 
+(if a~=3 then 1 elseif a=4 then 2 elseif a~=3 then -2 else -1 endif) = -1
+
+# case expressions
+
+(case a from 3: "abc end endcase) = "abc
+(case a from 4: "abc end endcase) = ??noexpr
+(case a from 4: "abc end else "def endcase) = "def
+(case f a from 4: "abc end 5: "def end endcase) = "abc
+(case T f a from 4: "abc end 5: "def end endcase) = "def
+(case f f f a from 4: "abc end 5: "def end endcase) = ??noexpr
+(case f f f a from 4: "abc end 5: "def end else "ghij endcase) = "ghij
+(case T f a from 4: "abc end 5: "def end endcase;) = ??noexpr
+
+#for loops 
+
+(for i with 2 3 4 do i endfor) = 4
+(for i with 2 3 4 do f i endfor) = 5
+(for i with Null do f i endfor) = ??noexpr
+(for i with 2 3 4 do f i;T f i endfor) = 6
+(for i with 2 3 4 do f i;T f i; endfor) = ??noexpr
+(for i with 2 3 4 do f i;exit opposite i;T f i endfor) = -2
+(for i with Null do f i;exit opposite i;T f i endfor) = ??noexpr
+
+#while loops
+
+(i := 5;while i>0 do i := i - 1 endwhile) = 0
+(i := 5;while i>0 do i := i - 1; endwhile) = ??noexpr
+(i := 5;while i>0 do i := i - 1;if i<3 then exit i endif endwhile) = 2
+(i := 5;while i>0 do i := i - 1;if i<3 then exit i endif; endwhile) = 2
+(i := 5;while i>0 do i := i - 1;if i<3 then exit i endif; endwhile;) = ??noexpr
+(i := 0;while i>0 do i := i - 1 endwhile) = ??noexpr
+
+#repeat loops
+
+(i:=5;repeat i:=i - 1 until i<=0 endrepeat) = 0
+(i:=5;repeat i:=i - 1; until i<=0 endrepeat) = ??noexpr
+(i:=5;repeat i:=i - 1;if i<3 then exit i endif until i<=0 endrepeat) = 2
+(i:=5;repeat i:=i - 1;if i<3 then exit i endif; until i<=0 endrepeat) = 2
+(i:=5;repeat i:=i - 1;if i<3 then exit i endif; until i<=0 endrepeat;) = ??noexpr
+(i:=0;repeat i:=i - 1 until i<=0 endrepeat) = -1
+

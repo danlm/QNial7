@@ -1,0 +1,10 @@
+
+.s set "sketch; set "nodecor;
+To insert an apostrophe in a string, use two apostrophes, side by side
+
+.n Company Software := 'Nial Systems Limited' 'Q''Nial'
+
+To insert an apostrophe in a phrase, just use one apostrophe.
+
+.n Company Software := (phrase 'Nial Systems Limited ') "Q'Nial
+.p

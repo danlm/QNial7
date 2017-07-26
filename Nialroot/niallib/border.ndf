@@ -1,0 +1,19 @@
+#
+Operation: border Table Border_item
+File: border.ndf
+
+# This operation constructs a border around a table using a specified value.
+
+border IS OPERATION Table Value {
+   Bordrow := second shape Table reshape Value ;
+   Tblcols := pack link [ Bordrow ] ( rows Table ) [ Bordrow ] ;
+   Bordcol := shape first Tblcols reshape Value ;
+   mix pack link [ Bordcol ] Tblcols [ Bordcol ] }
+
+# Example:
+
+#        border (2 3 reshape 'abcdef') `+
++++++
++abc+
++def+
++++++

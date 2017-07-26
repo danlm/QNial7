@@ -1,0 +1,178 @@
+                    Set Operations in Nial
+
+A set is a collection of objects in which the order of the objects or
+the number of times the object occurs is not important. The question of
+interest is "What objects are in the collection?"
+
+A set can be a list of phrases. The operation "isin" tests for membership.
+
+.n isin IS OP Item Array {IF Item in Array THEN "Yes ELSE "No ENDIF}
+
+.n Friends := "Mary "Ludwig "Hercule "Tom "Sarah ;
+
+.n "Tom isin Friends
+
+Changing the sequence of "Friends" does not affect the result.
+
+.n Friends2 := "Ludwig "Tom "Sarah "Hercule "Mary ;
+
+.n "Tom isin Friends2
+.p
+The set operation "union" is accomplished by "link".
+
+.n Pals := "Jack "Tony "Rick "Tom "Kalev
+
+.n All_friends := link Friends Pals
+
+Although Tom appears twice, it does not affect the result.
+
+.n "Tom isin All_friends
+
+.n Acquaintances := "Joan "Betty "Carol "Mary
+
+.n Everyone := link Friends Pals Acquaintances
+.p
+The intersection of sets is accomplished by the operation "lap".
+
+.b lap IS OPERATION A {
+     IF empty A THEN A
+     ELSE EACH and (first A EACHLEFT EACHRIGHT in A) sublist first A
+.e   ENDIF }
+
+.n lap Friends Pals
+
+This shows that Tom is the only Friend who is also a Pal.
+
+.n Friends except Pals
+
+These are the friends except for Tom.
+.p
+Duplicates in a set can be eliminated by the use of "cull link".
+
+.n All_friends := cull link Friends Pals
+
+The operation "allin" handles set inclusion.
+
+.n "Tom "Mary "Jack allin All_friends
+
+The operation "like" handles set equality.
+
+.n Friends like Friends2
+
+All the items are in both sets.
+.p
+"in", "cull", "lap" and "except" use array equality in the internal tests
+and cannot be used to manage collections of objects that are themselves
+representations of sets.
+
+.n Some_men := "Andy "Bill "Charlie "Dick "Tom "Ludwig "Zorro ;
+.n Some_women := "Anne "Betty "Carol "Diane "Edna "Mary "Theresa ;
+
+.n "Tom in Some_men Pals Friends
+
+.n Acquaintances Pals Friends except Some_women
+
+Some_women, as a set, was not part of Acquaintances Pals and Friends
+
+.n Acquaintances Pals Friends except Acquaintances Friends
+.p
+An alternative representation for a set is as a list of truth-values
+corresponding to the universe represented by a given list.
+
+.n People := sortup cull link Acquaintances Pals Friends Some_men Some_women
+
+The set of acquaintances would be represented by "oololoooooolooloooooo".
+
+.n Acquaintances
+
+.n oololoooooolooloooooo sublist People
+.p
+Equality of two sets is equality of the representations. Union and
+intersection are done by "or" and "and" respectively. To convert from a
+list form to a truth-value representation, the following operation is used:
+
+.n list_them is op Subset Universe {or ( Subset EACHLEFT match Universe )}
+
+.n List_Pals    := list_them Pals People
+.n List_Friends := list_them Friends People
+
+.n Pnames := List_Pals sublist People
+.n Fnames := List_Friends sublist People
+.p
+All the Pals and Friends
+.n List_Pals or List_Friends sublist People
+
+The Pal who is also a Friend
+.n List_Pals and List_Friends sublist People
+.p
+Set operations can be used when creating an index from a set of text.
+
+The operation "getfile" is used to read some text.
+
+.n Lines := getfile link Nialroot Os_Path_Separator 'tutorial' Os_Path_Separator 'textfile' ;
+
+The operation "post" shows the lines that were read.
+
+.n post Lines
+.p
+The operation "fixit" gets rid of punctuation symbols.
+
+.n fixit is op Str {Str except ',./<>?\|;:"''`~][{}=+-_)(*&^%$#@!'}
+
+The operation "wordit" returns a list of words in lower case AND with 
+the punctuation removed.
+
+.n wordit is op Data {link EACH (towords tolower fixit) Data}
+
+Applying the operation "wordit" to the list of strings that were
+read in using "gettext" results in the list of words, including
+ones that should be omitted and repeats.
+
+.n Words := wordit Lines
+.p
+There are some words that would be omitted from any index.
+
+.b Omit_words := "a "all "an "and "any "are "as "at "b "be "been "by
+                 "c "can "creating "e "each "from "gets "have "hers
+                 "his "in "is "its "n "of "or "our "p "q "r "rid "run
+                 "set "s "some "that "the "these "to "use "used
+.e               "were "when "which "with ;
+
+"make_index" removes the words not to be indexed and sorts the result.
+
+.n make_index is op Words Omits {sortup (cull Words except Omits)}
+.p
+"make_index" culls the words (removes duplicates), drops the ones in the
+omit list and then sorts the resulting list in ascending sequence.
+
+.n see "make_index
+
+.n Index_words := make_index Words Omit_words
+
+Using "putfile", the results are written to a file, one word per line.
+
+           putfile "index.dat (EACH string Index_words);
+.p
+The operation "indexit" combines the preceding steps.
+
+.b indexit is op File_in File_out Omits {
+      Lines := getfile File_in ;
+      Words := wordit Lines ;
+      Index_words := make_index Words Omits ;
+.e    putfile File_out (EACH string Index_words); }
+
+The following application of "indexit" to the file "moretext" creates a list
+of index words in the file "setindex". The words in "Omit_words"
+are excluded from the result.
+
+.b indexit 
+     (link Nialroot Os_Path_Separator 'tutorial' Os_Path_Separator 'moretext')
+.e     "setindex Omit_words;
+.p
+The lines of file moretext are:
+.n post getfile (link Nialroot Os_Path_Separator 'tutorial' Os_Path_Separator 'moretext')
+
+What did we get in the index?
+
+.n getfile "setindex
+.p

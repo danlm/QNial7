@@ -1,0 +1,32 @@
+#
+Operation: deleteall Array Value
+Transformer: DELETEBY Predicate Array
+File: deleteby.ndf
+
+# DELETEBY deletes all items from the given array that satisfy the predicate.
+  The result is a list. 
+deleteall uses DELETEBY to delete all occurrences
+  of a value in an array. It also returns a list.
+
+DELETEBY IS TRANSFORMER f ( sublist [ not EACH f , pass ] )
+
+deleteall IS OPERATION Array Value {
+   DELETEBY Value = Array }
+
+# Examples:
+
+#        DELETEBY (2=) (3 2 1 4 2)
+3 1 4
+         DELETEBY (`a=) 'a fat cat sat'
+ ft ct st
+         DELETEBY empty 'abc' '' (2 3 4) Null 5
++---+-----+-+
+|abc|2 3 4|5|
++---+-----+-+
+         DELETEBY (3 >) count 5
+3 4 5
+         deleteall (30 reshape count 5) 3
+1 2 4 5 1 2 4 5 1 2 4 5 1 2 4 5 1 2 4 5 1 2 4 5 
+
+# When the predicate is (3 >), for example, the items from count 5 that are
+deleted are the ones less than 3.  Thus, "DELETEBY (3 >) count 5" returns 3 4 5.

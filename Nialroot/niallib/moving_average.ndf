@@ -1,0 +1,20 @@
+#
+Operation moving_average N Data
+
+# 
+The moving average of length N for an array of data is computed by the
+following operation:
+
+moving_average IS OPERATION N Data {
+    Indicies := tell (tally Data - N + 1) EACHLEFT + tell N;
+    Groups := Indicies EACHLEFT choose Data;
+EACH sum Groups / N }
+
+# Examples
+        2 moving_average 3 4 5 6 7 8
+3.5 4.5 5.5 6.5 7.5
+
+#
+        moving_average [2,3 4 5 6 7 8]
+3.5 4.5 5.5 6.5 7.5
+

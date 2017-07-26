@@ -1,0 +1,21 @@
+#
+Operation: towords Str
+File: towords.ndf
+
+# This operation returns the list of phrases of the words in the string.
+  Words in the string are character sequences separated by one or more blanks.
+  For example, the string 'See Spot run.' has 3 words:  "See", "Spot" and
+  "run.".
+
+towords IS OPERATION Str {
+   Strings := EACH phrase ( `  match Str cut Str ) }
+
+# Examples:
+
+#
+        set "decor ; towords 'See    Spot  run.'
+"See "Spot "run.
+
+#
+        towords '3 + 2 * 4'
+"3 "+ "2 "* "4

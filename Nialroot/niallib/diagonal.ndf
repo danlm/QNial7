@@ -1,0 +1,21 @@
+#
+Operation: diagonal Array
+File: diagonal.ndf
+
+# This operation returns the diagonal of its array argument.
+
+diagonal IS OPERATION Array {
+   solitary tell valence Array fuse Array }
+
+# Examples:
+
+#        diagonal (2 2 reshape tell 4)
+0 3
+
+#        A := 3 3 3 reshape tell 27
+0 1 2   9 10 11  18 19 20
+3 4 5  12 13 14  21 22 23
+6 7 8  15 16 17  24 25 26
+
+#          diagonal A
+0 13 26

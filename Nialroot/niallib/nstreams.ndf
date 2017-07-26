@@ -1,0 +1,49 @@
+#
+# Nial streams module
+#
+# Nial streams are an extensible binary buffering mechanism that can
+# be used for encoding and decoding Nial data. They can also be connected 
+# to file descriptors belonging to pipes, sockets and files etc.
+#
+
+#      
+# Types of streams
+#
+
+NIO_INTERNAL := 0;
+NIO_EXTERNAL := 1;
+
+
+#
+# Status values for streams
+#
+
+NIO_NORMAL   := 0;
+NIO_EOF      := -1;
+
+
+# When specifying the limit values for reading
+
+IOS_NOLIMIT :=         -1;
+
+
+#
+# Special waiting time values. 
+#
+
+IOS_NO_WAIT :=                 0;
+IOS_WAIT_INDEFINITELY :=      -1;
+
+
+# ----------------- Extensions ---------------
+
+nio_flush IS OPERATION S { 
+    Count := nio_count S ; 
+    WHILE 0 ~= nio_count S DO 
+       nio_write_stream S Ios_wait_indefinitely ; 
+    ENDWHILE ; 
+    Count }
+
+
+ 
+

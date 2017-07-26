@@ -1,0 +1,91 @@
+# Common code for GNUPlot demos.
+#
+# This file contains code to create a  GNUPlot process and send commands
+# to that process using the Nial 'open' primitive. 
+
+% Reference to the last created plot process;
+_GNU := Null;
+
+% The GNUPlot program name, this must be on the path for executables;
+gplot_exe := 'gnuplot';
+
+% Create a process running GNUPlot with which we can interact;
+gplot_open IS OPERATION path { open (link [ path , ' -persist' ]) 'pwt' }
+
+% Close GNUPlot;
+gplot_close IS (close _GNU; _GNU := Null);
+
+% Create a gnuplot process and hold ist reference;
+IF _GNU = Null THEN
+    _GNU := gplot_open gplot_exe ;
+ENDIF;
+
+% Issue any gnuplot command. Argument s is a single-quoted string, as shown in the gnuplot manual;
+gplot IS OPERATION s { writefile _GNU s l;}
+
+
+% Create a new  plotting window;
+gplot_terminal IS OPERATION ttype id {
+    gplot link ['set terminal ', string ttype, ' ', string id];
+}
+
+
+# ----------------- GNUPlot utilities ------------------------
+
+# Format vectors for ordinary X-Y plot
+
+gplot_fmt2D IS OPERATION x y { 1 catenate ( post x ) ( post y ) }
+
+
+# Format grid data for surface plot
+
+gplot_fmt3D IS OPERATION x y z {
+   y := ( 0 link y ) ;
+   y := 1 ( tally y ) reshape y ;
+   0 catenate y ( 1 catenate ( post x ) z )
+}
+
+
+# Create a random file name
+
+gplot_rfn IS OPERATION Fn Ext {
+    FnInfix := string floor (1000000000 * (first random 1));
+    link [Fn, FnInfix, Ext]
+}
+
+# Write the formatted data out to file 'Filename'
+
+gplot_writedata IS OPERATION Coords Filename {
+   Data := picture Coords ;
+   Fd := open Filename "w ;
+   writefile Fd Data ;
+   close Fd ;
+}
+
+
+# Simple plot from x and y vectors (must be of the same length)
+
+gplot_xy IS OPERATION x y {
+   Coords := gplot_fmt2D x y ;
+   Fn := gplot_rfn '_plot_xy_' '.dat';
+   gplot_writedata Coords Fn;
+   gplot link ['plot ', '"', Fn, '"'];
+   Fn
+}
+
+# Simple plot of a single vector. The other axis is the integer array
+# [0..n-1]
+
+gplot_y IS OPERATION y {
+    x := tell tally y;
+    Coords := gplot_fmt2D x y ;
+    Fn := gplot_rfn '_plot_y_' '.dat';
+    gplot_writedata Coords Fn;
+    gplot link ['plot ', '"', Fn, '"'];
+    Fn
+}
+
+
+
+
+

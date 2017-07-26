@@ -1,0 +1,3 @@
+if (CMAKE_SYSTEM_NAME MATCHES "Windows")
+   set(NIAL_LIBS ${NIAL_LIBS} ws2_32)
+endif (CMAKE_SYSTEM_NAME MATCHES "Windows")

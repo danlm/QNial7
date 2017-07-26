@@ -1,0 +1,175 @@
+# This program generates random arrays with maximum depth maxdepth 
+  and maximun valence maxvalence and maximum extent maxextent.  
+  The test randtest applies some of the identities to the random array.  
+
+loaddefs "ids
+
+noisy := l;
+
+maxdepth is 2
+
+maxvalence is 3
+
+maxextent is 3
+
+numoftypes is 12;
+
+characters gets 'abcdefghijklMNOPQRSTUVWXYZ1234567890!@#$%^&*()_}{"';
+
+ints gets tell 5 EACHLEFT reshape 0 1 2 -12 20;
+
+reals gets tell 5 EACHLEFT reshape 0. 1. -2.5 3.14 1e-10;
+
+strings gets tell 5 EACHLEFT reshape '' 'a' 'abcde' '''';
+
+bitstrings gets tell 5 EACHLEFT reshape ol lol (15 reshape lo) (16 reshape o)(17 reshape l);
+
+phrases gets " "" "abc (phrase 'two words') (phrase 'hello world');
+
+faults gets ? ?? ??fault  (fault '?error message') (fault 'test fault');
+
+randarr is external operation
+
+randreal is 2 * first random 1
+
+randitem is op depth { local rtype;
+  if (depth+1) > maxdepth then
+    write 'stopping depth';
+    rtype gets 1 + floor ((numoftypes  - 1) * first random 1);
+  else
+    rtype gets floor (numoftypes * first random 1);
+  endif;
+  case rtype from
+        0 : randarr (depth+1) end
+        1 : floor ( 2 * first random 1) pick ol end
+        2 : floor ( -25 + (50 * first random 1)) end
+        3 : randreal end
+        4 : randreal + (randreal * .5) end
+        5 : floor ( 50 * first random 1) pick characters end
+        6 : floor ( 5 * first random 1) pick phrases end
+        7 : floor ( 5 * first random 1) pick faults end
+        8 : floor ( 5 * first random 1) pick ints end
+        9 : floor ( 5 * first random 1) pick reals end
+        10 : floor ( 5 * first random 1) pick strings end
+        11 : floor ( 5 * first random 1) pick bitstrings end
+    endcase
+}
+
+randshape is op v (floor (maxextent * random v))
+
+randarr is op depth { local val shap arr x z;
+    val gets floor (maxvalence * first random 1);
+    %write 'valence ' val;
+    if val = 0 then
+       z gets single randitem depth ;
+    else
+       shap gets randshape val;
+       if 0 in shap then
+         z gets shap reshape single randitem depth ;
+       else
+         arr gets shap reshape 0;
+         for x with tell shap do
+             z gets update "arr x (randitem depth );
+         endfor;
+       endif;
+    endif;
+    z }
+
+Unary_idnames :=
+ 'cartids' 'linkids' 'reshapeids' 'singleids' 'rowcolids'
+ 'fuseids' 'packids' 'measureids' 'pickids' 
+ 'arithids' 'logicids' 
+ 'equalityids' 'cullids' 'listids' 'simpleids' 
+ 'eachids' 'maxminids' 'reverseids' ;
+
+#Unary_idnames := ['linkids'];
+
+
+Binary_idnames :=
+ 'reshapeids1' 'splitblendids' 'selectionids' 'arithids1' 'logicids1' 
+ 'compareids' 'seekids' 'listids1' 'eachids1' 'maxminids1' 'rotateids' 
+ 'sublistids' 'exceptids' 'takedropids' ;
+
+#Binary_idnames := ['logicids1'];
+
+Unary_idatlas is
+[cartids,linkids,reshapeids,singleids,rowcolids,
+ fuseids,packids,measureids,pickids, arithids,logicids,
+ equalityids,cullids,listids,simpleids, eachids,maxminids,reverseids];
+
+#Unary_idatlas is [linkids];
+
+
+Binary_idatlas is
+[reshapeids1, splitblendids,selectionids, arithids1,logicids1,
+ compareids,seekids,listids1, eachids1,maxminids1,rotateids, 
+ sublistids,exceptids,takedropids] 
+
+#Binary_idatlas is [logicids1];
+
+box is op pic { set "decor; p gets diagram pic; set "nodecor; p }
+
+
+randtest is {
+   NONLOCAL tries limit starters spacelost;
+   setformat '%25.17g';
+   repeat
+     write Tries (starters@tries);
+     seed starters@tries;
+     c1 gets randarr 0 ;
+     c2 gets randarr 0 ;
+     if(noisy) then writescreen box c1; endif;
+     if(noisy) then writescreen box c2; endif;
+     freeespace := 34567 + 25;
+     freespace := first status;
+     d1 gets unary_idatlas c1;
+     %write d1;
+     d2 gets unary_idatlas c2;
+     %write d2;
+     d3 gets binary_idatlas c1 c2;
+     %write d3;
+     d4 gets binary_idatlas c2 c1 ;
+     %write d4;
+     if isfault and link d1 d2 d3 d4 then
+       appendfile "rand.out (link 'Example ' (string tries) );
+       appendfile "rand.out (display c1);
+       appendfile "rand.out (display c2);
+       appendfile "rand.out (link 
+         'Failed pattern is: ' (picture (link d1 d2 d3 d4)));
+     elseif not and link d1 d2 d3 d4 then
+       appendfile "rand.out (link 'Example ' (string tries) );
+       appendfile "rand.out (display c1);
+       appendfile "rand.out (display c2);
+       appendfile "rand.out (link 
+         'Failed on ids: ' (picture ( not link d1 d2 d3 d4 sublist 
+              link Unary_idnames Unary_idnames Binary_idnames Binary_idnames)));
+       write 'the following ids failed: ';
+       write ( not link d1 d2 d3 d4 sublist 
+              link Unary_idnames Unary_idnames Binary_idnames Binary_idnames);
+     endif;
+     d1 := d2 := d3 := d4 := 0;
+     if freespace - first status max 0 > 0 then 
+       appendfile "rand.log (link 'space lost on try ' (string Tries) 
+        ': ' (string (freespace - first status max 0)));
+     endif;
+     spacelost := spacelost + (freespace - first status max 0);
+     tries gets tries + 1;
+   until tries >= Limit endrepeat;
+}
+
+
+#use Restarting to do a segment of random tests run earlier. Used to help
+pinpoint failures.
+
+Restarting is op  newstart newlimit {
+  NONLOCAL tries limit ;
+  tries := newstart;
+  limit := newlimit;
+  write "Restarting newstart newlimit;
+  appendfile "rand.out (link 'Restarting on ' (string Tries));
+  IF Tries < Limit THEN
+    randtest ;
+    write 'done from Restarting';
+  ENDIF;
+}
+

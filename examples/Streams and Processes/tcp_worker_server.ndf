@@ -1,0 +1,81 @@
+# Example of a TCP/IP server process that accepts connections and
+# spawns a child process to handle the connection.
+#
+#
+
+# Load the support functions
+
+library "sprocess;
+
+
+# echo actor is a simple Nial function that echoes what it receives
+# on a stream
+#
+
+echo_actor is op chan {
+  running := l;
+  while running do
+    res := ipc_read_array chan;
+    ipc_write_array chan res;
+    if res = "done then
+      running := o;
+    endif;
+  endwhile;
+  "done
+}
+
+
+#
+# Start child spawns a Nial child process to handle the connection.
+# It receives two arguments, the connection and a function to 
+# perform the work
+#
+
+start_child is op con actor {
+  % Create a reader/write pair;
+  chan := [nio_open con 0, nio_open con 0];
+  child := spawn_child PRC_MANAGED;
+  if child = Null then
+    % Actions in child;
+    res := catch apply actor chan;
+    ipc_write_array chan res;
+    bye;
+  else
+    % actions in parent;
+    res := child;
+  endif;
+  child
+}
+
+
+#
+# Start a socket server to accept incoming connections
+# on a nominated host/port combination. 
+#
+# When a connection is accepted a child process is created to
+# handle the interaction through a nominated function/actor
+# 
+
+start_controller is op host port actor {
+    write ['starting controller', host, port];
+    sock aport := socket_bind host port;
+    write ['bind', sock, aport];
+    socket_listen sock 5;
+    while l do
+      con := socket_accept sock;
+      write ['accepting', con];
+      child := start_child con actor;
+      socket_close con;
+    endwhile;
+    "done
+}
+
+
+
+# Simple test code, start a controller on this machine with an
+# echo actor to do the work. Use a host of '0.0.0.0' to accept
+# connections on all network addresses for this host.
+
+start_controller '0.0.0.0' 5000 "echo_actor;
+
+

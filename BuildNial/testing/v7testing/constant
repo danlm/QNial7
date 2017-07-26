@@ -1,0 +1,39 @@
+# some simple lexical tests to ensure all constants and symbols are
+# handled correctly.
+
+(second second second parse scan 'l') = (3 = 3)
+(second second second parse scan 'o') = (3 ~= 3)
+(second second second parse scan 'lollo') = ('abcde' EACHLEFT in 'acd')
+(second second second parse scan '-285') =  opposite 285
+(second second second parse scan '1024') = (2 power 10)
+(second second second parse scan '0') = (5 - 5)
+(second second second parse scan '07') = (5 + 2)
+(second second second parse scan '3.') = (4.0 - 1.0)
+(second second second parse scan '3.5') = (3.0 + reciprocal 2.0)
+(second second second parse scan '.25') = reciprocal 4.0
+(second second second parse scan '0.25') = reciprocal 4.0
+(second second second parse scan '-0.25') = opposite reciprocal 4.0
+(second second second parse scan '-0.25e5') = opposite (reciprocal 4.0 * (10. power 5))
+(second second second parse scan '-0.25e+5') = opposite (reciprocal 4.0 * (10. power 5))
+(second second second parse scan '-0.25e-5') = opposite (reciprocal 4.0 * (10. power -5))
+(second second second parse scan '3j4') = (3 + (4 * 0j1))
+(second second second parse scan '-3j-4') = opposite (3 + (4 * 0j1))
+(second second second parse scan '`x') = first 'xyz'
+(second second second parse scan '`''') = first ''''
+(second second second parse scan '`'' ') = second ' '' '
+(second second second parse scan '``') = first '`'
+(second second second parse scan '''abcd''') = link 'ab' 'cd'
+(second second second parse scan '''Queen''''s''') = ('Queen' append `' append `s)
+(second second second parse scan '''''') = Null 
+(second second second parse scan '"abcd') = phrase 'abcd'
+(second second second parse scan '"abc:') = phrase 'abc:'
+(second second second parse scan '""abcd') = phrase '"abcd'
+(second second second parse scan '""') = phrase '"'
+(second second second parse scan '??') = fault '?'
+
+# tests from earlier files
+
+[((((((((((((((((((((((((2)))))))))))))))))))))))) 3] = solitary 2 3
+((((((((((((((((((((((((2 3)))))))))))))))))))))))) = 2 3
+(2(3(4(5(6(7(8(9(0 0))))))))) = [2,[3,[4,[5,[6,[7,[8,[9,[0,0]]]]]]]]]
+(each each each each each each each each each first 3) = 3

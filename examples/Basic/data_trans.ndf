@@ -1,0 +1,45 @@
+# Create an array of vectors of random numbers
+# For each vector compute its mean and standard
+# deviation and adjust the entries of the vector
+# to be number of standard deviations from the mean
+
+
+# Set the size values for our testing
+
+nentries := 60000;
+narrays := 1024;
+
+# Create the array of vectors. 
+# Note that we could also do this as 
+#  a := rows random (narrays nentries)
+
+a := each random (narrays take nentries);
+
+# Define the function to perform the computation for
+# one vector
+
+one_row is op x {
+  m := (sum x)/(tally x);
+  ax := x - m;
+  s := sqrt ((sum (ax*ax))/(tally x));
+  ax/s
+}
+
+# Time Nial running this code. There are implementations in 
+# other systems in the comparison directory.
+
+write 'Starting time test';
+
+n_iter := 20;
+i := 0;
+
+start_time := time;
+while i < n_iter do
+  res := each one_row a;
+  i := i + 1;
+endwhile;
+end_time := time;
+
+write 'Duration' ((end_time-start_time)/n_iter);
+bye;
+

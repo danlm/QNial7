@@ -1,0 +1,51 @@
+# INTEGRATE f A B Eps
+
+# Find the integral of the function f over the interval A B using the
+  technique known as Romberg Integration.
+
+# The stopping criteria Eps guarantees the relative accuracy of the
+  answer.  Normally the result is considerably more accurate.  The
+  suggested value for Eps is 1e-6.
+
+# The function can be edited to change the internal comments to
+  write statements that will display the intermediate results.
+  This version of Integrate works well on smooth functions.
+
+# EXAMPLE:  INTEGRATE sin 0 Pi 1e-6
+
+INTEGRATE IS TRANSFORMER f
+    OPERATION A B Eps {
+       N := 4 ;
+       Endpoints := A B ;
+       Endpointsum := sum EACH f Endpoints ;
+       H := B - A / N ;
+       Internalpoints := A + H times count ( N - 1 ) ;
+       Internalsum := 2 * sum EACH f Internalpoints ;
+       Trap := sum Internalsum Endpointsum * H / 2.0 ;
+       K := 0 ;
+       R_table := 10 10 reshape 0. ;
+       R_table @ [ 0 , 0 ] := Trap ;
+       FOR K WITH count 9 DO
+          H := H / 2.0 ;
+          Newpoints := A + ( H times ( 1 + ( 2 * tell N ) ) ) ;
+          N := N * 2 ;
+          Internalsum := Internalsum + ( 2 * sum EACH f Newpoints ) ;
+          Trap := sum Internalsum Endpointsum * H / 2.0 ;
+          R_table @ [ K , 0 ] := Trap ;
+          FOR J WITH count K DO
+             P := 4.0 power J - 1.0 ;
+             R_table @ [ K - J , J ] := R_table @ [ K - J + 1 , J - 1
+             ] + ( R_table @ [ K - J + 1 , J - 1 ] - R_table @ [ K -
+             J , J - 1 ] / P ) ;
+          ENDFOR ;
+   %writescreen ' Romberg table ';
+   %write ((K+1)(K+1)take R_table);
+          T1 := R_table @ [ 1 , K - 1 ] ;
+          T2 := R_table @ [ 0 , K ] ;
+          IF abs ( T2 - T1 ) <= ( abs ( T2 ) * Eps ) THEN
+             EXIT T2 ;
+          ENDIF ;
+       ENDFOR ;
+       T2 }
+
+

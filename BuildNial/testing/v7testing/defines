@@ -1,0 +1,30 @@
+# evaluation tests to check out the definition facility
+
+# defining expressions
+
+xy is 5;xy = 5
+v is external variable;xy is v;v gets 10;xy = 10
+xy is 2*v;v gets 30;xy = 60
+xy is (2*v);v gets 30;xy = 60
+xy is {2*v};v gets 30;xy = 60
+xy is external expression;xy is 5;xy = 5
+
+# defining operations
+
+f is count;f 3 = 1 2 3
+f is 3 *;f 3 = 9
+f is rest rest;f count 5 = 3 4 5
+f is EACH count;f 2 3 = (1 2) (1 2 3)
+f is op a(a+1);f 20 = 21
+f is op a{f is rest;f f a};f count 5 = 3 4 5
+f is external operation;f is count;f 3 = 1 2 3
+
+# defining transformers
+
+T is EACH;T count 2 3 = (1 2) (1 2 3)
+T is tr f(3 FOLD f);T rest count 5 = 4 5
+T is tr f (equal EACH f);T (first count) 2 3 4 = l
+T is tr f (EACH EACH f);T tally [[[1,2,3],[4,5]],[[2,3],[4,5,6,7]]] = [[3,2],[2,4]]
+T is tr f(f f);T rest count 5 = 3 4 5
+T is tr f op a([f,f]a);T count 2 = [1 2,1 2]
+T is external transformer;T is EACH;T count 2 3 = (1 2) (1 2 3)

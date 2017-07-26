@@ -1,0 +1,90 @@
+# Nial sorting performance test
+
+library "labeltable
+
+
+% make our random numbers cover a large range;
+part_size := 65536;
+nbase := 4096*part_size*part_size*part_size;
+
+
+test_sort_ints is op niter cnt base {
+  if base = 0 then
+    base := cnt;
+  endif;
+  dur := 0.0;
+  qdur := 0.0;
+  for i with (count niter) do
+    d := (floor (2*base*(random cnt))) - base;
+    % standard nial sort (radix);
+    st := nano_time 0;
+    res := sort <= d;
+    et := nano_time 0;
+    dur := dur + (et - st);
+    % quicksort;
+    st := nano_time 0;
+    res := qsort d;
+    et := nano_time 0;
+    qdur := qdur + (et - st);
+  endfor;
+  [dur/niter, qdur/niter]
+}
+
+
+            
+test_sort_reals is op niter cnt base {
+  if base = 0 then
+    base := cnt;
+  endif;
+  dur := 0.0;
+  qdur := 0.0;
+  for i with (count niter) do
+    d := (2*base* (random cnt)) - base;
+    st := nano_time 0;
+    res := sort <= d;
+    et := nano_time 0;
+    dur := dur + (et - st);
+    st := nano_time 0;
+    res := qsort d;
+    et := nano_time 0;
+    qdur := qdur + (et - st);
+  endfor;
+  [dur/niter, qdur/niter]
+}
+
+
+test_fmt is op ttl vals {
+  ttl hitch vals
+}
+
+% test ratio;
+t_ratio is op a b {
+  [a/b]
+}
+
+
+% Run the timing tests;
+iterations := 2;
+trials := 100 1000 10000 100000 1000000;
+t_rows0 := [];
+t_rowsb := [];
+for n with trials do
+  sri0 := test_sort_ints (iterations n 0);
+  srr0 := test_sort_reals (iterations n 0);
+  t_r0 := link [sri0, t_ratio sri0, srr0, t_ratio srr0];
+  t_rows0 := t_r0 hitch t_rows0;
+  srib := test_sort_ints (iterations n nbase);
+  srrb := test_sort_reals (iterations n nbase);
+  t_rb := link [srib, t_ratio srib, srrb, t_ratio srrb];
+  t_rowsb := t_rb hitch t_rowsb;
+endfor;
+
+corner := 'Counts';
+rowlabs := each string trials;
+collabs := ['Sort Ints', 'Qsort Ints', 'Ratio', 'Sort Reals', 'Qsort Reals', 'Ratio'];
+
+write labeltable [corner, rowlabs, collabs, mix reverse t_rows0];
+write labeltable [corner, rowlabs, collabs, mix reverse t_rowsb];
+
+
+bye;

@@ -1,0 +1,142 @@
+Some of the ideas and operations of APL (A Programming Language - IBM)
+have counterparts in Nial. In this set of examples, reshape, sublist and
+indexing using @, # and | are shown.
+.s set "sketch
+
+"reshape" in Q'Nial is equivalent to infix use of "rho" in APL
+
+.n 4 10 reshape count 40
+.n 20 reshape `z
+.n 2 3 reshape 45 `a (2 3) "xxx
+
+Items of the argument are repeated cyclically to fill the result.
+.p
+"sublist" is useful for extracting specific fields from records.
+
+.n lol sublist 'abc'
+
+.n R1 := '1357Mr  Smith      Thomas A   234 Ventura Drive   Hollywood   CA';
+.n R2 := '2468MissJohnston   Rebecca P  1015 Main Street,#33Los Angeles CA';
+.n Ex :=  lllloooolllllllllllooooooooooooooooooooooooooooooolllllllllllloo;
+
+.n Ex EACHRIGHT sublist R1 R2
+
+If the bitstring is too short to handle all the items of the array, it is
+repeated until all items have been addressed.
+
+.n lo sublist count 20
+
+.p
+The sublist operation can result in specific fields
+
+.n R1 := '1357Mr  Smith      Thomas A   234 Ventura Drive   Hollywood   CA';
+.n R2 := '2468MissJohnston   Rebecca P  1015 Main Street,#33Los Angeles CA';
+.n E1 :=  lllloooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo;
+.n E2 :=  oooooooolllllllllllooooooooooooooooooooooooooooooooooooooooooooo;
+.n E3 :=  oooooooooooooooooooooooooooooooooooooooooooooooooolllllllllllloo;
+
+.n Result := E1 E2 E3 EACHRIGHT EACHLEFT sublist R1 R2
+
+One interesting use of this capability is to apply the extraction process
+against the records of a file and then use a "rule interpreter" to select
+the records needed for further analysis or action.
+The rules can be Nial strings that are executed.
+.p
+.n R1 := '1357Mr  Smith      Thomas A   234 Ventura Drive   Hollywood   CA';
+.n R2 := '2468MissJohnston   Rebecca P  1015 Main Street,#33Los Angeles CA';
+.n R3 := '3579Mrs Smith      Anne A     123 Morden Street   New York    NY';
+.n R4 := '4567Dr  Jones      Paul B     67 Sydenham Street  Kingston    ON';
+.n Records := R1 R2 R3 R4 ;
+
+.n E1 :=  lllloooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo;
+.n E2 :=  oooooooolllllllllllooooooooooooooooooooooooooooooooooooooooooooo;
+.n E3 :=  oooooooooooooooooooooooooooooooooooooooooooooooooolllllllllllloo;
+.n Extractors := E1 E2 E3 ;
+
+.n Res := Extractors EACHRIGHT EACHLEFT sublist Records;
+.n mix Res
+.p
+If the first number is greater than 2000, the second starts with "J"
+and there are three items, then select this record.
+
+.b Rule := 'execute first Rec > 2000'
+           'first second Rec = `J'
+.e         'tally Rec = 3';
+
+.b apply_rules is op Rules Results {
+      Extractor := '';
+      FOR I WITH grid Results DO
+        Rec := Results @ I;
+        Yes := and ( EACH execute Rules ) ;
+        Extractor := Extractor link Yes
+.e    ENDFOR }
+
+.n Winners := apply_rules Rule Res
+
+.n mix ( Winners sublist Records )
+
+.p
+The operation "and" returns Truth if all items in the argument are Truth.
+The operation "or"  returns Truth if any item in the argument is Truth.
+The operation "not" returns an argument of opposite truth value.
+
+.n lollo or olllo
+
+.n and (lollo) (olllo) (llllo)
+
+.n not loollloloollolool
+
+If a bitstring is summed, the l's are treated as ones.
+
+.n sum lllololllol
+
+The operation "abs" returns 0 for False and 1 for True.
+
+.n abs lloololo
+.p
+Addresses in Nial start at address 0 for a list, 0 0 for a table.
+
+.n Array gets 3 5 reshape count 15
+
+.n grid Array
+
+The grid can be used to select items from the array
+
+.n grid Array choose Array
+.p
+The operation "pick" selects one item from an array.
+
+.n Array
+.n 2 3 pick Array
+
+The "at" (@) notation is used to select an item using indexing.
+
+.n Array @ (2 3)
+.n Array @ (2 3) gets 99 100
+.p
+The operation "choose" selects many items from the array.
+
+.n Array
+
+.n [2 3,1 4] choose Array
+
+.n (7 plus count 5) choose list Array
+
+.p
+The notation for multi-item selection and insertion is "at all" (#).
+
+.n Array
+
+.n Array # [2 3,1 4,0 1]
+.n Array # [0 0,1 1] := 22 33
+.p
+The notation for slicing (selecting a row, column or sub array) is "|".
+.n Array := 5 5 reshape count 25
+
+.n Array | [1,]
+.n Array | [,3 4]
+.n Array | [2 4,1 2 3]
+
+In this last example, the items selected are from rows with address 2 and 4,
+and from columns with addresses 1, 2 and 3.
+.p

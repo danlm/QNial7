@@ -1,0 +1,44 @@
+#
+File: findpath.ndf
+Operation: findpaths Item Array
+
+# This operation returns a list of the paths to an item in the given array.
+
+findpaths IS OPERATION Item Array {
+   findpath2 IS OPERATION Item Array Pathsofar {
+      IF Array = Item THEN
+         solitary Pathsofar
+      ELSEIF atomic Array THEN
+         Null
+      ELSE
+         link EACHALL findpath2 ( single Item ) Array ( Pathsofar EACHRIGHT
+         append grid Array )
+      ENDIF } ;
+   findpath2 Item Array Null }
+
+   findpath IS first findpaths
+
+
+# EXAMPLES:
+        A := 0 2 ( 1 2 ( 2 2 ) )
++-+-+---------+
+|0|2|+-+-+---+|
+| | ||1|2|2 2||
+| | |+-+-+---+|
++-+-+---------+
+        findpaths 2 A
++-+---+-----+-----+
+|1|2 1|2 2 0|2 2 1|
++-+---+-----+-----+
+        B := 2 3 reshape EACH tell 6
++-----------+-----------+-----------+
+|0 1 2 3 4 5|0 1 2 3 4 5|0 1 2 3 4 5|
++-----------+-----------+-----------+
+|0 1 2 3 4 5|0 1 2 3 4 5|0 1 2 3 4 5|
++-----------+-----------+-----------+
+        findpaths 0 B
++-------+-------+-------+-------+-------+-------+
+|+---+-+|+---+-+|+---+-+|+---+-+|+---+-+|+---+-+|
+||0 0|0|||0 1|0|||0 2|0|||1 0|0|||1 1|0|||1 2|0||
+|+---+-+|+---+-+|+---+-+|+---+-+|+---+-+|+---+-+|
++-------+-------+-------+-------+-------+-------+

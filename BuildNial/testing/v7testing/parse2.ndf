@@ -1,0 +1,346 @@
+set"log
+
+# undefined identifier
+
+h : 2
+
+# undefined identifier
+
+h = 2
+
+# undefined identifier
+
+h get 2
+
+h gets 2
+
+a gets 3
+
+b gets 1
+
+j gets 4
+
+f1 is op a (first a)
+
+f2 is op a {first b}
+
+# expecting body
+
+f3 is op a [first a]
+
+# tokens left 
+
+sea gets (33 8) (77 9) 9 9) (7 6)
+
+# expecting right parenthesis
+
+sea1 gets (33 8) (77 9) (9 (9) (7 6)
+
+# expecting identifier
+
+pairs is tr  op a ( front a eachboth f rest a)
+
+bot is op x { if x then '---+' else '  +' endif}
+
+# unexpected token or eol
+
+down1 is op r { write ( link '+' (link bot each  r ) }
+
+# expecting endwhile
+
+a gets 3
+{
+while a<8 do
+ writescreen 'a'
+}
+ 
+
+a gets 2
+
+h gets 2
+
+j gets 4
+
+one is 1
+
+# expecting then
+
+if h = 7 
+ j gets 68 append h;
+endfor;
+
+# expecting endif, elseif, or else
+
+if h = 2 then
+  j gets 6;
+end
+
+# expecting expression sequence
+
+if h = 7 then
+ d gets 68 append h;
+else 
+ ;
+end
+
+# expecting then
+
+if h > 7 then
+ writescreen 'hello'
+elseif h < 7
+ writescreen 'bye'
+else
+ writescreen 'bad'
+endif
+
+# undefined identifier
+
+if h > 7 then
+ writescreen 'hello'
+eleif h < 7 then
+ writescreen 'bye'
+else
+ writescreen 'bad'
+endif
+
+
+# expecting expression sequence
+
+for i with tell 5 do
+ writescreen i;
+ exit i = ;
+ a gets i;
+endfor
+
+# expecting do
+
+for i with (i < 10)
+ writescreen i;
+endfor
+
+# expecting with
+
+for i (i <10) do
+  writescreen i;
+endfor
+
+# expecting endfor
+
+for i with (i<10) do
+  writescreen i;
+end
+
+s gets 2
+
+(x gets 3);x
+
+# expecting right bracket
+
+[x gets 3];x
+
+# expecting until
+
+dummy is op d {
+ repeat 
+  s := 5;
+  s = 5  endrepeat
+}
+
+i gets 1
+
+x gets 3
+
+ x gets 2;
+
+ a := 5;
+
+try gets a b
+
+h gets 2
+
+j gets 4
+
+s gets 2
+
+# expecting expression
+
+while  do
+ a gets 7;
+endwhile
+
+# expecting endrepeat
+
+repeat 
+ s gets 6 ;
+until s = 10 
+
+# expecting constant or endcase
+
+case x from
+ 2 : write '2' end
+ 3 : write '3' end 
+ : write '4' end
+ endcase
+
+# expecting from
+
+case x 
+ 2 : write '2' end
+ endcase
+
+# expecting colon
+
+case x from
+ 2  write '2' end
+ 3 : write '3' 
+ 4 : write '4' end
+ endcase
+
+# expecting end
+
+case x from
+ 2 :write '2' end
+ 3 : write '3' 
+ 4 : write '4' end
+ endcase
+
+# expecting constant or endcase
+
+case x from
+ 2 : write '2' end
+ 3 : write '3' end
+ else write 'other'
+
+# expecting expression
+
+case  from
+ 2 : write '2' end
+ 3 : write '3' end
+   : write '4' end
+   write 'other' end
+endcase
+
+# assignment to referenced name
+
+x gets 3;{x ; x gets 4; x}
+
+# expecting end of block
+
+noright is op dum {
+ while o do
+  h gets 2;
+  exit h > 4;
+  s gets h sum 1;
+  h gets 3;
+endwhile
+
+a gets 1 2 24  55 66 5 4 3 3;
+
+a@[2]:=10
+
+# expecting an action
+
+a[2]:=10
+
+# tokens left
+
+a@2]:=10
+
+# invalid address as a fault at run time
+
+a@[]:=10
+
+# expecting an action
+
+ @[2]:=10
+
+# expecting expression
+
+a@ :=10
+
+xx gets 7 8
+
+# getdef not possible for a variable
+
+see "xx
+
+# undefined identifier
+
+{x gets 2;y} gets 3 4
+
+# undefined identifier
+
+[x,y] gets 3 4
+
+# undefined identifier
+
+[x y z] gets 3 4 5
+
+# invalid assignment
+
+tally gets sum 1 2 3;
+
+# expecting an action
+
+  ;
+
+# exit used in wrong context
+
+foo is op a { x gets first tell a;
+  y gets first tell a;
+  exit a>5;
+  writescreen x;
+  writescreen y;
+}
+
+# undefined identifier
+
+{yyy gets 3};yyy
+
+# undefined identifier
+
+{{xxx gets 3};y gets 4;xxx}
+
+# undefined identifier
+
+{{xxx gets 3};y gets 4};xxx
+
+#expecting an action
+
+     1+
+
+# name already defined
+
+     truth is 7
+
+# expecting a definition
+
+     foo is
+
+# expecting a definition
+
+     f is is 
+
+# expected external definition
+
+     fi is external
+
+# mismatched external specification
+
+     x gets 3; 
+
+     x is external op
+
+# expecting expression
+
+      ()
+
+# unexpected token or eol
+
+      (.)
+
+# expecting identifier
+
+    foo is op
+
+Bye

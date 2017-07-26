@@ -1,0 +1,13 @@
+#
+Operation: diffs Number_list
+File: diffs.ndf
+
+# Diffs returns the differences between adjacent items of a number list.
+
+diffs IS OPERATION Numbers {
+   rest Numbers - front Numbers }
+
+# Example:
+
+#        diffs 1 3 8
+2 5

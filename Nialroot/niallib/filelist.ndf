@@ -1,0 +1,48 @@
+#
+Operations: filelist Path Pattern
+            filelist1 Patttern
+
+#
+File: filelist.ndf
+
+# Two utility operations to return a list of files given a pattern.
+
+# fileist Path Pattern
+  The Path gives path from the user's home directory to
+  the directory containing the files to be selected.  
+  The Pattern must be an appropriate pattern for 'ls'.
+  The result is the list of filenames as strings.
+
+# filelist Pattern
+  THe files are selected from the current directory unless the Pattern itself
+  includes a path.
+  The result is a list of strings with the filenames preceded by the path 
+  provided in the Pattern.
+
+library "newhost
+
+filelist IS OPERATION Path Pattern { 
+   Cmd := link '\ls -da ' Path Os_Path_Separator ( string Pattern ); 
+   Nms := newhost Cmd;
+   IF not empty Nms THEN
+     last (first OS_Path_Separator findall (first Nms)+1) EACHRIGHT drop Nms
+   ELSE
+     Nms
+   ENDIF
+} 
+
+filelist1 IS OPERATION Pattern {  
+      newhost ( link '\ls -da ' ( string Pattern ) ) 
+} 
+
+
+#Examples
+
+#
+ 'QNial7/niallib' filelist '*.ndf'
+
+#
+filelist1 '*'
+
+#
+ filelist1 'QNial7/niallib/*.ndf'

@@ -1,0 +1,8 @@
+rm *.out
+rm *.log
+./nial +size 1000000 -defs autoids
+./nial +size 1000000 -defs autocov
+./nial +size 1000000 -defs autoops
+./nial +size 1000000 -defs autoeval
+./nial +size 1000000 -defs autopic
+./nial +size 1000000 -defs autorand

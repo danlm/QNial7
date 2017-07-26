@@ -1,0 +1,171 @@
+.s set "sketch ; set "nodecor ;
+.s setformat '%g' ;
+There are three types of numeric data: boolean, integer and real.
+
+True and False are boolean values represented by l and o respectively.
+This choice of representation allows lists of booleans to be displayed
+compactly.
+
+.n l l o o True True False o
+
+Integers are whole numbers. They range in value from a low of -2147483648 
+to a high of 2147483647 in a 32-bit version of QNial or from a low of
+-9223372036854775808 to a high of 9223372036854775807 in a 64-bit version. 
+Negative numbers are shown with a minus sign at the front. If a space is placed 
+after the minus sign, then Q'Nial interprets the minus sign as the minus
+operation.
+
+.n 21 2147483647 -512 -2147483648 0 -0
+
+.n 25 - 20
+.p
+Real numbers are ones that have a decimal point. In Q'Nial, the real
+numbers can be displayed either with a specified number of digit positions
+after the decimal point or in a scientific notation with an exponent part.
+Thus 1,234,567.89 can be expressed in either of the two ways below:
+
+.n 1234567.89 1.23456789e6
+
+The display of a real number is controlled by the "setformat" operation.
+
+setformat '%g'
+
+is the default, which displays the number in fixed format unless its
+is too small or too big in size, and then it uses exponential notation.
+
+The format '%10.2f' can be used to display numbers in fixed format with two
+decimal places. It is useful when displaying money values.
+.p
+There are three literal types of atomic data: characters, phrases and faults.
+
+A single character is denoted with the grave mark (`).
+
+.n `X
+
+A phrase is denoted with the phrase mark (").
+
+.n "Accounting
+
+.n "apples
+.p
+A fault is denoted by the question mark (?).
+.s Trig := settrigger o;
+
+.n ??Too_many_widgets
+
+By convention a fault message text begins with a question mark to show that
+it represents a fault. This is achieved by putting ?? at the front.
+.s settrigger Trig ;
+
+A string is a list of characters. It is denoted by surrounding a sequence
+of characters by the single quote mark.
+
+.n 'a place in the sun'
+.p
+In the default output display mode (sketch, nodecor) it is difficult to
+distinguish between the literal types. Below we show the display for
+each combination of mode for the 3 atomic types and a string.
+
+.n set "sketch; set "nodecor; `X "Tom ??error 'apple pie'
+
+.n set "sketch; set "decor;   `X "Tom ??error 'apple pie'
+.p
+.n set "diagram;set "nodecor; `X "Tom ??error 'apple pie'
+
+.n set "diagram;set "decor;   `X "Tom ??error 'apple pie'
+.p
+The underscore character is considered to be a letter and can
+be used in a variable name or phrase to make a long name readable.
+
+.n Long_name := "A_really_long_phrase
+
+If a phrase is to include blanks, it is necessary to construct it
+using a string to show the blank locations.
+
+.n Blank_phrase := phrase 'with a blank'
+
+In the above example, the operation "phrase" is being used to create
+the phrase from a string. The operation "string" converts a phrase to a
+string. Either diagram mode or decor mode shows the difference between a
+phrase and a string.
+
+.n set "diagram ; set "nodecor ; Blank_phrase  (string Blank_phrase)
+.s 
+.n set "sketch; set "decor ; Blank_phrase (string Blank_phrase)
+.s set"nodecor;
+.p
+
+To insert an apostrophe in a string, use two apostrophes, side by side
+
+.n Company Software := 'Nial Systems Limited' 'Q''Nial'
+
+To insert an apostrophe in a phrase, just use one apostrophe.
+
+.n Company Software := (phrase 'Nial Systems Limited ') "Q'Nial
+
+To insert a phrase mark in a phrase, use the phrase operation.
+
+.n Decor_symbol := phrase '"decor'
+.p
+A bitstring is a list of Boolean truthvalues. When a list of truthvalues
+is displayed, it is normally shown as follows. Decor mode has no effect
+on a bitstring display.
+
+.n set "sketch;  lolllolo
+.n set "diagram; lolllolo
+.s set "sketch; set "nodecor;
+
+The operations and or and not can be applied to bitstrings as unary
+operations.
+
+.n and lolllolo
+
+.n or lolllolo
+
+.n not lolllolo
+.p
+When and and or are used infix on bitstrings, the anding or oring is
+done itemwise.
+
+.n lollolo and llollol
+.n lollolo or llollol
+.p
+Tables are two dimensional arrays. They can have any number of rows
+and columns. A table can be generated using "tell". Such a table
+shows the "address" or "row number" "column number" pair that is used to
+select items from a table.
+
+.n tell 5 5
+
+The addressing scheme starts with 0. Addresses for a list of 25 characters:
+
+.n tell 25
+.p
+Using an address, a particular value can be extracted using the operation
+"pick" or the "at" indexing notation.
+
+.n Table := 5 5 reshape 'abcdefghijklmnopqrstuvwxy';
+
+.n Table           (tell 5 5)
+
+.n 3 2 pick Table
+.n Table@(4 3)
+.p
+The operation "cart" creates a table by combining the items of its items
+in a systematic way. It generates all possible combinations for test data.
+
+.n Tests := ("TV "Computer "Radio "Telescope) cart ("Fix "Return "Reject)
+
+.n Tests @ (2 1)
+.p
+A table of booleans can be constructed. 
+
+.n TT := 5 5 reshape lllololllolooolololllolol;
+
+The operation sublist can be used to select based on a bit string.
+.n Table TT (TT sublist Table)
+
+.n EACH equal grid Table sublist Table
+
+The above expression selects the diagonal of Table.
+.p

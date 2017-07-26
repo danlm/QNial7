@@ -1,0 +1,422 @@
+                           Q'Nial Teach Facility
+
+This program is provides a brief introduction to Nial concepts
+on a number of topics. From the main menu you can select a topic
+which leads to a sequence of screen presentations with text and
+examples.
+
+At the bottom of every screen, you will see a message indicating
+your options:
+
+If you press <Enter> or any other key, you continue with the next screen.
+
+If you press <b>, you will back up to the previous screen.
+
+If you press letter <n>, you will enter Q'Nial's break mode in which
+you can experiment using Nial expressions.  Type RESUME <Enter> to continue.
+
+If you press the letter <q>, the program quits this topic and displays
+the main menu. Then you may choose another topic or quit the TEACH demo.
+.p
+Q'Nial (pronounced cue-nee-yal) is the name of the program (an interpreter)
+that executes the Nested Interactive Array Language (Nial). It is an 
+interactive programming environment in which program fragments can
+be developed and tested. Nial uses nested arrays as data objects and the
+has nested syntactic constructs.
+
+Q'Nial was developed by Prof. Michael Jenkins of Queen's University,
+Kingston, Ontario. It is licensed on behalf of Queen's by Nial Systems
+Limited.
+
+The data objects of Q'Nial utilize a theory of array data structures
+developed by Dr. Trenchard More Jr., who has collaborated in the
+design of the language.
+.p
+The demonstration examples are being read from a "script" file
+and interpreted by Q'Nial as though they were being typed
+at the keyboard. The indented line is a statement to Q'Nial,
+and the following line is the response provided by Q'Nial.
+
+.n sum 3 5 21
+
+.s setformat '%g' ;
+Q'Nial is an interactive system. When an expression is typed in,
+it is evaluated and the response is displayed on the screen immediately.
+
+.n 3 + 4
+
+.n 7.1 times 4
+
+The result can be assigned to a name or identifier. A name used in this way
+is called a "variable".
+
+.n Pay := 40. times 15.35
+.p
+The keyword "gets" may be used in place of the double symbol " := " to mean
+"is assigned the value of".
+
+.n Pay gets 40.0 times 15.35
+
+The variable "Pay" is assigned the value of the expression "40. times 15.35".
+The value held by the variable is returned in response to the name.
+
+.n Pay
+
+Several assignments can be made in one expression. A semi-colon at the
+end of the expression means "Do not return the result to the screen".
+
+.n Hours Rate Deductions := 40.00 15.00 100.00;
+
+.n Rate
+.p
+The arithmetic symbols may be used in place of words as follows:
+.r
+     SYMBOL     WORDS                       MEANING
+.r
+       *        times, prod or product      multiply
+       /        div or divide               divide
+       +        plus or sum                 add
+       -        minus                       subtract
+.r
+
+.n  Net gets Hours times Rate minus Deductions
+.n  Net := Hours * Rate - Deductions
+
+.n  X := 3.;
+.n  Y := 7 * X * X + (4 * X) - 50
+
+Thus, depending on your style of programming, you can write expressions
+that are like english or like mathematical formulas.
+.p
+Q'Nial handles character data. A "string" is a list of characters.
+A string is specified by placing a single quote mark symbol at each end
+of the list.
+
+Here the letters of the alphabet are assigned to the name "alphabet".
+
+.n Alphabet := 'abcdefghijklmnopqrstuvwxyz'
+
+.n Vowels gets 'aeiou';
+
+In the second example, the semicolon at the end of the assignment
+supressed the display of the value assigned to the variable Vowels;
+however, the value 'aeiou' has been assigned to it as we can see:
+
+.n Vowels
+.p
+A single character of data is specified by using the grave ` symbol.
+Thus `X represents the atom X, `2 represents the character 2.
+
+.n One_char := `X
+
+A sequence of character representations is the same as a string
+.n  `a `b `c = 'abc'
+.p
+Another type of data handled by Q'Nial is called a "phrase". A phrase
+is denoted by a sequence of characters preceded by a double quote mark symbol.
+For example,
+
+.n "Trudeau
+
+The value of the phrase is an atomic array, similar to a string, containing
+the letters following the double quote mark.
+
+A phrase denotation ends at the first space or certain punctuation mark.
+
+.n Phrases := "Bill "Jane "October "Kingston
+
+A phrase can be created from any string, by applying the phrase operation
+to it.
+
+.n phrase 'apple pie'
+.p
+The last type of "literal" data is called the "fault". It is specified
+by placing a question mark in front of a sequence of characters. Most faults 
+are used as error messages. The system produces then when you do something 
+illegal.  In programming you may want to create a fault as an error message
+for an unexpected condition. 
+
+.s settrigger o
+.n ??error
+
+.n fault '?missing text'
+
+Normally, the creation of a fault triggers a program interrupt. The operation
+settrigger can be used to turn this behaviour off. It has been used to
+avoid interrupting this teaching program on the above examples.
+
+.p
+When arithmetic operations such as "sum" or "times" are applied to literal
+data, such as phrases or strings, the result is a fault, indicating a 
+specific type of error.
+
+.n Data := "Total (2 3 4 5)
+.n sum Data
+
+The result is a list of four faults ?A where ?A means arithmetic error.
+The Q'Nial interpreter determined that it cannot add numbers and a phrase
+and returned an indication. There are four results because it tried to
+to add each of the four numbers in the second item of "Data" to the phrase.
+.p
+In normal display mode, it is impossible to tell if a string of characters
+represents a string, phrase or fault. A mode of display called "decor"
+decorates the items displayed so that the type of data is visible.
+
+.n Some_data gets "words 'words' ?words
+
+.n set "decor; Some_data
+
+With "decor" mode set, the differences are easily seen. Normal mode
+is returned by the following expression:
+
+.n set "nodecor;
+.p
+Q'Nial handles lists and tables of numbers and characters.
+
+.n Numbers := 100 3 7 11 17 49 14 22 5
+
+The expression "R C reshape List" returns a table with "R" rows and "C"
+columns formed by building rows of items from the "List".
+
+.n Table := 3 4 reshape 23 34 45 26 34 25 47 56 12 66 95 64
+
+The "reshape" operation can be applied to character data too. For example,
+the "alphabet", defined earlier, can be reshaped into a table of 2 rows
+of 13 columns by the following operation:
+
+.n Characters := 2 13 reshape alphabet
+.p
+Different types of data may be mixed together in a list. The display of
+a list is put in the form of a box diagram unless all the items are
+atoms (numbers, phrases, or characters).
+
+Earlier in this presentation, values were assigned to identifiers named
+Phrases, Characters, Numbers and Vowels. These values can be made into
+a list by naming them one after the other. This list has four items,
+each of which has a number of items. The idea of a list of lists is
+a fundamental idea of nested arrays; ie. arrays within arrays.
+
+.n Longlist gets Phrases Characters Numbers Vowels
+.p
+Operations are applied to arrays to produce an array result.
+
+.n Data gets "word (2 3 4 5) 'letters'
+
+The operation "reverse" reverses the sequence of the items of a list.
+
+.n reverse Data
+.p
+The operation "post" makes a column of the items of the list.
+
+.n post Data
+
+.n Numbers
+
+The operation "sum" adds the items of a list.
+
+.n sum Numbers
+
+The operation "max" finds the largest number in the list.
+.p
+.n max Numbers
+
+The operation "min" finds the smallest number in the list.
+
+.n min Numbers
+
+The operation "sqrt" finds the square root of each number in the list.
+
+.n sqrt Numbers
+.p
+Transformers are used to modify the application of an operation.
+The transformer EACH makes an operation apply to each item of the array.
+
+.n Longlist
+
+.n EACH reverse Longlist
+
+This capability is explained by saying that (EACH reverse) is a new
+operation that applies reverse to the items of the argument array. In 
+Q'Nial terms, EACH is a transformer and (EACH reverse) is a transform.
+.p
+A "strand" is a list of items following one after the other with one
+or more spaces between each item. Lists formed in this way are said to
+be in "strand notation". The last item on the list shows that the
+7+2 is evaluated and the result of 9 displayed.
+
+.n 2 3 Vowels 3.75 (4 5 6) (7+2)
+
+For some circumstances, it is necessary to have a list that contains
+only one item. In this case, a "brackets notation" is used. In brackets
+notation, list items are separated by commas and the whole list is
+bounded by brackets.
+
+.n [2,3,Vowels,3.75,[4,5,6],(7+2)]
+
+.n A_single_item_list := ["Total]
+.p
+The brackets notation is used to specify an empty list. Such a list is
+sometimes used at the beginning of a program to specify the name of a
+list that will be built by "linking" items to the list. Linking an
+item to an empty list results in a list with one item. Linking an item to
+a list with one item returns a list with two items etc.
+
+.n Friends := []
+.n Friends := link Friends "Mary
+.n Friends := link Friends "Tom
+
+An empty list shows up in a list of several items as an empty box.
+
+.n "Tom 3 5 [] 7 9 "Mary
+.p
+The term "operation composition" means combining two operations into one.
+
+In operation composition, the right-most operation is applied to the
+data and then the next operation to the left is applied to the result.
+The expression "first rest 2 3 4" is read "the first of the rest of 2 3 4".
+Since the rest of 2 3 4 is 3 4 and the first of 3 4 is 3, the result is 3.
+
+.n first      2 3 4
+.n rest       2 3 4
+.n first rest 2 3 4
+.p
+A control construct called the "IF" construct provides for selecting
+different program segments to be executed. An example is shown below.
+
+Since 5 is greater than 4, the result is "hello".
+
+.b IF 5 > 4 THEN
+    'hello'
+   ELSE
+    'goodbye'
+.e ENDIF
+
+The "CASE", "FOR", "WHILE" and "REPEAT" control constructs are also
+available in Q'Nial. Examples are shown in the "Control" topic.
+.p
+Q'Nial is programmed by defining new operations to accomplish a desired
+task. For example, there is no predefined operation in Q'Nial to average
+a list of numbers. Such an operation is easily defined as follows:
+
+.b average IS OPERATION Numbers {
+      sum Numbers / tally Numbers }
+.e
+
+The keyword "IS" indicates that a definition is being made. The keyword
+OPERATION followed by "Number {" indicates that an operation with one
+parameter "Number" is being defined. The body of the operation definition
+is the expression "sum Numbers / tally Number" which computes the value
+of the operation from its argument.
+
+.n average 22. 14. 27.
+.p
+Some very simple operations can be defined directly as a composition. 
+For example, the operation second_last can be defined as
+
+.n second_last IS OPERATION A { first rest reverse A }
+
+or can be abbreviated to 
+
+.n second_last IS first rest reverse
+
+Operations are described as being "predefined" if they are an integral
+part of the Q'Nial interpreter, or as being "user defined" if they are
+defined in the manner above. Thus, "first", "rest", "reverse", "sum", 
+"div" and "tally" are predefined; "second_last" and "average" are user defined.
+.p
+The result returned when a definition is made is ?noexpr if the definition
+has no syntax (i.e. grammatical) errors. The ?noexpr is a special result
+which does not display. Thus, if the definition has no errors, no result
+is displayed.
+
+If errors are detected, an indication is returned.
+
+.n wrong_operation IS OPERATION Array {Month gets JANUARY; write Month Array}
+
+This is incorrect because the name "JANUARY" is not known to Q'Nial.
+
+.n right_operation IS OPERATION Array {Month gets 'January';write Month Array}
+.p
+An operation is "executed" by specifying the operation name followed by the
+array to which it is applied. The array is called the "argument" of the
+operation. In the following examples, the argument is always 2 3 4 5.
+
+.n rest 2 3 4 5
+.n right_operation 2 3 4 5
+.n second_last 2 3 4 5
+.p
+When determining what has happened when a user defined operation is
+executed, it is sometimes helpful to "see" the definition. The operation
+"see" takes the name of the operation in the form of a phrase or string
+as its argument.
+
+.n see "second_last
+
+.n see 'right_operation'
+.p
+.n Num := 7 8 9
+.n tally Num
+.n sum Num
+.n sum Num div tally Num
+
+.n see "average
+
+The above definition is read:
+average is an operation on a variable called Numbers in which
+the sum of Numbers is divided by the tally of Numbers.
+.p
+.n see "average
+.n Num
+.n average Num
+.n sum (7 8 9) div tally (7 8 9)
+
+When "average" is executed with "Num" as its argument, the value of
+"Num" is substituted in the formula in place of "Any_numbers" wherever
+"Any_numbers" occurs. The definition shows the form of the operation.
+In the definition, the word "Any_numbers" is used to show how the argument
+is used when "average" is applied to an argument.
+.p
+The word or words that follow the word "OPERATION" in an operation
+definition are called the arguments of the operation. They
+can be thought of as "place-holders", since they indicate where
+the actual values are placed when the operation is used.
+If an operation has three arguments, for example, the values provided
+when the operation is used must be in the right order.
+
+.b make_date IS OPERATION Month Day Year {
+      Mo := 3 take Month ;
+      Da := string Day ;
+      Yr := 2 drop string Year ;
+.e    link  Da Mo Yr }
+
+.n make_date 'August' 23 1987
+
+.n make_date 23 'August' 87
+
+The first example provides suitable parameters to the operation. The second
+example has the parameters in the wrong order and gets an incorrect result.
+.p
+Transformers can be "user-defined". The following is the definition of a
+transformer called "TWICE", which applies an operation twice in a row.
+
+.n TWICE IS TRANSFORMER any_operation (any_operation any_operation)
+
+.n rest       1 2 3 4 5
+.n rest rest  1 2 3 4 5
+.n TWICE rest 1 2 3 4 5
+
+Transformers may be applied to any operation, either a predefined
+one, such as "rest", or one defined in a session, such as "average".
+
+.n EACH rest    (1 2 3 4 5) (99 88 42 55 66) (5 4 3 2 1) (2 4 6 8 10)
+.n EACH average (1 2 3 4 5) (99 88 42 55 66) (5 4 3 2 1) (2 4 6 8 10)
+.p
+The list of operations in brackets notation is called an "atlas".
+.s fmt := setformat '%8.5f';
+.n [sin,cos,tan,sqrt] 1.21
+
+In the above example, each of the operations is applied to the
+argument 1.21 and the result is a list of the same length as the atlas.
+
+.s setformat fmt
+.p

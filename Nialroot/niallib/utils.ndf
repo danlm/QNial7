@@ -1,0 +1,211 @@
+# utility routines used in many applications
+
+Tab IS char 9;
+
+Newline IS char 10;
+
+Return IS char 13;
+
+Blank IS char 32 ;
+
+gradedown IS GRADE >=;
+
+allwhitespace IS OP Text { and (charrep Text <= charrep Blank) }
+
+# routine to drop blanks before and after a string of text
+
+dropblanks IS OPERATION Str {
+   Str := list Str;
+   Str := False find (`  match Str) drop Str;
+   Str1 := reverse Str;
+   Str1 := False find (`  match Str1) drop Str1;
+   reverse Str1 }
+
+# routine to see if array A is a subarray of any of the arrays in B
+
+subin is op A B { or (A EACHRIGHT allin B) }
+
+isdigitorslash IS OP D { D = `/ or (D >= `0 and (D <= `9)) }
+
+isdigit IS OP D { D >= `0 and (D <= `9) }
+
+hasnodigits IS op Str {
+  and EACH (not isdigit) Str }
+
+
+# Utility routine to double up quotes and add surrounding quotes.
+  This is used when a string with single quote needs to be
+  used by Nial or embedded in a string to be stored by SQL and
+  eventually executed by Nial.  Nial requires single quotes in a string
+  to be doubled up to be properly interpreted. SQL has the same convention.
+
+newquotefix IS OP Str {
+  IF not empty Str THEN
+    Strs := `' match Str cutall Str;
+    Strs := `' EACHRIGHT hitch Strs;
+    IF first Str = `' THEN
+       link `' (link Strs) `' 
+    ELSE
+       (link Strs) append `' 
+    ENDIF
+  ELSE
+    `' `'
+  ENDIF }
+
+# test that a string has visible content.
+
+hascontent IS op Str { or (charrep Str > 32) }
+
+
+# routine to find intersect of a lists of lists
+
+intersect IS OP A {
+   IF empty A THEN
+      Null
+   ELSE
+      R := first A;
+      A := rest A;
+      WHILE not empty A and not empty R DO
+        R := R EACHLEFT in sortup first A sublist R;
+        A := rest A;
+      ENDWHILE;
+      R
+   ENDIF }
+
+substrposns is op S1 Str {
+  Posns := first S1 findall Str;
+  Substrings gets Posns EACHLEFT + grid S1 EACHLEFT choose (Str link (tally S1 reshape ' '));
+  S1 EACHRIGHT = Substrings sublist Posns }
+
+# The lexical data for each message is a list of Nial strings holding key phrases. 
+  Rather than using the display/execute mechanism to store and retrieve the 
+  data from the database, we convert the list to a single comma-separated string using
+  the following routines to place and remove commas between the strings.
+
+Comma IS `, 
+
+CommaBlank IS ', '
+
+addcommas IS OP Strs { -2 drop link (Strs EACHLEFT link CommaBlank) }
+
+allblanks IS OP Str { and (Str match ` ) }
+
+removecommas IS OP Str {
+  IF not empty Str and not allblanks Str THEN 
+     Pieces :=  Comma match Str cut Str;
+     EACH dropblanks Pieces
+  ELSE
+     Null
+  ENDIF }
+
+removewhitespace IS OP Text {
+   Text#(Text match Return sublist grid Text) := Blank;
+   Whitespace := or (Text EACHRIGHT match Blank Tab Newline);
+   Adjacent := and [front,rest] Whitespace append o;
+   not Adjacent sublist Text }
+
+
+# routine to do conversion of a Nial timestamp to an SQL date field
+  in the same order as an SQL date field.
+
+Convert_timestamp IS {
+   Months := 'Jan' 'Feb' 'Mar' 'Apr' 'May' 'Jun'
+          'Jul' 'Aug' 'Sep' 'Oct' 'Nov' 'Dec';
+   Str := Timestamp;
+   Pattern := Str EACHLEFT in ', ';
+   Parts := Pattern cut Str;
+   Mth := 3 take Parts@1;
+   Posn := Mth find Months;
+   MM := -2 take ('0' link string (Posn + 1));
+   DD := -2 take ('0' link Parts@2);
+   link Parts@4 '-' MM '-' DD ' ' Parts@3
+  }
+
+
+HttpDate_to_SQLDate IS OP Str {
+   Months := 'Jan' 'Feb' 'Mar' 'Apr' 'May' 'Jun'
+          'Jul' 'Aug' 'Sep' 'Oct' 'Nov' 'Dec';
+   Pattern := Str EACHLEFT in ', ';
+   Parts := Pattern cut Str;
+   Day Month YYYY HMS := front (rest Parts);
+   Mth := Month find Months + 1; 
+   MM := -2 take ('0' link string Mth);
+   DD := -2 take ('0' link Day);
+   link YYYY '-' MM '-' DD ' ' HMS
+  }
+
+#SQLDate_to_Oracle IS OP Str {
+    YYYY MM DD HH Mi SS := looolloll
+
+
+# utility routines for playing with dates and times.
+
+isleapyear is OP Year {
+  IF Year mod 4 = 0 THEN
+    IF Year mod 100 = 0 THEN
+      IF Year mod 400 = 0 THEN
+        l
+      ELSE
+        o
+      ENDIF
+    ElSE
+      l
+    ENDIF
+  ELSE
+    o
+  ENDIF }
+
+
+# days since Jan 1, 1980
+
+daysafter is op Yr Mo Dy {
+   Dysmo := 31 28 31 30 31 30 31 31 30 31 30 31;
+   Yrs := Yr - 1980;
+   Fullyrdays := Yrs * 365;
+   Noleapdays := sum EACH isleapyear (1980 + tell Yrs) +
+           (isleapyear Yr and ((Mo > 2) or (Mo = 2 and (Dy = 29))));
+   Daysthisyear := sum (Mo - 1 take Dysmo) + Dy - 1;
+   Fullyrdays + noleapdays + Daysthisyear }
+
+daysbetween is OP Date1 Date2 {
+  daysafter Date2 - daysafter Date1 }
+
+
+# routine to compute the difference in minutes between two 
+  SQL date/time fields. The first one is assumed to be later.
+
+minutes_between IS OP SQLDate1 SQLDate2 {
+   Yr1 Mth1 Day1 Hr1 Min1 Sec1 := EACH tonumber (SQLDate1 EACHLEFT in '-: ' cut SQLDate1);
+   Yr2 Mth2 Day2 Hr2 Min2 Sec2 := EACH tonumber (SQLDate2 EACHLEFT in '-: ' cut SQLDate2);
+   Sec1 Sec2 := floor (Sec1 Sec2 + 0.5);
+   Days := Yr2 Mth2 Day2 daysbetween Yr1 Mth1 Day1;
+   IF Hr1 < Hr2 THEN
+      Days := Days - 1;
+      Hrs := 24 + Hr1 - Hr2;
+   ELSE
+      Hrs := Hr1 - Hr2;
+   ENDIF;
+   IF Min1 < Min2 THEN
+      Hrs := Hrs - 1;
+      Mins := 60 + Min1 - Min2;
+   ELSE
+      Mins := Min1 - Min2;
+   ENDIF;
+   IF Sec1 - Sec2 < -30 THEN
+     Mins := Mins - 1;
+   ELSEIF Sec1 - Sec2 > 30 THEN
+     Mins := Mins + 1;
+   ENDIF;
+   ((Days * 24) + Hrs) * 60 + Mins
+  }
+
+is_after IS OP Date1 Date2 {
+   Date1 minutes_between Date2 > 0 }
+
+
+# utility for tracing path through code
+
+Trace is External variable;
+
+addtopath IS OP Str (
+   Trace := Trace append Str; )

@@ -1,0 +1,254 @@
+.s Table1 := 2 3 reshape (10 * random 6)
+.s Table2 := 2 3 reshape (10 * random 6)
+.s Table3 := 2 3 reshape (10 * random 6)
+.s Table4 := Table1 - Table2
+.s Table5 := Table4 / Table3
+.s List1 List2 List3 List4 List5:=EACH list Table1 Table2 Table3 Table4 Table5
+.s List4@2 := 2 2 reshape 2.34 -5.67 -3.12 4.32 ;
+.s setformat '%5.2f';
+Pervasive Operations
+
+A unary pervasive operation maps an array to another array of identical
+structure, mapping each atom by the function's behaviour on atoms.
+There are twenty-two pre-defined unary pervasive operations. Examples of
+each are given in the next few screens.
+
+The unary pervasive operations include
+
+Operation    Function
+
+abs          absolute value
+
+.n List4
+.n abs List4
+.p
+The unary pervasive operations include
+
+Operation    Function
+
+arccos       inverse cosine
+arcsin       inverse sine
+arctan       inverse tangent
+
+.n List7 := List1 / List2
+.n arccos List7
+.n arcsin List7
+.n arctan List7
+.p
+The unary pervasive operations include
+
+Operation    Function
+
+ceiling      lowest integer below a real number
+char         integer to character conversion
+charrep      character to integer conversion
+
+.n List4
+.n ceiling List4
+.n char 40 50 60 70 80 90 91 92 93 94 95
+.n charrep 'abcDEF+-*/'
+.p
+The unary pervasive operations include
+
+Operation    Function
+
+cos          cosine
+cosh         hyperbolic cosine
+
+.n List4
+.n cos List4
+.n cosh List4
+.p
+The unary pervasive operations include
+
+Operation    Function
+
+exp          exponential
+
+.n List4
+.n exp List4
+
+.p
+The unary pervasive operations include
+
+Operation    Function
+
+ln           natural logarithm
+log          logarithm to the base 10
+
+.n mix pack List7 (ln List7)(log List7)
+.p
+The unary pervasive operations include
+
+Operation    Function
+
+not          opposite of a boolean value
+opposite     opposite of a number
+
+.n post (llloooll)(not llloooll)
+
+.n mix List4 (opposite List4)
+.p
+The unary pervasive operations include
+
+Operation    Function
+
+pass         identity function
+reciprocal   reciprocal of a number
+
+.n List4
+.n pass List4
+.n reciprocal List4
+.p
+The unary pervasive operations include
+
+Operation    Function
+
+sin          sine
+sinh         hyperbolic sine
+sqrt         square root of a number
+
+.n mix pack List7 (sin List7)(sinh List7)(sqrt List7)
+.p
+The unary pervasive operations include
+
+Operation    Function
+
+tan          tangent
+tanh         hyperbolic tangent
+
+.n mix pack List7 (tan List7) (tanh List7)
+
+.p
+The unary pervasive operations include
+
+Operation    Function
+
+type         representative atom of the same type
+
+.n set "diagram;
+
+.n mix pack (o 1 2.3 `X "Wow ??error23)(type o 1 2.3 `X "Wow ??error23)
+.s set "sketch ;
+.p
+Binary Pervasive
+
+A binary pervasive operation maps two arrays having identical structure to
+one with the same structure, mapping each pair of corresponding atoms by the
+function's behaviour on pairs of atoms.
+
+All the operations of arithmetic and logic are binary pervasive.
+
+If a binary pervasive operation is applied to a pair of arrays that do not
+have the same shape, the effect is to build a conformable pair by
+replicating an atom or solitary item of the pair to the shape of the other
+item. If both items are of unequal shape and if both items are made up of
+more than one item, the fault ?conform is returned.
+.p
+Binary Pervasive Examples
+
+Operation    Function
+
+gt or >      greater than comparison
+gte or >=    greater than or equal comparison
+
+.n List1
+.n List2
+.n List1 gt List2
+.n List1 >= List2
+.p
+Binary Pervasive Examples
+
+Operation    Function
+
+lt or <      less than comparison
+lte or <=    less than or equal comparison
+
+.n Table3 (Table3 lt 5)
+
+.n List4 (List4 <= 3)
+.p
+Binary Pervasive Examples
+
+Operation    Function
+
+match        equality of atoms without type coercion
+mate         equality of atoms with type coercion
+
+.n (3.0 match 3)(3.0 mate 3)
+.n (tell 2 3) (1 match tell 2 3)
+.n `  match 'find the blanks in a sentence'
+.n 1.0 mate lll (1 1 1) (1.0 1.0) 1.0 1.1
+.p
+Binary Pervasive Examples
+
+Operation    Function
+
+mod          remainder on division of integers
+quotient     quotient of division of integers
+
+.n List10 := each ceiling List1
+.n List20 := each ceiling List2
+.n quotient List10 List20
+.n mod List10 List20
+.n [quotient,mod] 157157 13
+.n [quotient,mod] 100 16
+.p
+Binary Pervasive Examples
+
+Operation    Function
+
+plus         addition of numbers
+minus        subtraction of numbers
+
+.n List4
+.n List4 plus 5
+.n List4 minus 5
+.p
+Binary Pervasive Examples
+
+Operation    Function
+
+times        multiplication of numbers
+divide       division of numbers
+
+.n mix pack List1 List2 (List1 times List2)
+.n mix pack List1 List2 (List1 divide List2)
+.p
+Multi Pervasive
+
+A multi pervasive operation maps an arrays with items having having
+identical structure to one with the same structure, applying the operation
+to atoms in corresponding positions in the items.
+
+There are six operations in this class. They are the "reductive"
+operations of arithmetic and logic.
+
+If a multi pervasive operation is applied to an array that does not have
+items of the same shape, the effect is to build a conformable array by
+replicating an atom or solitary item of the array to the common shape of
+the other items. If two or more of the items have tally different from one
+and are of unequal shape, the fault ?conform is returned.
+
+The multi pervasive operations are: and, max, min, or, product, sum.
+.p
+.n and l l
+.n and lllollololl
+.n and lllo lolo oolo
+.n or l l
+.n or lllollololl
+.n or lllo lolo oolo
+.p
+.n List1
+.n [max,min] List1
+.n List4
+.n [max,min] List4
+.p
+.n List1
+.n sum List1
+.n mix List1 List2 List3 (sum List1 List2 List3)
+
+.n List1 link (product List1)
+.n mix pack List1 List2 List3 (product List1 List2 List3)
+.s setformat '%g';
+.p

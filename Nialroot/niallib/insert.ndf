@@ -1,0 +1,49 @@
+#
+File: insert.ndf
+Operation: inbefore Values List Index
+Operation: inafter Values List Index
+Operation: inserthere Values List Indices
+Operation: ininterval Values List Interval_width
+
+# This file contains insertion operations.
+  Inbefore places the list of values before the item with a specified index in
+  the given list.
+.
+  Inafter places the list of values after the item with a specified index in
+  the given list.
+.
+  Inserthere places the list of values after each of the items of List having
+  the indices specified in Indexlist.
+.
+  Ininterval places the list of values after each interval of a list of a given
+  width.
+
+inafter IS OPERATION Values Lst Index {
+   link ( Index + 1 take Lst ) Values ( Index + 1 drop Lst ) }
+
+inbefore IS OPERATION Values Lst Index {
+   link ( Index take Lst ) Values ( Index drop Lst ) }
+
+inserthere IS OPERATION Values Lst Indexlist {
+   Frontparts := 0 hitch front Indexlist EACHBOTH drop ( Indexlist EACHLEFT
+   take Lst ) ;
+   Lastpart := last Indexlist drop Lst ;
+   link ( link ( Frontparts EACHLEFT link Values ) ) Lastpart }
+
+ininterval IS OPERATION Values Lst Interval {
+   Indexlist := Interval * count floor ( tally Lst / Interval ) ;
+   inserthere Values Lst Indexlist }
+
+# Examples:
+
+#        inbefore (2 3) (1 4 5) 1
+1 2 3 4 5
+
+#        inafter 'bad ' 'The cat.' 3
+The bad cat.
+
+#        inserthere ' - ' 'hellooutthere' (5 8)
+hello - out - there
+
+#        ininterval ' - ' 'aabbccddee' 2
+aa - bb - cc - dd - ee -

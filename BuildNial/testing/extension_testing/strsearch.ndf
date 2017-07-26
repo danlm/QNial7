@@ -1,0 +1,62 @@
+# routines to support my regular expression design
+  
+# routine strsearch uses a support routine re_matchall
+  which repeatedly uses the compiled regular expression
+
+strsearch IS OP A {
+re_matchall is OP Target Regexp Options {
+    Matches := Null;
+    Done := o;
+    Offset := 0;
+    WHILE not Done DO
+       Match := re_match 0 Target 1 Options;
+       IF empty Match THEN
+         Done := True;
+       ELSE
+         Pos Len := first Match;
+         Matches := Matches append (Offset + Pos) Len;
+         Offset := Offset + Pos + Len;
+         Target := (Len + Pos) drop Target;
+       ENDIF;
+    ENDWHILE;
+    Matches 
+};
+  IF tally A notin 2 3 THEN
+      Res := fault '?invalid args in strsearch';
+  ELSE 
+    IF tally A = 2 THEN
+       Regexp Target := A;
+       Options := 1;
+    ELSEIF tally A = 3 THEN
+       Regexp Target Options := A;
+    ENDIF;
+    Res := re_compile 0 Regexp Options;
+    IF Res THEN
+       Res := re_matchall Target Regexp Options;
+    ENDIF;
+  ENDIF;
+  Res
+}
+
+# nial routine to replace re_extract
+
+re_extract1 IS OP Target Posnlens {
+   Posns Lens := flip Posnlens;
+   Parts := Posns EACHBOTH + EACH tell Lens;
+   Parts EACHLEFT choose Target }
+
+
+# nial routine to replace re_split
+
+re_split1 is OP Target Posnlens (
+   Posns Lens := flip Posnlens;
+   Parts := Posns EACHBOTH + EACH tell Lens;
+   grid Target EACHLEFT in Posns cut Target 
+)
+
+#nial routine to replace re_splice
+
+re_splice1 is OP Val Parts {
+   link (front Parts eachleft Link Val) link last Parts
+}
+

@@ -1,0 +1,19 @@
+#
+Operation: tostring Array_list
+File: tostring.ndf
+
+# Tostring converts a list of items to a string with each item separated by one
+  blank.
+
+tostring IS OPERATION A {
+   front link ( EACH string ( list A ) EACHLEFT link ' ' ) }
+
+# Examples:
+
+#        
+set "decor ; tostring "See "Spot "Run
+'See Spot Run'
+
+#
+        tostring "See "the 3 "Dogs
+'See the 3 Dogs'

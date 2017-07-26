@@ -1,0 +1,29 @@
+#
+Operation: dropfront Item A
+Operation: dropback Item A
+Operation: dropboth Item A
+File: dropfront.ndf
+
+# dropfront drops leading occurrences of an item from an array.  
+  If the array is a multivalent one, the result is a list.
+  dropback drops all trailing occurrences of an item from an array.
+  dropboth comines the actions to drop leading and trailing items.
+
+dropfront IS OPERATION Item A {
+   A := list A;
+   False find (Item EACHRIGHT = A) drop A }
+
+dropback IS OPERATION Item A {
+   reverse (Item dropfront reverse A ) }
+
+dropboth IS OPERATION Item A {
+    dropback Item (dropfront Item A) }
+
+# Examples:
+
+#        dropfront `. '... and so on ...'
+ and so on ...
+         dropback  `. '... and so on ...'
+... and so on
+         dropboth  `. '... and so on ...'
+ and so on

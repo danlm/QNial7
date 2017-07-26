@@ -1,0 +1,20 @@
+# a test to show speed of computation in the face of fragmentation.
+  Run 
+        timeit test 1000 10000
+There should be no delay between the 4th and 5th outputs of status
+and time. The old memory allocator had a significant delay there.
+
+test is OP M N { 
+    Z := floor (M times random n);
+    write status; write time;
+    X gets EACH string Z;
+    write status; write time;
+    Y gets cull X;
+    write status; write time;
+    X gets 5;
+    write status; write time;
+    EACH string Z;
+    write status; write time;
+    Y gets 10;
+    write status; write time;
+}

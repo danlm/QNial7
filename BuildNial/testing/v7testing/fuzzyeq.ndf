@@ -1,0 +1,19 @@
+# an equality test that considers its arguments equal 
+  if they are numerically equal within relative fuzz.
+
+fuzzyeq is op a b {
+   fuzz is 1e-13;
+   numeric is op a (type a in o 0 0.);
+     if a = b then
+       True
+     elseif atomic a and atomic b then
+        if numeric a and numeric b then
+           abs(a - b) <= (fuzz*max abs a b) or (abs(a - b) <= fuzz)
+        else 
+           a = b
+        endif
+     elseif shape a = shape b then
+        and eachboth fuzzyeq a b
+     else
+        False
+     endif }

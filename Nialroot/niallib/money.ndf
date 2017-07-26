@@ -1,0 +1,48 @@
+#
+Operation: money Number [Minimum field width]
+File: money.ndf
+
+# Money returns a string with the input number formatted into dollars and cents.
+  The optional second argument specifies the minimum length of the string.
+  Negative numbers are returned with enclosing parenthesis.  An invalid
+  argument, or one with absolute value greater than 1,000,000,000,000 returns
+  the fault ?money.
+
+money IS OPERATION Amount {
+   Moneysign Moneydecimal Moneyseparator := '$.,' ;
+   IF tally Amount = 2 THEN
+      Amt Size := Amount ;
+   ELSE
+      Amt Size := Amount 0 ;
+   ENDIF ;
+   IF ( isinteger Amt or isreal Amt ) and ( abs Amt < 1.e13 ) THEN
+      Mode := setformat '%15.2f' ;
+      Digits := link sketch ( abs Amt * 1. ) ;
+      Result := Moneydecimal hitch ( -2 take Digits ) ;
+      Dollars := -3 drop Digits ;
+      Dollars := not ( Dollars match `  ) sublist Dollars ;
+      WHILE tally Dollars > 3 DO
+         Result := link Moneyseparator ( -3 take Dollars ) Result ;
+         Dollars := -3 drop Dollars ;
+      ENDWHILE ;
+      Result := link Moneysign Dollars Result ;
+      IF Amt < 0. THEN
+         Result := link '(' Result ')' ;
+      ENDIF ;
+      IF ( tally Result < Size ) THEN
+         Result := Size - tally Result reshape ' ' link Result ;
+      ENDIF ;
+      setformat Mode ;
+      Result
+   ELSE
+      fault '?money'
+   ENDIF }
+
+# Examples:
+
+# (4 dollars,  minimum field width of 10)
+         money 4 10   
+     $4.00
+
+#        money -49999.98
+($49,999.98)

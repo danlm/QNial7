@@ -1,0 +1,29 @@
+# This program generates random arrays and stores them in the workspace in
+  random variable names. It erases every other one to create a heap that is
+  badly fragmanted.
+
+# It should be run to examine the behaviour of a fixed size workspace as it
+  gets full.
+
+Varnum := 0;
+
+genname is phrase link 'X ' (string (Varnum := Varnum + 1));
+
+generate is op seedno (
+     seed seedno;
+     Size gets 1;
+     repeat
+       assign (Nm := genname) (tell Size);
+       assign genname (tell (Size+1));
+       assign genname (tell (Size + 2));
+       erase Nm;
+       Size := Size + 3;
+       write "Varnum Varnum "Size Size;
+       write status;
+     until false endrepeat;
+)
+
+set"log;
+
+generate (Pi/10.)
+

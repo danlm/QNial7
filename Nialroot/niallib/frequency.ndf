@@ -1,0 +1,14 @@
+#
+Operation: frequency Values A
+File: frequenc.ndf
+
+# This operation counts the number of occurrences in A of each value in
+  Values.
+
+frequency IS OPERATION Values A {
+   EACH sum ( Values EACHLEFT EACHRIGHT = A ) }
+
+# Example:
+
+#        frequency 'abc' 'The cat sat on the baseball bat'
+5 3 1

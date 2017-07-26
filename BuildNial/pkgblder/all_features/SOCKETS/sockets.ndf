@@ -1,0 +1,93 @@
+# high level routines for socket communication 
+
+MAXLENGTH IS 1000
+
+check_socket IS OP Arg {
+  NONLOCAL Return_status;
+  IF isfault Arg and (Arg ~= ??noexpr) THEN
+    write Arg;
+    Return_status := 'Connection_lost';
+    %Toplevel;
+  ENDIF;
+  Arg }
+
+socket_read IS OP socket {
+  Len := check_socket socket_receive socket 1 l;
+  %write 'received Len: ' Len;
+  %write 'type' (type Len);
+  str := '';
+  WHILE len - tally Str > MAXLENGTH DO
+    Piece := socket_receive socket MAXLENGTH o;
+    Str := Str link Piece;
+  ENDWHILE;
+  Str := Str link socket_receive socket (len - tally Str) o;
+  %write 'received Str ' Str;
+  %write 'received type' (type Str);
+  %write link 'received string of length ' (string tally Str);
+  Res := execute Str;
+  %write link 'containing ' (string tally content Res) ' atoms';
+  Res
+}
+
+
+socket_write IS OP socket array {
+  str := display array;
+  len := tally str;
+  check_socket socket_send socket len l;
+  WHILE tally str > MAXLENGTH DO
+    piece str := MAXLENGTH [take,drop] str;
+    socket_send socket piece o;
+  ENDWHILE;
+  socket_send socket str o;
+  %write link 'sent string of length ' (string tally Str);
+  %write link 'containing ' (string tally content array) ' atoms';
+}
+
+
+socket_getline IS OP socket echo echostar remoteecho {
+ nllist IS char (0 10 13);
+ input := null;
+ nl1 := list char 13;
+ nl2 := list char 10;
+ REPEAT
+  % get the next char;
+  inp := socket_receive socket 1 o;
+  IF isfault inp THEN
+    exit null;
+  ENDIF;
+  %-- if it is not a new line then use it;
+  IF inp ~= nl1 THEN
+    %-- add it to the end of our string;
+    input := input link inp;
+    IF echo THEN 
+      IF echostar THEN
+        socket_send socket '*';
+      ELSE
+        socket_send socket inp;
+      ENDIF;
+    ENDIF;
+  ELSE
+    %-- NON Blocking peek at the next character;
+    %-- depending on the client, there is sometimes a extra NULL or other nl char;
+    %-- character waiting;
+    inp2 := socket_peek socket 1 o;
+    if (first inp2) in nllist THEN
+      %-- if we got a NULL then gobble it up;
+      inp2 := socket_receive socket 1 o;
+    ENDIF;
+    IF remoteecho THEN
+     socket_send socket nl1;
+     socket_send socket nl2;
+     exit input;
+    ENDIF;
+    IF (inp2 = nl2)  THEN
+      IF echo THEN
+        socket_send socket nl1;
+        socket_send socket nl2;
+      ENDIF;
+      exit input;
+    ENDIF
+  ENDIF;
+ UNTIL o
+ ENDREPEAT
+}

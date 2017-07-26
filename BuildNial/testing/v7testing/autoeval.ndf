@@ -1,0 +1,82 @@
+# this file does the automatic tests on the evaluation ids
+
+#This file checks the evaluator using expressions that are expected
+# to evaluate to true (predicates) and also validates
+# the parsing mechanism using the folllowing two identities,
+# which depend on the function canonical. The first identity checks
+# the parsing mechanism is consistent, while the second adds a test
+# that it does not transform meaning. 
+
+canonical is link descan deparse parse scan
+
+id1 is op a (canonical canonical a equal canonical a)
+
+id2 is op a (execute a equal execute canonical a)
+
+loaddefs"fuzzyeq
+
+setformat '%25.17g'
+
+testcases IS OP Fname {
+  Tests := getfile Fname;
+  FOR Test WITH Tests DO
+    IF not empty TEST and (first Test ~= `#) THEN
+      write Test;
+      Res := execute Test;
+      IF isboolean Res THEN
+        IF not execute Test THEN
+           write 'result does not match answer';
+           appendfile "evaltest.out ( link 'incorrect value on : ' Test);
+        ENDIF;
+      ELSE
+        write (phrase 'value is not boolean: ') Res;
+        appendfile "evaltest.out ( link 'value is not boolean: ' Test);
+      ENDIF;
+      IF not id1 Test THEN
+         write 'id1 failed';
+         appendfile "evaltest.out ( link 'id1 fails on : ' Test);
+      ENDIF;
+      IF not id2 Test THEN
+         write 'id2 failed';
+         appendfile "evaltest.out ( link 'id2 fails on : ' Test);
+      ENDIF;
+    ENDIF;
+  ENDFOR;
+}
+
+clean is {x gets symbols 0; 
+      write link 'no of ids is ' (string tally x);
+      each (erase first) x; }
+
+# code for examples for checking evaluator
+
+a is 3; f is 1+ ; T is TR f (f f)
+
+#The routines below control reading the file evtests..
+# The file contains calls to testcases each of which reads in a sequence of tests.
+
+
+Init is op filenm {
+  NONLOCAL fnm;
+  fnm gets open filenm "r;
+  if isfault fnm then
+    write fnm;
+    write 'Leaving Nial.';
+    bye;
+  endif;
+}
+
+
+Run is { NONLOCAL Spacelost;
+ Str := '';
+ while not isfault Str do
+  Str gets readfile Fnm;
+  write Str;
+  execute Str;
+ endwhile;
+  write 'Done autoeval.ndf from Run';
+ Bye;
+}
+
+Run
+

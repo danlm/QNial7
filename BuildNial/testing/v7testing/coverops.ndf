@@ -1,0 +1,102 @@
+# The purpose of this program is to test that
+all the operations of Nial do not fail when
+applied to a variety of data sets. It is expected
+to run until completion logging places where it
+produced a result that forced a jump to top
+level. These test do not check for semantic correctness
+of the operations, but just that they are robust when
+given any kind of argument.
+
+#  The data sets should be tailored to avoid problems that interrupt the execution.
+
+# The datagen.ndf file contains generators for data in a number
+of classes and lists of the names suitable for testing
+unary, and binary soperations.
+
+# The names of all the operations of Q'Nial are stored in the file: "allops".
+The files "uniops" and "binops" contain the names of the data operations.
+The coverage tests should run on these latter ones with no difficulty.
+
+# The file "pictops" contains operations that are part of the
+i/o capabilities of Q'Nial. 
+The remaining operations in "otherops" are either
+duplicate names or operations which have side-effects and cannot be
+run from the coverage tests. Thus allops is retained just to ensure that
+all operations have been considered.
+
+# The three expressions Startunary, Startbinary, snd Startpict
+initiate the test run for each of the above lists of operations.
+
+# Space usage can be monitored when the tests are run with the
+DEBUG version of Q'Nial. The space available message at the top
+level should not change from its value after the point that 
+"coverops.ndf" has been loadded.
+
+loaddefs "datagen
+
+coverageloop is operation Opsvar Datavar { 
+  NONLOCAL Dataops Datasets Opsi DataI; 
+  For OpsI with Opsvar drop grid Dataops DO
+    Opi := Dataops@opsi;
+    For DataI with Datavar drop grid Datasets DO
+      Dataseti := Datasets@Datai;
+      { % block to reduce local variable usage;
+      Str := link 'applying ' Opi ' to ' Dataseti;
+      write Str;
+      Pt := parse scan link 'EACH ' Opi ;
+      Res := apply Pt (execute Dataseti);
+      };
+      % write first status;
+    ENDFOR;
+  ENDFOR;
+}
+
+
+Startunary is {
+ NONLOCAL Dataops Datasets Spacelost; % shared with coverageloop and Recovery;
+ setlogname "cover.log;
+ set"log;
+ freespace := 34567 + 25;
+ Dataops gets getfile "uniops;
+ Datasets gets allargs;
+ write status;
+ freespace := first status;
+ coverageloop 0 0;
+ write 'done from Start';
+ erase "Dataops; % to clear space used by this function;
+ write status;
+ Spacelost := Spacelost + (freespace - first status max 0);
+}
+
+Startbinary is {
+ NONLOCAL Dataops Datasets Spacelost; % shared with coverageloop and Recovery;
+ setlogname "cover.log;
+ set"log;
+ freespace := 34567 + 25;
+ Dataops gets getfile "binops;
+ Datasets gets binaryargs;
+ write status;
+ freespace := first status;
+ coverageloop 0 0;
+ write 'done from Start';
+ erase "Dataops; % to clear space used by this function;
+ write status;
+ Spacelost := Spacelost + (freespace - first status max 0);
+}
+
+Startpict is {
+ NONLOCAL Dataops Datasets Spacelost; % shared with coverageloop and Recovery;
+ setlogname "cover.log;
+ set"log;
+ freespace := 34567 + 25;
+ Dataops gets getfile "pictops;
+ Datasets gets allargs;
+ write status;
+ freespace := first status;
+ coverageloop 0 0;
+ write 'done from Start';
+ erase "Dataops; % to clear space used by this function;
+ write status;
+ Spacelost := Spacelost + (freespace - first status max 0);
+}
+

@@ -1,0 +1,117 @@
+A language used for artificial intelligence applications must handle
+symbols effectively. It must be able to select items from sets of items,
+make decisions about the items and manage associations between items.
+An AI language should be able to mix numeric and symbolic computations.
+
+These examples show how Q'Nial handles symbols.
+
+Q'Nial can determine if an item is a member of a collection of objects.
+
+.n Names := "Tom "Mary "Susan "Bill "Frank "Ludwig "Rafael "Sven "Maude;
+
+.n find "Susan Names
+
+Susan is in position 2 in the list (counting 0, 1, 2, 3 ...). The result is
+an address (a list of length one).
+
+.n "Bill in Names
+
+The result is "l", representing True. Therefore, Bill is in Names.
+.p
+The pre-defined operation "seek" provides the results of "find" and "in".
+
+.n Names
+
+.n There Where := seek "Ludwig Names
+
+The result indicates that Ludwig is in Names at address 5.
+
+.n IF There THEN Names @ Where ENDIF
+.p
+The string 'if the door is open enter the room' can be converted to
+phrases using the library operation "towords".
+
+.n set "decor ;
+
+.n Words := towords 'if the door is open enter the room'
+
+The phrases can be converted to strings using "EACH string".
+
+.n Sentence := EACH string Words
+.s set "nodecor ;
+.p
+The next example finds the words with 4 letters in the list Words.
+
+The (tally string) converts a word to a string and determines how many
+characters are in it.
+
+EACH applies (tally string) to each of the items in Words.
+
+This gives the list 2 3 4 2 4 5 3 4.
+
+.n Words
+
+.n Count_of_characters := EACH (tally string) Words
+
+The list 2 3 4 2 4 5 3 4 is compared to 4 returning the bitstring oololool.
+
+.n Extractor := Count_of_characters match 4
+.p
+Items are extracted from Words using "sublist".
+
+.n Wordswith4letters := Extractor sublist Words
+
+These separate lines can be combined as one expression as follows:
+
+.n Wordswith4letters := EACH (tally string) Words match 4 sublist Words
+.p
+A requirement in AI is to manage associations, such as animals and facts.
+.n post pack Animalfacts
+.p
+To determine facts about cats, the operation "lookup" is used.
+
+.n lookup Animalfacts "cat
+
+The operation "lookup" is user-defined as follows:
+
+.n see "lookup
+
+.n lookup Animalfacts "chicken
+
+There is no information on "chicken".
+.p
+Is there an association between "cow" and "gives milk"?
+
+.n Animalfacts has_assoc ("cow (phrase 'gives milk'))
+
+The operation "has_assoc" is another user-defined one.
+
+.n see "has_assoc
+.p
+The operation "add_assoc" is used to add a new association.
+
+.n see "add_assoc
+.p
+Add_assoc is used to add the association that "cats are finicky".
+
+.n Animalfacts := Animalfacts add_assoc "cat "finicky;
+
+.n lookup Animalfacts "cat
+
+Now cats are recorded as finicky.
+.s Fmt := setformat '%5.2f';
+.p
+An AI language should be able to mix numeric and symbolic computations.
+.b Report IS OPERATION Partnames Quantity Price Title {
+       Cost := Quantity * Price;
+       Body :=  ("Part "Number "Price (phrase '   Cost')
+                hitch (pack Partnames Quantity Price Cost)
+                append " " "Total (sum Cost));
+.e     post Title (mix Body) }
+
+.n Parts := "wing "fuselage "rudder "tail "engines ;
+.n Quantities := 2 1 1 1 4 ;
+.n Prices := 3.60 10.30 1.30 .70 2.30 ;
+.n Report Parts Quantities Prices 'Aircraft Plan'
+.s setformat Fmt ;
+.p

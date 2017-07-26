@@ -1,0 +1,79 @@
+Many of the operations and ideas of Lisp have a counterpart in Q'Nial.
+
+"car", "cdr" and "cons" in Lisp are the Q'Nial operations "first", "rest"
+and "hitch". To use Lisp terminology, they are defined for us as follows:
+
+.n car is first
+.n cdr is rest
+.n cons is hitch
+
+.n a gets "sum ("prod "x 1) 3
+
+.n (car a)
+
+.n (cdr a)
+.p
+A list can be built back using the Lisp terms or Nial ones.
+
+.n a
+
+.n (cons (car a) (cdr a))
+
+.n (first a hitch rest a)
+
+Two other Lisp words can be defined, nul and eq
+
+.n nul is empty
+
+.n eq is =
+.p
+The concept of membership can be written in terms of Lisp operations:
+
+.b member is op a b(
+     if (nul b) then o
+      elseif (eq a (car b)) then l
+      else (member a (cdr b))
+.e   endif)
+
+Is X a member of Y X Z AA? The response is l for True, indicating
+that X is a member of the list.
+
+.n "X member "Y "X "Z "AA
+
+Is X a member of Y Z? The response is o for False, indicating
+that X is not a member of Y Z.
+
+.n "X member "Y "Z
+.p
+The corresponding Q'Nial primitive operation for membership is "in".
+
+.n "X in "Y "X "Z "AA
+
+The operation "member" could be written in the functional style.
+Its definition as written above is:
+.n see "member
+
+In functional style it is:
+.n member IS OPERATION A B (or ( A EACHRIGHT = B ) )
+
+.n "X member "Y "X "Z "AA
+.p
+Some of the Lisp ideas are implemented succinctly in Q'Nial
+The operation "push" pushes item onto a stack; "pop" takes it off
+
+.n Stack is external variable
+.b push is op Item {
+   NONLOCAL Stack ;
+.e Stack := link Item Stack }
+
+.b pop is {
+   NONLOCAL Stack ;
+   Item Stack := [first,rest] Stack ;
+.e Item }
+
+.n Stack := 2 3 5 8 11 19 ;
+.n pop
+.n Stack
+.n push 30
+.n pop pop pop pop ; Stack
+.p

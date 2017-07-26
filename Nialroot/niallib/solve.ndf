@@ -1,0 +1,80 @@
+# solve_linear_eqns A B
+
+# Routines associated with solving linear equations
+	The linear algebra primitives are:
+		solve
+		inverse        (inv)
+		innerproduct   (ip)
+
+
+# The operation solve uses Gaussian Elimination for
+  solving the system of linear equations
+            Ax = b
+  
+
+# Examples:
+
+#    A gets 2 2 reshape 1. 0. 0. 1.;  
+     B gets 3. 4.; 
+     A solve B
+
+matrixmult IS innerproduct
+
+hilbert IS OPERATION N {
+  recip (tell N  OUTER + tell N + 1) }
+
+vnorm IS OPERATION X {
+  max abs X }
+
+mnorm IS OPERATION A {
+  max EACH sum rows abs A }
+
+reldiff IS OPERATION X Y {
+  vnorm (X - Y) / vnorm X }
+
+residuals IS OPERATION A B X {
+  vnorm (A matrixmult X - B) }
+
+# M is a series of integers, eg. count 10. Test runs solve on a random
+  N by N matrix with N taking on the values of (abs M). It returns a list 
+  of pairs where the first item of each pair is abs N and the second is 
+  the elapsed CPU time spent in solving the set of equations.
+
+#
+test is op M {
+   Fmt := setformat '%5.2f' ;
+   Res := Null ;
+   FOR N WITH abs M DO
+      a gets random n n ;
+      b gets a inner[+,*] count n;
+      T1 := Time ;
+      a solve b ;
+      T2 := Time ;
+      Res := Res append ( N (T2 - T1) );
+   ENDFOR ;
+   write mix Res ;
+   setformat Fmt ;
+   Res }
+
+# Test1 displays the results of the other functions.
+
+#
+test1 is op N {
+  Fmt := setformat '%g' ;
+  A := random N N ;
+  B gets A inner[+,*] count N ;
+  X := A solve B ;
+  H := ((hilbert N) ) ;
+  V := ((EACH vnorm cols A) ) ;
+  M := ((mnorm A) ) ;
+  D := ((reldiff X (count N) ) ) ;
+  R := ((residuals A B X ) ) ;
+  ITERATE write
+  ('hilbert    ') H
+  ('vnorm      ') V
+  ('mnorm      ') M
+  ('solve AX=B ') X
+  ('reldiff    ') D
+  ('residuals  ') R ;
+  setformat Fmt ; }
+

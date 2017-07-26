@@ -1,0 +1,64 @@
+# This program generates random arrays and stores them in the workspace in
+  random variable names.  Should run until internal integer overflow or
+  workspace full. To run, loaddefs this file then type: generate <seed>
+
+vals gets 0 1 2 99 32767 -1 -77 -32768
+[0] [1] [2] [99] [32767] [-1] [-77] [-32768]
+(0 reshape 0) (0 reshape 1) (0 reshape 2) (0 reshape 99)
+(0 reshape 32767) (0 reshape -1) (0 reshape -77)
+(0 reshape -32768)
+(0 2 reshape 0) (0 2 reshape 1) (0 2 reshape 2) (0 2 reshape 99)
+(0 2 reshape 32767) (0 2 reshape -1) (0 2 reshape -77)
+(0 2 reshape -32768)
+(1 1 reshape 0) (1 1 reshape 1) (1 1 reshape 2) (1 1 reshape 99)
+(1 1 reshape 32767) (1 1 reshape -1) (1 1 reshape -77)
+(1 1 reshape -32768)
+(1 1 2 reshape 0) (1 1 2 reshape 1) (1 1 2 reshape 2) (1 1 2 reshape 99)
+(1 1 2 reshape 32767) (1 1 2 reshape -1) (1 1 2 reshape -77)
+(1 1 2 reshape -32768)
+(2 2 reshape 0) (2 2 reshape 1) (2 2 reshape 2) (2 2 reshape 99)
+(2 2 reshape 32767) (2 2 reshape -1) (2 2 reshape -77)
+(2 2 reshape -32768)
+3.4 0.0 -1.99 234.567 89.54 "hello "goodbye 'what' ?bad 'stop' `x `y `z
+o l lolloo  lloolllll lllll ooooooo 3.4e10 2.6e-7 -1.99e2 -44e-50 [1,2,3]
+[3.4,66,"hello] (1 (2 ( 3 4 5 (6 7) 8 (4 5)) 8)) ('abc' ("hello 29) (1 2 3))
+2e307 3.43e-308 (2e307 3.43e-308) [[[`a]]] [[[1 2 3]]]
+(post tell 8) (tell 2 3) (cart ('abc' 99 4.5))(1 2 3 [[[4]]]) [Null];
+
+numvals gets tally vals
+
+noisy gets o;
+
+uops gets "cart "product "link "pair "sqrt "grid
+   "type "content "flip "mix "rows "single "reverse;
+
+binops gets "plus "minus "link "pair "append "flip "cull ;
+
+genname is phrase ( floor (26 * random 5) choose 'abcdefghijklmnopqrstuvwxyz' )
+
+genvalue is { b gets floor (numvals * random 1) pick vals; 
+  if noisy then write b endif ; b }
+
+genuop is { a gets floor (tally uops * random 1) pick uops; 
+  if noisy then write a endif; a }
+
+genbinop is { a gets floor (tally binops * random 1) pick binops;
+  if noisy then write a endif; a }
+
+
+generate is op seedno {
+     seed seedno;
+     write timestamp;
+     repeat
+       assign genname (apply genuop genvalue);
+       assign genname (apply genbinop (genvalue genvalue));
+       write status;
+     until false endrepeat;
+}
+
+Run is { set"log;
+   generate read 'give starting number x (0 <=x<1) : ';
+  }
+
+Run
+   

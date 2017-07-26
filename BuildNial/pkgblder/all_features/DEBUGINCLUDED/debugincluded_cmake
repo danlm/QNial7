@@ -1,0 +1,6 @@
+option(USE_DEBUG "Build a DEBUG system" OFF)
+
+# Compilation options for DEBUG system
+if (USE_DEBUG)
+  set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -DDEBUG")
+endif (USE_DEBUG)

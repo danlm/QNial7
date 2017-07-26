@@ -1,0 +1,68 @@
+#
+# Some performance testing of streams
+#
+library "nstreams
+
+write_size := 1034*1024;
+num_writes := 512;
+
+data := write_size take 'a';
+
+test_write is op N {
+  s := nio_open -1 0;
+  i := 0;
+  while i < N do
+    nio_write s data;
+    i := i + 1;
+  endwhile;
+  s
+}
+
+t_start := time;
+s := test_write num_writes;
+res := nio_count s;
+t_end := time;
+
+write '*** Write Test 1 ***';
+write 'Res' res;
+write 'Time' (t_end - t_start);
+write 'Performance' (Res / (t_end - t_start));
+
+write '';
+
+read_test is op S N {
+  i:= 0;
+  while i < N do
+    nio_read s write_size;
+    i := i + 1;
+  endwhile;
+  s
+}
+
+write '*** Read Test ***';
+
+cnt := nio_count s;
+t_start := time;
+s := read_test s num_writes;
+res := nio_count s;
+t_end := time;
+
+write 'Res' res;
+write 'Time' (t_end - t_start);
+write 'Performance' (cnt / (t_end - t_start));
+
+write '*** Write Test 2 ***';
+
+t_start := time;
+s := test_write num_writes;
+res := nio_count s;
+t_end := time;
+
+write 'Res' res;
+write 'Time' (t_end - t_start);
+write 'Performance' (Res / (t_end - t_start));
+
+write '';
+
+bye;
+

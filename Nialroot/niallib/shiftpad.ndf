@@ -1,0 +1,30 @@
+#
+Operation: shiftpad Position Array Pad_item
+File: shiftpad.ndf
+
+# Rotate items a specified number of positions to the left, replacing emptied
+  positions with a specified item.  The result is the shape of Array.
+
+shiftpad IS OPERATION Position Array Pad {
+   shape Array reshape ( opposite tally Array take
+     ( Array link ( Position reshape single Pad ) ) ) }
+
+# Examples:
+
+#        shiftpad 3 'abcdef' `*
+def***
+
+#        shiftpad 1 (1 2 3) 0
+2 3 0
+
+#
+     shiftpad 3 (count 4 5) (0 0)
++---+---+---+---+---+
+|1 4|1 5|2 1|2 2|2 3|
++---+---+---+---+---+
+|2 4|2 5|3 1|3 2|3 3|
++---+---+---+---+---+
+|3 4|3 5|4 1|4 2|4 3|
++---+---+---+---+---+
+|4 4|4 5|0 0|0 0|0 0|
++---+---+---+---+---+

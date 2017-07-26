@@ -1,0 +1,9 @@
+set"log
+
+test1 is (i:=5;repeat i:=i - 1;if i<3 then exit i endif until i<=0 endrepeat)
+
+test2 is (i:=5;repeat i:=i - 1;if i<3 then i endif until i<=0 endrepeat)
+
+getdef "test1
+
+getdef "test2

@@ -1,0 +1,3 @@
+timed is tr f op a{ t gets time;f a;time - t}
+
+btimed is tr f op a b{ t gets time;a f b;time - t}

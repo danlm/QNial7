@@ -1,0 +1,56 @@
+library "sprocess
+
+# Very simple worker process that just echoes back anything
+# read on the comms channel
+
+echo_worker is op chan args {
+       while l do
+         data := ipc_read_array chan;
+	 cnt := ipc_write_array chan data;
+       endwhile;
+       l
+}
+
+write 'Starting echo worker';
+
+try_count := 100000; 
+tries := try_count;
+success := 0;
+test_data := 2 3 4 5 reshape count 120;
+
+# Create a worker process to implement the echo_worker function
+# defined above.
+
+chan io_chan proc := create_worker "echo1 !echo_worker 1;
+
+write child_id proc;
+
+# loop sending the test data to the child process and reading what
+# is sent back. Count the number of correct responses.
+
+start_time := time;
+while (tries > 0) do
+      %write 'Sending array';
+      ipc_write_array chan test_data;
+      %write 'Reading array';
+      res := ipc_read_array chan;
+      if (res = test_data) then
+        success := success + 1;
+      else
+        write o;
+      endif;
+      tries := tries - 1;
+endwhile;
+end_time := time;
+
+# Write the count of successes
+
+write 'Ending test';
+write success;
+write 'Performance in messages/sec';
+write ((2*try_count)/(end_time - start_time));
+
+# Terminate the child process to avoid zombies
+
+kill_child proc;
+bye

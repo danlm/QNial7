@@ -1,0 +1,143 @@
+# Complex functions for Nial
+#
+# Arrays of complex numbers are implemented in Nial as arrays
+# of real numbers whose last dimension is 2.
+#
+# The following operations are provided in C
+#
+# ----------------------- Primitives ------------------------------
+#
+#   _cprod A [B]
+#
+#        Product of two complex arrays or the product of all
+#        elements of the complex array A.  Either A or B can be
+#        single complex number (a pair of doubles).
+#
+#   _cdiv A [B]
+#
+#        Division of two complex arrays or the sequential division of all
+#        elements of the complex array A (REDUCE).   Either A or B can be
+#        single complex number (a pair of doubles).
+#
+#   _csum A [B]
+#
+#        Sum of two complex arrays or the sequential sum of all
+#        elements of the complex array A (REDUCE).   Either A or B can be
+#        a single complex number (a pair of doubles).
+#
+#   _csub A [B]
+#
+#        Subtraction of two complex arrays or the sequential subtraction of all
+#        elements of the complex array A (REDUCE).   Either A or B can be
+#        a single complex number (a pair of doubles).
+#
+#   _isComplex A
+#
+#        Tests for a valid complex array, i.e. last dimension is 2.
+#
+#   _cexp A
+#
+#        Exponentials of the elements of the complex array A
+#
+#   _csplit A
+#
+#        Separates the real and imaginary parts of a complex array and
+#        returns a pair of real arrays.
+#
+#
+# ----------------------- Additional Functions and Values --------------------
+#
+# This file adds additional operations not in the C code and defines
+# some constants.
+#
+
+
+# Sqrt -1 in homage to Iverson
+
+_J := 0.0 1.0;
+
+# Combining Real and Imaginary parts into a complex array.
+# either the real or imaginary parts can be a single real. 
+
+_Complex IS OPERATION A B {
+    % Join real and imaginary parts;
+    Data := content ((1.0 * content A) pack ((1.0 * content B)));
+    IF 1 = tally A THEN
+        ((shape B) link 2) reshape Data
+    ELSE
+        ((shape A) link 2) reshape Data
+    ENDIF
+}
+
+
+# Convert Real to complex by adding a imaginary part of 0
+
+_R2C IS OPERATION A {
+    A _complex 0.0
+}
+
+
+# Real part of complex array
+
+_CRe IS OPERATION A {
+     A_re A_im := _csplit A;
+     A_re
+}
+
+
+# Imaginary part of a complex array
+
+_CIm IS OPERATION A {
+     A_re A_im := _csplit A;
+     A_im
+}
+
+ 
+# Absolute value of a complex number
+
+_CAbs IS OPERATION A {
+      A_re A_im := _csplit A;
+      sqrt ((A_re*A_re) + (A_im*A_im))
+}
+
+
+# Complex conjugation
+
+_CConj IS OPERATION A {
+       A_re A_im := _csplit A;
+       A_re _complex opposite A_im
+}
+
+
+# Complex Cosine
+# --------------
+# This is defined by the formula
+#   _CCos X := (_cexp(J*X) + J*_cexp(-J*X))/2
+
+_CCos IS OPERATION A {
+    % Multiple by I;
+    A0 := _J _cprod A;
+    ((_cexp A0) + (_J _cprod (_cexp (0.0 - A0))))/2.0
+}
+
+# Complex Sine
+# ------------
+# This is defined by the formula
+#   _CSin X := (_cexp(J*X) - J*_cexp(-J*X))/2
+
+_CSin IS OPERATION A {
+    % Multiple by I;
+    A0 := _J _cprod A;
+    ((_cexp A0) - (_J _cprod (_cexp (0.0 - A0))))/2.0
+}
+
+
+# Format Complex number
+# ---------------------
+# Format the elements of a complex array as strings
+#
+
+_CFormat IS OPERATION A {
+    A_re A_im := _csplit A;
+    (EACH string A_re) EACHBOTH (op x y (link x 'j' y)) (EACH string A_IM)
+}

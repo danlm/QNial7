@@ -1,0 +1,20 @@
+# Fork is a primitive transformer which can take an arbitrary number
+of operations in its argument list. It cannot be directly
+simulated in general, but can be for a fixed number of arguments.
+
+#FORK3 is tr f g h op a {
+  if f a then g a else h a endif }
+
+#CHECK10 is tr f g h (equal [FORK [f,g,h],FORK3[f,g,h])
+
+testid 'CHECK10 [atomic,abs,opposite]' Mixedargs
+
+testid 'CHECK10 [simple,first,second]' Mixedargs
+
+testid 'CHECK10 [empty ,Null first,(3 reshape)]' Mixedargs
+
+testid 'CHECK10 [atomic,solitary,single]' Mixedargs
+
+testid 'CHECK10 [Null = shape,link,cart]' Mixedargs
+
+testid 'CHECK10 [simple,sum,max]' Mixedargs

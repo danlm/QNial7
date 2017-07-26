@@ -1,0 +1,13 @@
+#
+Operation: median Numbers
+File: median.ndf
+
+# Median returns the median in a given list of numbers.
+
+median IS OPERATION Numbers {
+   tally Numbers quotient 2 pick ( SORT <= Numbers ) }
+
+# Example:
+
+#        median 5 3 1 4 2
+3

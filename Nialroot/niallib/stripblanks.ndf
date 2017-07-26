@@ -1,0 +1,19 @@
+#
+Operation: stripblanks Str
+File: stripblanks.ndf
+
+# This operation removes all leading and trailing blanks from a string.
+
+stripblanks IS OPERATION Str {
+   Nonblanksat := EACH first (o findall (`  match list Str)) ;
+   IF empty Nonblanksat THEN
+      ''
+   ELSE
+      first Nonblanksat drop (last Nonblanksat + 1 take list Str) 
+   ENDIF }
+
+# Example:
+
+#       stripblanks '   This is a string.    '
+This is a string.
+

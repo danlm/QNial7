@@ -1,0 +1,37 @@
+#
+# TCP/IP Client process to test the server
+#
+
+library "sprocess;
+
+write 'Starting client';
+sock := socket_connect 'localhost' 5000;
+write ['connected', sock];
+
+chan := [nio_open sock 0, nio_open sock 0];
+
+ntries := 100;
+success := 0;
+ndata := 2 3 4 5 reshape count 120;
+
+while ntries > 0 do
+  ipc_write_array chan ndata;
+  res := ipc_read_array chan;
+  if res = ndata then
+    success := success + 1;
+    write 'succeeded';
+  else
+    write 'failed';
+    write res;
+  endif;
+  ntries := ntries - 1;
+endwhile;
+
+% disconnect;
+ipc_write_array chan "done;
+write (ipc_read_array chan);
+
+write ['success', success];
+
+bye;
+    

@@ -1,0 +1,163 @@
+#
+File: benchmark.ndf
+
+# This file contains programs to benchmark the speed of Q'Nial in various
+  versions and on different hardware.
+#
+Expressions:
+   Scantest
+   Parse1test
+   Parse2test
+   Parse3test
+   Arith1test
+   Arith2test
+   Loop1test
+   Loop2test
+   Each1test
+   Each2test
+   Structtest
+   Selecttest 
+   Constructtest 
+   Searchtest 
+   Perv1test 
+   Perv2test
+Operations:
+   run N
+Transformer: TIMED f A
+
+
+TIMED is tr f op A {T := Time; f A; Time - T}
+
+scantest is {
+   Str gets 20000 reshape 'a 3.145 33 alongerid ''a string constant'' "phrase ';
+   timed (ITERATE scan) (3 reshape [Str]) }
+
+parse1test is { LOCAL a;
+   Tokens gets scan (5000 reshape 'a 3.145 33 ');
+   timed (ITERATE parse) (3 reshape [Tokens]) }
+
+parse2test is { LOCAL a;
+   Tokens gets scan (3000 reshape 'a ');
+   timed parse Tokens }
+
+parse3test is {
+   Tokens gets scan link (100 reshape ['if l then 1 else 2 endif; ']);
+   timed parse Tokens }
+
+arith1test is {
+   Parsetree gets parse scan link (10 reshape ['3. * 2. - 5. + '] append '1.');
+   timed (iterate eval) (50 reshape [Parsetree]) }
+
+arith2test is {
+   a gets 10000 reshape 3.;
+   b gets 10000 reshape 2.;
+   c gets 10000 reshape 5.;
+   d gets 10000 reshape 1.;
+   Parsetree gets parse scan link (5 reshape ['a * b - c + '] append 'd');
+   timed eval Parsetree }
+
+loop1test is {
+   Parsetree gets parse scan 'x gets 0;while x < 2000 do x gets x+1 endwhile;';
+   timed eval Parsetree }
+
+loop2test is {
+   Parsetree gets parse scan 'x gets 0;for i with count 2000 do x gets x + 1 endfor;';
+   timed eval Parsetree }
+
+each1test is {
+   Parsetree gets parse scan 'each pass count 6000';
+   timed eval Parsetree }
+
+each2test is {
+   Parsetree gets parse scan 'each (max tell) count 1000';
+   timed eval Parsetree }
+
+structtest is {
+  a gets 10 15 40 reshape 'abc';
+  Parsetree gets parse scan 'reverse mix rows transpose reverse a';
+   timed eval Parsetree }
+
+selecttest is {
+bintest is op n m {
+  x gets 0 find tell n pick reverse tell n;
+  y gets [m - 1] pick tell m find tell m;
+  tell n m choose tell n m;
+  x y
+};
+test is op n m {
+  tries gets m reshape [n m];
+  ITERATE bintest tries
+};
+Cases := [4 1,5 5,4 10,10 4];
+timed ITERATE test Cases }
+
+constructtest is {
+bintest is op n m {
+  z gets m reshape n;
+  w gets m hitch z append n;
+  last link (z w link w z)
+};
+test is op n m {
+  tries gets m reshape [n m];
+  ITERATE bintest tries
+};
+Cases := [4 1,10 10,4 30,50 10,2 3];
+timed ITERATE test Cases }
+
+searchtest is {
+bintest is op n m {
+  z gets link (m reshape [count n * Pi]);
+  sort <= cull z;
+  sz := sort <= z;
+  cull sz;
+  cull z eachleft findall z;
+  cull sz eachleft findall sz;
+  z except sz;
+};
+test is op n m {
+  tries gets m reshape [n m];
+  ITERATE bintest tries;
+};
+Cases := [4 1,10 2,20 5];
+timed ITERATE test Cases }
+
+perv1test is {
+arithtest is op a {
+  x gets a + a - a * a / a;
+  sum x x
+};
+test is op n m {
+  a gets n reshape count m * Pi;
+  tries gets m reshape [a];
+  ITERATE arithtest tries
+};
+Cases := [Null 50,1 50,10 20,100 5];
+timed ITERATE test Cases }
+
+perv2test is {
+arithtest is op a {
+  y gets ceiling a mod floor a quotient 2;
+  sum y y
+};
+test is op n m {
+  a gets n reshape count m * Pi;
+  tries gets m reshape [a];
+  ITERATE arithtest tries
+};
+Cases := [Null 50,1 50,10 20,50 5];
+timed ITERATE test Cases }
+
+
+Tests gets "scantest "parse1test "parse2test "parse3test "arith1test
+  "arith2test "loop1test "loop2test "each1test "each2test "structtest
+  "selecttest "constructtest "searchtest "perv1test "perv2test;
+
+run is op N {
+ average is div[sum,tally];
+ T := Time;
+ Res gets shape Tests reshape 0.;
+ for i with grid Tests do
+   Res@i gets average EACH execute (N reshape [Tests@i]);
+   write Tests@i (Res@i);
+ endfor;
+ write link 'Total time: ' (string (Time - T)); }

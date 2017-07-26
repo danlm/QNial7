@@ -1,0 +1,61 @@
+# memory spaces
+# -------------
+#
+# Nial memory spaces are a way to connect two Nial processes
+# via shared memory or connect Nial to another system.
+#
+
+# Types of Nial objects
+
+msp_inttype  := 1;
+msp_booltype := 2;
+msp_chartype := 3;
+msp_realtype := 4;
+
+
+# The following are used to control how the memory
+# space is accessed. By default the access is
+# shared and read/write. The value is a sum of the
+# following
+
+msp_private   := 1;
+msp_prot_read := 2;
+
+
+# The following values are for flags in msp_shm_open
+
+msp_shm_readonly := 1;
+msp_shm_create   := 2;
+msp_shm_excl     := 4;
+
+# The following are mode bits as per file open
+
+msp_other_exec   := 1;
+msp_other_write  := 2;
+msp_other_read   := 4;
+msp_other_all    := msp_other_read+msp_other_write+msp_other_exec;
+
+msp_group_exec   := 1*8;
+msp_group_write  := 2*8;
+msp_group_read   := 4*8;
+msp_group_all    := msp_group_read+msp_group_write+msp_group_exec;
+
+msp_user_exec   := 1*64;
+msp_user_write  := 2*64;
+msp_user_read   := 4*64;
+msp_user_all    := msp_user_read+msp_user_write+msp_user_exec;
+
+
+
+# Sizes of basic types
+
+msp_intsize  := msp_msize msp_inttype 1;
+msp_realsize := msp_msize msp_realtype 1;
+
+
+# Calculate the word size of the number
+
+msp_wsize is op num {
+    floor num/msp_intsize}
+
+

@@ -1,0 +1,23 @@
+# Code to call evaluation tester on various test suites
+
+testcases "atcases
+
+testcases "control
+
+testcases "scope
+
+testcases "evassign
+
+testcases "indexing
+
+testcases "quoted
+
+testcases "defines
+
+testcases "recurs
+
+testcases "constant
+
+testcases "limits
+
+

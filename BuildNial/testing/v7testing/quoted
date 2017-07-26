@@ -1,0 +1,28 @@
+# evaluation test for the quoted program construct
+
+eval !a = a
+eval !(a) = a
+eval !(a a) = a a
+eval !(a f a) = (a f a)
+apply !(a f) a = (a f a)
+eval !(a T f a) = (a T f a)
+apply !(a T f) a = (a T f a)
+apply !(T f) (a a) = (a T f a)
+eval !(f a) = f a
+eval !(f f a) = f f a
+apply !(f f) a = f f a
+eval !(f T f a) = f T f a
+apply !(f T f) a = f T f a
+eval !(T a f a) = T a f a
+apply !(T a f) a = T a f a
+eval !(T f a) = T f a
+apply !(T f) a = T f a
+eval !(T T f a) = T T f a
+apply !(T T f) a = T T f a
+eval !([a,a]) = a a
+apply !([f,f]) a = [f,f] a
+eval !(v gets 5;count 5) = (v gets 5;count 5)
+eval !(if l then 2 else 3 endif) = (if l then 2 else 3 endif)
+eval !(eval !a) = a
+
+

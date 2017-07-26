@@ -1,0 +1,138 @@
+# REGULAR EXPRESSION OPERATIONS added at the Nial level
+
+#
+# This codes implements an interface to the POSIX regular expression library.
+#
+# It separates compilation and matching/testing to improve efficiency in
+# conformance with the C implementation. This allows for better handling of
+# transformers combined with the routines.
+#
+# Compiled expressions are stored in one of 16 slots identified by the 
+# integers 0..15. By convention slot 15 is used as a temporary to allow
+# for older Nial regexp code to be written in Nial. 
+#
+#
+# The following operations are provided at the C level:
+#
+#    re_compile <index>  <re-string> <options>
+#
+#        This compiles the supplied string as a regular expression and stores 
+#        the compiled result at the nominated index for later use. It returns
+#        either true or throws a fault.
+#
+#    re_test <index> <string> <options>
+#
+#        This tests to see if the string matches the regular expression at
+#        the nominated index. It returns a true or false value. If an error
+#        occurs it may throw a fault.
+#
+#    re_match <index> <string> <num matches> <options>
+#
+#        This matches the string to the regular expression at the nominated
+#        index. It returns Null is there is no match, otherwise it returns 
+#        a list of pairs of integers of the form offset/length corresponding
+#        to the matched groups. The first pair corresponds to the whole
+#        matched substrings and the remainder to the individual subgroups.
+#
+#    re_extract <string> [<start> <length>]
+#
+#        This extracts the substring of the supplied string starting at index <start>
+#        of the nominated length.
+#
+#    re_split <string> [ [ <start> <len> ] ...]
+#
+#        This splits a string by removing the substrings specified by the sequence of
+#        <start>/<len> pairs. The result is a list of strings.
+#
+#    re_splice <value> <list>
+#
+#        This creates a new list from the supplied list obtained by splicing the value
+#        between element. 
+#
+# The options mentioned above is an integer value obtained by adding a number of the following values
+# to control either the compilation or the matching process
+#
+
+# Options
+# -------
+#
+# The options value is a combination of the following entries. The value is obtained
+# by adding the individual option values and the primitives code translates to the 
+# POSIX codes for internal use.
+#
+# The following options affect compilation
+#
+#   PREGEX_NONE     - No supplied options, use defaults
+#   PREGEX_EXTENDED - This is an extended POSIX regular expression
+#   PREGEX_ICASE    - Ignore case when matching
+#   PREGEX_NOSUB    - Dont store match details
+#   PREGEX_NEWLINE  - Dont treat newline as an ordinary character, affects ^ and $ matching
+#
+# The following options affect matching
+#
+#   PREGEX_NOTBOL   - Don't treat the beginning of the string as the beginning of a line
+#   PREGEX_NOTEOL   - Don't treat the end of the string as the end of a line
+
+PREGEX_NONE     := 0;
+PREGEX_EXTENDED := 1;
+PREGEX_ICASE    := 2;
+PREGEX_NOSUB    := 4;
+PREGEX_NEWLINE  := 8;
+PREGEX_NOTBOL   := 16;
+PREGEX_NOTEOL   := 32;
+
+
+# Code defaults
+# -------------
+
+PREGEX_MAXMATCH := 128;
+PREGEX_DEFINDEX := 15;
+
+# -------------------------------------------------------
+# Nial coded routines
+
+regexp_match IS OP args {
+  pattern := first args;
+  str := second args;
+  if tally args = 3 then
+    opts := third args;
+  else 
+    opts := PREGEX_NONE;
+  endif;
+  re := re_compile PREGEX_DEFINDEX pattern opts;
+  re_match PREGEX_DEFINDEX str PREGEX_MAXMATCH opts
+}
+
+
+#regexp_substitute IS OP args {
+  pattern := first args;
+  repl := second args;
+  str := third args;
+  if tally args = 4 then
+    opts := 3 pick args;
+  else
+    opts := ' ';
+  endif;
+  _regexp_s pattern repl str opts
+}
+
+
+#string_translate IS OP args {
+  pattern := first args;
+  repl := second args;
+  str := third args;
+  if tally args = 4 then
+    opts := args@3;
+  else
+    opts := ' ';
+  endif;
+  _regexp_tr pattern repl str opts
+}
+
+
+
+
+
+
+
+

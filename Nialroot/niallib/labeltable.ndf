@@ -1,0 +1,38 @@
+#
+Operation: labeltable Corner Rowlabels Collabels Table
+Operation: totaltable Corner Rowlabels Collabels Table
+File: labeltab.ndf
+
+# Labeltable labels Table with the corner label in the upper left corner, the
+  column labels at the top, and the row labels on the left side.  Totaltable
+  adds an extra row and column showing totals of each column and row.
+
+labeltable IS OPERATION Corner Rowlabel Columnlabel Table {
+   % Combine the corner label with the column labels for first line ;
+   Firstrow := Corner hitch Columnlabel ;
+   % Hitch the row labels to the rows of the table ;
+   Labelledrows := Rowlabel EACHBOTH hitch rows Table ;
+   % Hitch the first row of labels to the labelled rows and mix them ;
+   mix ( Firstrow hitch Labelledrows ) }
+
+totaltable IS OPERATION Corner Rowlabel Columnlabel Table {
+   mix ( link Corner Columnlabel "Total hitch ( Rowlabel EACHBOTH link
+   ( rows Table EACHBOTH link ( EACH sum rows Table ) ) ) append ( link "Total
+   ( sum rows Table ) ( sum Table ) ) ) }
+
+# Examples:
+
+#        X := count 3 ;
+         labeltable "TIMES X X (X OUTER times X)
+TIMES 1 2 3
+    1 1 2 3
+    2 2 4 6
+    3 3 6 9
+
+#   Y gets 3 3 reshape 15 3 27 -4 56 27 18 24 -3;     
+    totaltable "Y X X Y
+Y      1  2  3 Total
+    1 15  3 27    45
+    2 -4 56 27    79
+    3 18 24 -3    39
+Total 29 83 51   163

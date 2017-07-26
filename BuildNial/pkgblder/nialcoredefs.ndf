@@ -1,0 +1,371 @@
+#NIALCORE.NDF - definitions included in nialcore build
+
+# the following definitions are kept for compatibility
+with earlier versions:
+
+div is /
+
+prod is *
+
+truth is true
+
+falsehood is false
+
+opp is opposite
+
+recip is reciprocal
+
+istruthvalue is isboolean
+
+flip is pack
+
+mold is take
+
+#gage is OPERATION A { 
+ A := content A;
+ IF and EACH isinteger A THEN
+    IF tally A = 1 THEN 
+       IF first A >= 0 THEN first A ELSE ??gage ENDIF
+    ELSE
+       IF and EACH (0<=) A THEN list A ELSE ??gage ENDIF
+    ENDIF
+ ELSE 
+   ??gage
+ ENDIF }
+
+vacate is 0 reshape
+
+void is vacate single
+
+# end of obsolete definitions
+
+# The following names are part of the language and should be
+included. They are placed here so that internally, the same code
+is used. The abbreviations appear when the name is displayed.
+
+sum is +
+
+product is *
+
+minus is -
+
+divide is /
+
+lt is <
+
+gt is >
+
+lte is <=
+
+gte is >=
+
+equal is =
+
+unequal is ~=
+
+# The following abbreviations are included for convenience.
+
+inv is inverse
+
+ip is innerproduct
+
+# the following definitions are considered part of the language, but can be
+removed if the user does not need them.
+
+Pi IS 3.1415926535897932
+
+axes IS OPERATION A {tell valence A}
+
+post IS OPERATION A { [tally A, 1] reshape A }
+
+count IS OPERATION A { 1 + tell A }
+
+last IS OPERATION A {tally A - 1 pick list A}
+
+notin IS OPERATION A B { not (A in B) }
+
+allin IS OPERATION A B { and (A EACHLEFT in B) }
+
+like IS OPERATION A B { A allin B and (B allin A) }
+
+front IS OPERATION A {
+        IF empty A THEN
+                list A
+        ELSE
+                tally A - 1 reshape A
+        ENDIF }
+
+takeright IS OPERATION A B {
+  opposite A take B }
+
+dropright IS OPERATION A B {
+   opposite A drop B }
+
+lower IS OPERATION N A {
+ IF isinteger N THEN
+   IF N < 0 or (N > valence A) THEN
+     fault '?left arg of lower out of range'
+   ELSE
+     valence A - N raise A
+   ENDIF
+ ELSE
+   fault '?left arg not an integer'
+ ENDIF }
+
+rows IS OPERATION A { valence A min 1 lower A }
+
+split IS OPERATION I A {
+   IF empty A THEN
+      fault '?empty right arg in split'
+   ELSEIF not(I allin axes A and diverse I) THEN
+      fault '?invalid left arg in split'
+   ELSE
+     J gets axes A except link I;
+     tally J raise (J link I fuse A)
+   ENDIF }
+
+blend IS OPERATION I A {
+   IF empty A THEN
+      A
+   ELSE
+     J gets tell (valence A + valence first A) except I;
+     GRADE <= (J link I) fuse mix a 
+   ENDIF }
+
+
+cols IS OPERATION A {
+  IF valence A = 0 or (a = Null) THEN
+    single A
+  ELSE
+    valence A - 2 max 0 split A
+  ENDIF }
+
+rotate IS OPERATION N A {
+  IF isinteger N THEN
+    Ta := tally A;
+    shape A reshape (Ta + N + tell Ta mod Ta choose list A) 
+  ELSE
+    fault '?first arg of rotate not an integer'
+  ENDIF
+  }
+
+# the generic INNER transformer.  Typical use is INNER [sum,times]
+or INNER [+,*] .
+
+INNER IS TRANSFORMER f g  OPERATION A B {
+  IF valence A <= 2 THEN
+     AA := rows A;
+  ELSE
+     AA := 1 lower A;
+  ENDIF;
+  IF valence B <= 2 THEN
+     BB := cols B;
+  ELSE
+     BB := 1 raise B;
+  ENDIF;
+  EACH f (AA OUTER (EACHBOTH g) BB) }
+
+
+# the following two transformers are intended to be applied to operations
+that map lists to lists such as reverse and (N rotate). The resulting
+transform is intended to be used on a two-dimensional array.
+
+BYROWS IS TRANSFORMER f OPERATION A {
+       1 RANK f A }
+
+BYCOLS IS TRANSFORMER f OPERATION A {
+       transpose (1 RANK f transpose A) }
+
+PARTITION IS TRANSFORMER f OPERATION Ij A {
+  IF empty Ij or (tally Ij > 2) THEN
+    fault 'invalid left arg of PARTITION transform'
+  ELSEIF empty A THEN
+    A
+  ELSE
+    IF tally Ij = 1 THEN
+       I := J := first Ij;
+    ELSEIF tally Ij=2 THEN
+       I J := Ij;
+    ENDIF;
+    II gets axes A except I link I;
+    B := tally I RANK f (II fuse A);
+    IF J = Null and (shape B = Null) THEN
+      first B
+    ELSEIF tally J = (valence B - (valence A - tally I)) THEN
+      JJ gets axes B except J link J;
+      GRADE <= JJ fuse B
+    ELSE
+      fault 'left arg incompatible with function in PARTITION transform'
+    ENDIF
+  ENDIF }
+
+
+
+# the following two transformers are intended to be applied to operations
+that are binary or reductive such as sum, max, or /. The resulting
+transform is intended to be used on a multi-dimensional array (valence >=2).
+
+REDUCEROWS IS TRANSFORMER f OPERATION A {
+   BYROWS (REDUCE f) A }
+
+REDUCECOLS IS TRANSFORMER f OPERATION A {
+   [valence A - 2 max 0,axes first A] PARTITION (REDUCE f) A }
+
+# Get the file path separator for this operating system
+
+OS_Path_Separator := os_get_parameter 1;
+
+# Get the users home directory
+
+OS_Home_Directory := os_get_parameter 2;
+
+# Where does QNial live?
+ 
+# operation to create file paths
+
+makefilepath IS OP Items {
+  front link EACH link (Items EACHLEFT append OS_Path_Separator)
+}
+
+# set Nialroot to this default MAJ: need to figure out problem
+
+Nialroot := makefilepath OS_Home_Directory 'QNial7' 'Nialroot';
+
+
+# operation to create file paths
+
+makefilepath IS OP Items {
+  front link EACH link (Items EACHLEFT append OS_Path_Separator)
+}
+
+# Where we expect the library to be
+
+DefLibpath := makefilepath NialRoot 'niallib';
+
+Libpath := Null;
+
+library IS OPERATION Arg {
+  Libs :=
+    IF empty Libpath THEN
+       [ DefLibpath ]
+    ELSEIF isstring Libpath or isphrase Libpath THEN
+       string Libpath pair Deflibpath
+    ELSE
+       Libpath append Deflibpath
+    ENDIF;
+  IF tally Arg = 2 and not isstring Arg THEN
+    Filename Mode := Arg;
+  ELSE
+    Filename := Arg;
+    Mode := False;
+  ENDIF;
+  % turn off fault triggering in case the loaddefs faults;
+  Svtrigger := settrigger False;
+  Found := False;
+  WHILE not Found and not empty Libs DO
+    Libtotry Libs := [first,rest] Libs;
+    Pathtofile := makefilepath Libtotry (string Filename);
+    Res := loaddefs Pathtofile Mode;
+    IF Res = ??noexpr THEN
+      Found := True;
+    ENDIF;
+  ENDWHILE;
+  settrigger Svtrigger;
+  Res }
+
+# fault builder to avoid triggering.
+
+quiet_fault is OPERATION Str {
+   Oldsetting := settrigger o;
+   Res := fault Str;
+   settrigger Oldsetting;
+   Res }
+
+# definitions of APL-like catenation forms.
+  A is the list of objects to be joined. For example, if A is C D E, then:
+  I catenate C D E joins C D and E along the Ith axis
+  I LAMINATE C D E creates a new axis of length 3 before axis I.
+
+catenate IS OPERATION I A {
+   % push down I axis of items of A;
+   B := EACH ( I split ) A ;
+   IF equal EACH shape B THEN
+      I blend EACH link pack B
+   ELSE
+      fault '?conform error in catenate'
+   ENDIF }
+
+laminate IS OPERATION I A {
+   IF equal EACH shape A THEN
+      Axesofitems := axes first A;
+         link (I take Axesofitems) (I drop Axesofitems + 1) blend A
+   ELSE
+      fault '?conform error in laminate'
+   ENDIF }
+
+sortup is SORT up
+
+gradeup is GRADE up
+
+ 
+# timing function that write the time and returns the result
+
+TIMEIT IS TRANSFORMER f
+    OPERATION A { 
+       T gets Time;
+       Val := f A;
+       write (Time - T); 
+       Val }
+ 
+ 
+Vars IS { Syms := symbols 0;
+      IF empty Syms THEN
+         Null
+      ELSE
+         Names Roles  := pack Syms;
+         "var match Roles sublist Names 
+      ENDIF }
+
+Exprs IS { Syms := symbols 0;
+      IF empty Syms THEN
+         Null
+      ELSE
+         Names Roles  := pack Syms;
+         "expr match Roles sublist Names 
+      ENDIF }
+
+Ops IS { Syms := symbols 0;
+      IF empty Syms THEN
+         Null
+      ELSE
+         Names Roles  := pack Syms;
+         "op match Roles sublist Names 
+      ENDIF }
+
+Trs IS { Syms := symbols 0;
+      IF empty Syms THEN
+         Null
+      ELSE
+         Names Roles  := pack Syms;
+         "tr match Roles sublist Names 
+      ENDIF }
+
+getsyms is op Defn_name {
+  varnames is op Root {
+   IF Root = quiet_fault '?Grnd' THEN
+     Null
+   ELSE
+     first Root hitch (varnames Root@3) link (varnames Root@4)
+   ENDIF };
+   varnames first second third second getdef Defn_name }
+
+FILTER IS TRANSFORMER f OPERATION A { EACH f A sublist A }
+
+depth IS OPERATION A 
+{ IF atomic A THEN
+    0
+  ELSE
+    1 + (max EACH depth A)
+  ENDIF } 
+
+

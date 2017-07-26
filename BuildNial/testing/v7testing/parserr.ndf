@@ -1,0 +1,397 @@
+#The parser has had its error handling modified so that in debug
+mode, each parse error comes out with a number. This set of
+examples attempts to produce all possible error conditions.
+Some of the coded errors seem impossble to reach. The ordering in this
+file corresponds to the order of calls to error() in the parser code.
+
+set"log
+
+# error 1
+
+     1)
+
+# error 2. This occurs when the parser is called recursively, succeeds,
+    but has left over tokens. 
+
+     parse scan '(op a(a)) ]'
+
+#error 3. Marks a parser error and should not occur.
+
+# error 4;
+
+     1+
+
+
+# error 5;
+
+     truth is 7
+
+
+# error 9;
+
+     { x is external variable }
+
+# error 10;
+
+     fi is external
+
+# error 11;
+
+
+     x gets 3; 
+
+     x is external op
+
+#error 6; 
+
+     foo_twice is tr f(f f); foo_twice is op a(a + 1)
+
+
+#error 601; 
+
+     foo_twice is tr f(f f); foo_twice is { 3 }
+
+
+#error 18; 
+
+     foo_sec is (first rest); foo_sec is tr f(f f)
+
+
+# error 7;
+
+     foo is
+
+
+# error 29
+
+     goo is first;goo is each
+
+
+
+# error 8; I believe this error cannot be reached.
+
+
+#error 12 occurs when the RE marker is found in the shift
+   reduce parser but there are still productions in play.
+   I have not been able to produce this yet.
+
+
+#error 13. Marks a parser error and should not occur.
+
+
+#error 14. not used
+
+
+#error 15 
+
+    (!newx)
+
+#error 371 which sets up 16
+
+     yy is tr
+
+     !yy
+
+
+# error 17;
+
+     !
+
+
+# error 19;
+
+     !((2)
+
+# error 20;
+
+     !2
+
+# error 21;
+
+      ()
+
+# error 22;
+
+      (2
+
+# error 23; No longer producible. Covered a case in dot notation earlier.
+
+
+# error 24;
+
+      (.
+
+# error 270;
+
+     [EACH,first]
+
+# error 271;
+
+     [first,EACH]
+
+# error 25;
+
+     [3,first]
+
+# error 26;
+
+     [first,3]
+
+# error 27; This is no longer reachable. It used to mark changing a list
+or atlas to a galaxy.
+
+
+# error 28;
+
+    [3
+
+# error 32; 
+
+ xxxxxx
+
+#error 30. Marks a parser error and should not occur.
+
+#error 31. Marks a parser error and should not occur.
+
+# error 44
+
+     x gets 34;x@xxx
+
+
+#error 33; 
+
+     a gets 3;!(A@first)
+
+# error 34;
+
+    foo is op
+
+#error 35;
+
+   (op a(each))
+
+#error 36 unused
+
+   
+# error 37
+
+     (op a [a])
+
+# error 371 is caught in example 16 above.
+
+# error 38;
+
+   (tr f (f 3))
+
+# error 39;
+
+  {LOCAL A (tell 5)}
+
+# error 40;
+
+  foo2 is op a {nonlocal a;tell 5}
+
+# error 401;
+
+  {LOCAL B;NONLOCAL A B;(tell 5)}
+
+# error 402;
+
+  {NONLOCAL A B (tell 5)}
+
+#error 41;
+
+  {f is 3}
+
+# error 42;
+
+    {3,
+
+# error 43;
+
+    { first ,
+
+#error 45; is unused
+
+
+#error 46;
+
+     d gets 3;d|[,0,] h
+
+#error 47;
+
+     d@3 gets first
+
+#error 48; This error has to do with an error in nonlocal access. I have
+not been able to reproduce the example that caused.
+
+#error 49
+
+     a:= 3;{write a;a := 5}
+
+#error 50
+
+     first gets 5
+
+# error 51
+
+     a gets (op a(a))
+
+#error 52;
+
+     i gets 3; while i
+
+# error 53;
+
+     i gets 2; while i<2  do i:=i+1
+
+#error 54;
+
+     i gets 2; while i<2 do
+
+#error 55; unused
+
+
+#error 56;
+
+     while
+
+#error 57
+
+     exit 5
+
+#error 58 unused
+
+
+#error 59
+
+     while l do exit (first) endwhile
+
+# error 60;
+
+     i gets 0; repeat i
+
+# error 61;
+
+      i gets 1; repeat i until i<2
+
+#error 62; unused
+
+
+#error 63;
+
+     i gets 1; repeat i until
+
+#error 64
+
+     repeat
+
+# error 65;
+
+     for
+
+# errror 66;
+
+     for i j with
+
+# error 67; same problem as in 48 except in a for loop variable.
+I have been unable to produce this.
+
+#error 68
+
+     e gets 3;{write e; for e with 3 4 5 do write e endfor}
+
+# error 69;
+
+     for first with
+
+# error 70;
+
+     for i with 2
+
+# error 71;
+
+     for i with 2 do i
+
+# error 72;
+
+     for i with 2 do
+
+# error 73; unused
+
+# error 74;
+
+     for i with
+
+# error 75;
+
+     if first
+
+# error 76; unused
+
+
+# error 77;
+
+     if 1
+
+# error 78;
+
+     if 1 then first
+
+# error 79;
+
+     if l then 1 elseif first
+
+#error 80 unused
+
+#error 81
+
+     if l then 1 elseif a gets first then 2 endif
+
+#error 82
+
+     if l then 1 elseif l then first endif
+
+# error 83;
+
+     if 1 then 2 else first
+
+# error 84;
+
+     if 1 then 2 else 3
+
+# error 85;
+
+     case 1
+
+# error 86;
+
+     case 1 from 3
+
+# error 87
+
+     case 0 from 0:1;2 endcase
+
+# error 88;
+
+     case 1 from 3 :
+
+# error 89;
+
+     case 1 from 3: 4 end else first
+
+# error 90;
+
+     case  1 from 3 : 4 end
+
+# error 91; unused
+
+
+# error 92;
+
+     case first
+
+# error 93;
+
+    A gets 3 4 5; A@(first)
+

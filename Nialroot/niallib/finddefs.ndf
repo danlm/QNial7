@@ -1,0 +1,43 @@
+#
+Operation: finddefs Directory Report
+File: finddefs.ndf
+
+
+#
+Finddefs looks for definition files (*.ndf) and documents the defined names
+in each such file in a given directory. Only the top level definitions are found.
+Local definitions within a block are not documented. The operation returns a list
+of pairs: the first item of each pair is a definition file name, the second is the 
+list of the defined names within that file.
+
+
+
+library "filelist
+
+
+finddefs IS OPERATION Dir {
+   Dir := string Dir ;
+   Names := filelist1 link Dir Os_Path_Separator '*.ndf';
+   Entries := Null;
+   FOR File WITH Names DO
+      % Get the lines of the file;
+      Lines := getfile File ;
+      % Find the records that contain IS as the second item ;
+      Defn_names := Null ;
+      For Line WITH Lines DO
+         Words := ` match Line cut Line ;
+         IF tally Words >= 2 THEN
+            IF toupper second Words = 'IS' THEN
+               Defn_names := Defn_names append first Words ;
+            ENDIF ;
+         ENDIF ;
+      ENDFOR ;
+      Entries := Entries append File Defn_names ; 
+   ENDFOR ;
+   Entries }
+
+
+
+# Example:
+
+#        finddefs './niallib'

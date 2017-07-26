@@ -1,0 +1,712 @@
+#CORE.NDF - definitions included in all Nial 7.0 versions
+
+# the following definitions are kept for compatibility
+with earlier versions:
+
+div is /
+
+prod is *
+
+truth is true
+
+falsehood is false
+
+opp is opposite
+
+recip is reciprocal
+
+istruthvalue is isboolean
+
+flip is pack
+
+mold is take
+
+#gage is OPERATION A { 
+ A := content A;
+ IF and EACH isinteger A THEN
+    IF tally A = 1 THEN 
+       IF first A >= 0 THEN first A ELSE ??gage ENDIF
+    ELSE
+       IF and EACH (0<=) A THEN list A ELSE ??gage ENDIF
+    ENDIF
+ ELSE 
+   ??gage
+ ENDIF }
+
+vacate is 0 reshape
+
+void is vacate single
+
+# end of obsolete definitions
+
+# The following names are part of the language and should be
+included. They are placed here so that internally, the same code
+is used. The abbreviations appear when the name is displayed.
+
+sum is +
+
+product is *
+
+minus is -
+
+divide is /
+
+lt is <
+
+gt is >
+
+lte is <=
+
+gte is >=
+
+equal is =
+
+unequal is ~=
+
+# The following abbreviations are included for convenience.
+
+inv is inverse
+
+ip is innerproduct
+
+# the following definitions are considered part of the language, but can be
+removed if the user does not need them.
+
+Pi IS 3.1415926535897932
+
+axes IS OPERATION A {tell valence A}
+
+post IS OPERATION A { [tally A, 1] reshape A }
+
+count IS OPERATION A { 1 + tell A }
+
+last IS OPERATION A {tally A - 1 pick list A}
+
+notin IS OPERATION A B { not (A in B) }
+
+allin IS OPERATION A B { and (A EACHLEFT in B) }
+
+like IS OPERATION A B { A allin B and (B allin A) }
+
+front IS OPERATION A {
+        IF empty A THEN
+                list A
+        ELSE
+                tally A - 1 reshape A
+        ENDIF }
+
+takeright IS OPERATION A B {
+  opposite A take B }
+
+dropright IS OPERATION A B {
+   opposite A drop B }
+
+lower IS OPERATION N A {
+ IF isinteger N THEN
+   IF N < 0 or (N > valence A) THEN
+     fault '?left arg of lower out of range'
+   ELSE
+     valence A - N raise A
+   ENDIF
+ ELSE
+   fault '?left arg not an integer'
+ ENDIF }
+
+rows IS OPERATION A { valence A min 1 lower A }
+
+split IS OPERATION I A {
+   IF empty A THEN
+      fault '?empty right arg in split'
+   ELSEIF not(I allin axes A and diverse I) THEN
+      fault '?invalid left arg in split'
+   ELSE
+     J gets axes A except link I;
+     tally J raise (J link I fuse A)
+   ENDIF }
+
+blend IS OPERATION I A {
+   IF empty A THEN
+      A
+   ELSE
+     J gets tell (valence A + valence first A) except I;
+     GRADE <= (J link I) fuse mix a 
+   ENDIF }
+
+
+cols IS OPERATION A {
+  IF valence A = 0 or (a = Null) THEN
+    single A
+  ELSE
+    valence A - 2 max 0 split A
+  ENDIF }
+
+rotate IS OPERATION N A {
+  IF isinteger N THEN
+    Ta := tally A;
+    shape A reshape (Ta + N + tell Ta mod Ta choose list A) 
+  ELSE
+    fault '?first arg of rotate not an integer'
+  ENDIF
+  }
+
+# the generic INNER transformer.  Typical use is INNER [sum,times]
+or INNER [+,*] .
+
+INNER IS TRANSFORMER f g  OPERATION A B {
+  IF valence A <= 2 THEN
+     AA := rows A;
+  ELSE
+     AA := 1 lower A;
+  ENDIF;
+  IF valence B <= 2 THEN
+     BB := cols B;
+  ELSE
+     BB := 1 raise B;
+  ENDIF;
+  EACH f (AA OUTER (EACHBOTH g) BB) }
+
+
+# the following two transformers are intended to be applied to operations
+that map lists to lists such as reverse and (N rotate). The resulting
+transform is intended to be used on a two-dimensional array.
+
+BYROWS IS TRANSFORMER f OPERATION A {
+       1 RANK f A }
+
+BYCOLS IS TRANSFORMER f OPERATION A {
+       transpose (1 RANK f transpose A) }
+
+PARTITION IS TRANSFORMER f OPERATION Ij A {
+  IF empty Ij or (tally Ij > 2) THEN
+    fault 'invalid left arg of PARTITION transform'
+  ELSEIF empty A THEN
+    A
+  ELSE
+    IF tally Ij = 1 THEN
+       I := J := first Ij;
+    ELSEIF tally Ij=2 THEN
+       I J := Ij;
+    ENDIF;
+    II gets axes A except I link I;
+    B := tally I RANK f (II fuse A);
+    IF J = Null and (shape B = Null) THEN
+      first B
+    ELSEIF tally J = (valence B - (valence A - tally I)) THEN
+      JJ gets axes B except J link J;
+      GRADE <= JJ fuse B
+    ELSE
+      fault 'left arg incompatible with function in PARTITION transform'
+    ENDIF
+  ENDIF }
+
+
+
+# the following two transformers are intended to be applied to operations
+that are binary or reductive such as sum, max, or /. The resulting
+transform is intended to be used on a multi-dimensional array (valence >=2).
+
+REDUCEROWS IS TRANSFORMER f OPERATION A {
+   BYROWS (REDUCE f) A }
+
+REDUCECOLS IS TRANSFORMER f OPERATION A {
+   [valence A - 2 max 0,axes first A] PARTITION (REDUCE f) A }
+
+# Get the file path separator for this operating system
+
+OS_Path_Separator := os_get_parameter 1;
+
+# Get the users home directory
+
+OS_Home_Directory := os_get_parameter 2;
+
+# Where does QNial live?
+ 
+NialRoot := getenv 'NIALROOT';
+IF NialRoot = '' THEN
+  NialRoot := link [ OS_Home_Directory, OS_Path_Separator, 'QNial7-1' ];
+ENDIF;
+
+# Where we expect the library to be
+
+DefLibpath := link [NialRoot, OS_Path_Separator, 'niallib'];
+
+Libpath := Null;
+
+library IS OPERATION Arg {
+  Libs :=
+    IF empty Libpath THEN
+       [ DefLibpath ]
+    ELSEIF isstring Libpath or isphrase Libpath THEN
+       Libpath pair Deflibpath
+    ELSE
+       Libs := Libpath append Deflibpath
+    ENDIF;
+  IF tally Arg = 2 and not isstring Arg THEN
+    Filename Mode := Arg;
+  ELSE
+    Filename := Arg;
+    Mode := False;
+  ENDIF;
+  % turn off fault triggering in case the loaddefs faults;
+  Svtrigger := settrigger False;
+  Found := False;
+  WHILE not Found and not empty Libs DO
+    Libtotry Libs := [first,rest] Libs;
+    Pathtofile := link Libtotry OS_Path_Separator (string Filename);
+    Res := loaddefs Pathtofile Mode;
+    IF Res = ??noexpr THEN
+      Found := True;
+    ENDIF;
+  ENDWHILE;
+  settrigger Svtrigger;
+  Res }
+
+# fault builder to avoid triggering.
+
+quiet_fault is OPERATION Str {
+   Oldsetting := settrigger o;
+   Res := fault Str;
+   settrigger Oldsetting;
+   Res }
+
+# definitions of APL-like catenation forms.
+  A is the list of objects to be joined. For example, if A is C D E, then:
+  I catenate C D E joins C D and E along the Ith axis
+  I LAMINATE C D E creates a new axis of length 3 before axis I.
+
+catenate IS OPERATION I A {
+   % push down I axis of items of A;
+   B := EACH ( I split ) A ;
+   IF equal EACH shape B THEN
+      I blend EACH link pack B
+   ELSE
+      fault '?conform error in catenate'
+   ENDIF }
+
+laminate IS OPERATION I A {
+   IF equal EACH shape A THEN
+      Axesofitems := axes first A;
+         link (I take Axesofitems) (I drop Axesofitems + 1) blend A
+   ELSE
+      fault '?conform error in laminate'
+   ENDIF }
+
+sortup is SORT up
+
+gradeup is GRADE up
+
+ 
+# timing function that write the time and returns the result
+
+TIMEIT IS TRANSFORMER f
+    OPERATION A { 
+       T gets Time;
+       Val := f A;
+       write (Time - T); 
+       Val }
+ 
+ 
+Vars IS { Syms := symbols 0;
+      IF empty Syms THEN
+         Null
+      ELSE
+         Names Roles  := pack Syms;
+         "var match Roles sublist Names 
+      ENDIF }
+
+Exprs IS { Syms := symbols 0;
+      IF empty Syms THEN
+         Null
+      ELSE
+         Names Roles  := pack Syms;
+         "expr match Roles sublist Names 
+      ENDIF }
+
+Ops IS { Syms := symbols 0;
+      IF empty Syms THEN
+         Null
+      ELSE
+         Names Roles  := pack Syms;
+         "op match Roles sublist Names 
+      ENDIF }
+
+Trs IS { Syms := symbols 0;
+      IF empty Syms THEN
+         Null
+      ELSE
+         Names Roles  := pack Syms;
+         "tr match Roles sublist Names 
+      ENDIF }
+
+getsyms is op Defn_name {
+  varnames is op Root {
+   IF Root = quiet_fault '?Grnd' THEN
+     Null
+   ELSE
+     first Root hitch (varnames Root@3) link (varnames Root@4)
+   ENDIF };
+   varnames first second third second getdef Defn_name }
+
+FILTER IS TRANSFORMER f OPERATION A { EACH f A sublist A }
+
+depth IS OPERATION A 
+{ IF atomic A THEN
+    0
+  ELSE
+    1 + (max EACH depth A)
+  ENDIF } 
+
+
+
+# REGULAR EXPRESSION OPERATIONS added at the Nial level
+
+#
+# This codes implements an interface to the POSIX regular expression library.
+#
+# It separates compilation and matching/testing to improve efficiency in
+# conformance with the C implementation. This allows for better handling of
+# transformers combined with the routines.
+#
+# Compiled expressions are stored in one of 16 slots identified by the 
+# integers 0..15. By convention slot 15 is used as a temporary to allow
+# for older Nial regexp code to be written in Nial. 
+#
+#
+# The following operations are provided at the C level:
+#
+#    re_compile <index>  <re-string> <options>
+#
+#        This compiles the supplied string as a regular expression and stores 
+#        the compiled result at the nominated index for later use. It returns
+#        either true or throws a fault.
+#
+#    re_test <index> <string> <options>
+#
+#        This tests to see if the string matches the regular expression at
+#        the nominated index. It returns a true or false value. If an error
+#        occurs it may throw a fault.
+#
+#    re_match <index> <string> <num matches> <options>
+#
+#        This matches the string to the regular expression at the nominated
+#        index. It returns Null is there is no match, otherwise it returns 
+#        a list of pairs of integers of the form offset/length corresponding
+#        to the matched groups. The first pair corresponds to the whole
+#        matched substrings and the remainder to the individual subgroups.
+#
+#    re_extract <string> [<start> <length>]
+#
+#        This extracts the substring of the supplied string starting at index <start>
+#        of the nominated length.
+#
+#    re_split <string> [ [ <start> <len> ] ...]
+#
+#        This splits a string by removing the substrings specified by the sequence of
+#        <start>/<len> pairs. The result is a list of strings.
+#
+#    re_splice <value> <list>
+#
+#        This creates a new list from the supplied list obtained by splicing the value
+#        between element. 
+#
+# The options mentioned above is an integer value obtained by adding a number of the following values
+# to control either the compilation or the matching process
+#
+
+# Options
+# -------
+#
+# The options value is a combination of the following entries. The value is obtained
+# by adding the individual option values and the primitives code translates to the 
+# POSIX codes for internal use.
+#
+# The following options affect compilation
+#
+#   PREGEX_NONE     - No supplied options, use defaults
+#   PREGEX_EXTENDED - This is an extended POSIX regular expression
+#   PREGEX_ICASE    - Ignore case when matching
+#   PREGEX_NOSUB    - Dont store match details
+#   PREGEX_NEWLINE  - Dont treat newline as an ordinary character, affects ^ and $ matching
+#
+# The following options affect matching
+#
+#   PREGEX_NOTBOL   - Don't treat the beginning of the string as the beginning of a line
+#   PREGEX_NOTEOL   - Don't treat the end of the string as the end of a line
+
+PREGEX_NONE     := 0;
+PREGEX_EXTENDED := 1;
+PREGEX_ICASE    := 2;
+PREGEX_NOSUB    := 4;
+PREGEX_NEWLINE  := 8;
+PREGEX_NOTBOL   := 16;
+PREGEX_NOTEOL   := 32;
+
+
+# Code defaults
+# -------------
+
+PREGEX_MAXMATCH := 128;
+PREGEX_DEFINDEX := 15;
+
+# -------------------------------------------------------
+# Nial coded routines
+
+regexp_match IS OP args {
+  pattern := first args;
+  str := second args;
+  if tally args = 3 then
+    opts := third args;
+  else 
+    opts := PREGEX_NONE;
+  endif;
+  re := re_compile PREGEX_DEFINDEX pattern opts;
+  re_match PREGEX_DEFINDEX str PREGEX_MAXMATCH opts
+}
+
+
+#regexp_substitute IS OP args {
+  pattern := first args;
+  repl := second args;
+  str := third args;
+  if tally args = 4 then
+    opts := 3 pick args;
+  else
+    opts := ' ';
+  endif;
+  _regexp_s pattern repl str opts
+}
+
+
+#string_translate IS OP args {
+  pattern := first args;
+  repl := second args;
+  str := third args;
+  if tally args = 4 then
+    opts := args@3;
+  else
+    opts := ' ';
+  endif;
+  _regexp_tr pattern repl str opts
+}
+
+
+
+
+
+
+
+
+
+# high level routines for socket communication 
+
+MAXLENGTH IS 1000
+
+check_socket IS OP Arg {
+  NONLOCAL Return_status;
+  IF isfault Arg and (Arg ~= ??noexpr) THEN
+    write Arg;
+    Return_status := 'Connection_lost';
+    %Toplevel;
+  ENDIF;
+  Arg }
+
+socket_read IS OP socket {
+  Len := check_socket socket_receive socket 1 l;
+  %write 'received Len: ' Len;
+  %write 'type' (type Len);
+  str := '';
+  WHILE len - tally Str > MAXLENGTH DO
+    Piece := socket_receive socket MAXLENGTH o;
+    Str := Str link Piece;
+  ENDWHILE;
+  Str := Str link socket_receive socket (len - tally Str) o;
+  %write 'received Str ' Str;
+  %write 'received type' (type Str);
+  %write link 'received string of length ' (string tally Str);
+  Res := execute Str;
+  %write link 'containing ' (string tally content Res) ' atoms';
+  Res
+}
+
+
+socket_write IS OP socket array {
+  str := display array;
+  len := tally str;
+  check_socket socket_send socket len l;
+  WHILE tally str > MAXLENGTH DO
+    piece str := MAXLENGTH [take,drop] str;
+    socket_send socket piece o;
+  ENDWHILE;
+  socket_send socket str o;
+  %write link 'sent string of length ' (string tally Str);
+  %write link 'containing ' (string tally content array) ' atoms';
+}
+
+
+socket_getline IS OP socket echo echostar remoteecho {
+ nllist IS char (0 10 13);
+ input := null;
+ nl1 := list char 13;
+ nl2 := list char 10;
+ REPEAT
+  % get the next char;
+  inp := socket_receive socket 1 o;
+  IF isfault inp THEN
+    exit null;
+  ENDIF;
+  %-- if it is not a new line then use it;
+  IF inp ~= nl1 THEN
+    %-- add it to the end of our string;
+    input := input link inp;
+    IF echo THEN 
+      IF echostar THEN
+        socket_send socket '*';
+      ELSE
+        socket_send socket inp;
+      ENDIF;
+    ENDIF;
+  ELSE
+    %-- NON Blocking peek at the next character;
+    %-- depending on the client, there is sometimes a extra NULL or other nl char;
+    %-- character waiting;
+    inp2 := socket_peek socket 1 o;
+    if (first inp2) in nllist THEN
+      %-- if we got a NULL then gobble it up;
+      inp2 := socket_receive socket 1 o;
+    ENDIF;
+    IF remoteecho THEN
+     socket_send socket nl1;
+     socket_send socket nl2;
+     exit input;
+    ENDIF;
+    IF (inp2 = nl2)  THEN
+      IF echo THEN
+        socket_send socket nl1;
+        socket_send socket nl2;
+      ENDIF;
+      exit input;
+    ENDIF
+  ENDIF;
+ UNTIL o
+ ENDREPEAT
+}
+
+# Support code for hash tables in Nial viewed as associative arrays
+#
+# A hash table is a Nial data structure consisting of an array
+# of 5 entries 
+#
+#    0 - a standard phrase to identify a hash table
+#    1 - an array of keys
+#    2 - an array of values ( of the same size as keys)
+#    3 - some statistics on the array
+#    4 - a metadata slot for programmer use
+#
+# The code uses linear hashing with rehashing to handle collisions.
+# A table is automatically expanded if it becomes more than 70% full.
+# A hash table is not intended to be viewed. The definitions below
+# avoid returning the hash table as a value.
+# 
+# This code wraps a set of primitives with additional functionality
+#
+# The primitives are:
+#                  _tcreate count;     creates and return a new table
+#                  t  _tset key value  add a key/value pair 
+#                  t  _tget key        retrieve a value
+#                  istable t           test for a table
+#                  t  _tsetm mdata     set the metadata value
+#                  t  _tgetm           get the metadata value
+#                  t _tdel key         remove this key/value pair from t 
+#		           _getkeys t		   get the set of keys in use in t (new)
+#			
+
+
+# associatve array versions for adding pairs
+
+aupdate IS op AA KeyValpair {
+   AA _tset KeyValPair; }
+
+aupdateall IS op AA KeyValpairs {
+   AA EACHRIGHT aupdate KeyValpairs;
+  }
+
+
+# associative array versions for retrieving items
+
+apick IS OP Key AA {
+  AA _tget Key
+}
+
+achoose IS OP Keys AA {
+  Keys EACHLEFT apick AA }
+
+
+atell IS OP AA {
+  _getkeys AA }
+
+apickall IS OP AA {
+   atell AA achoose AA }
+
+
+# associative array version  of _tdel returns a Boolean value
+
+aremove IS OP AA Key {
+  AA _tdel Key = 1 }
+
+# ---------------------------
+# return the number of entries in a hash table
+
+tCount is OP T {
+	  3 0 reach T
+}
+
+# associative array version
+
+atally IS OP AA {
+   3 0 reach AA }
+
+# --------------------------
+# return the capacity of a hash table
+
+tsize is OP T {
+	 tally (1 pick T)
+}
+
+# associative array version
+
+acapacity IS OP AA {
+  tally (1 pick AA) }
+
+
+# --------------------------
+# return the number of probes in the last insertion
+
+tProbes is OP T {
+	   3 1 reach T
+}
+
+# omitted for associative arrays
+
+
+# ---------------------------
+# create a hash table from a list of key value pairs
+
+tnew is OP A {
+	t := _tcreate tally A;
+	t eachright _tset A;
+	t
+}
+
+# associative array version
+
+acreate IS OP Nm KeyValpairs {
+   AA :=  _tcreate tally KeyValpairs;
+   AA EACHRIGHT _tset KeyValpairs;
+   Nm assign AA; }
+
+ #----------------------
+# equality test for associative arrays	
+
+aequal IS OP AA BB {
+  apickall AA = apickall BB }
+

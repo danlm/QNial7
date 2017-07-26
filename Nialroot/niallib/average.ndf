@@ -1,0 +1,13 @@
+#
+Operation: average A
+File: average.ndf
+
+# This operation calculates the average of the numbers given in an array.
+
+average IS OPERATION A {
+   sum A / tally A }
+
+# Example:
+
+#        average 3 4 5
+4.

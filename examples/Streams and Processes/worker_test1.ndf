@@ -1,0 +1,70 @@
+# Example of interaction between a parent and child process using 
+# transmission of arrays over pipes. The behaviour is an echo 
+# process.
+
+# Load the basic routines from the 'sprocess.ndf' module in the
+# Nial library
+
+library "sprocess;
+
+# Very simple worker process that just echoes back anything
+# read on its comms channel
+
+echo_worker is operation chan args {
+       while l do
+         data := ipc_read_array chan;
+	 cnt := ipc_write_array chan data;
+       endwhile;
+       l
+}
+
+# Set the number of messages and the data
+
+try_count := 100000; 
+tries := try_count;
+n_success := 0;
+test_data := 2 3 4 5 6 reshape count 720;
+
+# Create a worker process to implement the echo_worker function
+# defined above. Save the comms channel, the process i/o channel
+# and the process id. Use a cast to pass the function so that we 
+# can use apply.
+
+chan io_chan proc := create_worker !echo_worker 1;
+
+# loop sending the test data to the child process and reading what
+# is sent back. Count the number of correct responses.
+
+write 'Starting echo worker';
+
+start_time := time;
+while (tries > 0) do
+      % Send array;
+      ipc_write_array chan test_data;
+      % Read response array;
+      res := ipc_read_array chan;
+      % Check validity of response;
+      if (res = test_data) then
+        n_success := n_success + 1;
+      else
+        write 'Echo failed' res;
+	bye;
+      endif;
+      tries := tries - 1;
+endwhile;
+end_time := time;
+
+# Write the count of successes
+
+write 'Ending test';
+write ('Success count:' n_success);
+
+# Determine performance. Note that we have serialised, sent and 
+# deserialised the message in each process
+
+write ('Performance in messages/sec' ((2*try_count)/(end_time - start_time)));
+
+# Terminate the child process to avoid zombies
+
+interrupt_child proc -1;
+bye

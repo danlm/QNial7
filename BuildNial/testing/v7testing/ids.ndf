@@ -1,0 +1,485 @@
+loaddefs "fuzzyeq
+
+loaddefs "faulteq
+
+# definition used in describing equations
+
+implies IS OP A B { 
+       IF isboolean A THEN
+          IF A THEN
+             B
+          ELSE 
+             l
+          ENDIF
+       ELSEIF isfault A THEN
+          fault link '?faulty premise: ' (string A)
+       ELSE
+          fault link '?non-atomic test: ' (display A)
+       ENDIF }
+
+isshape IS OP S { 
+  IF empty S THEN
+     S = Null 
+  ELSE
+     and (valence S = 1) (and EACH isinteger S) (and (S >= 0) = True )
+  ENDIF }
+
+quiet is external variable
+
+# This definition tests many of the identities
+that hold for cart. They are done as a group to minimize
+computation.
+
+# the following operations are used as dummy operations in transformer
+identities.
+
+f is 2 reshape
+
+g is 5 converse hitch
+
+cartids IS OP A {
+  if not quiet then writescreen 'CARTIDS' endif;
+     cartA := cart A; % cart A is computed once;
+     X:= (empty A implies ( cartA = single A) )
+         (or EACH empty A implies ( empty cartA))
+         (not empty A and not empty cartA implies( shape first cartA = shape A))
+         (not empty A and not empty cartA implies(first cartA = EACH first A))
+         (shape cartA = link EACH shape A)
+         (valence cartA = sum EACH valence A)
+         (IF 0 in EACH tally A THEN 
+             % avoid overflow in product below;
+             tally cart A = 0
+          ELSE
+             tally cartA = product EACH tally A
+          ENDIF)
+         (cart single A = EACH single A)
+         (equal EACH shape cartA)
+         (simple A implies( cart A = single A))
+         (A OUTER pair 1 = (A cart 1));
+         IF prod each tally link a > 1000 THEN
+            write 'omitting associative cart law';
+            Y := l;
+         ELSE
+            Y := (cart link a = each link cart each cart a);
+         ENDIF;
+        and (X append Y)
+     }
+
+
+# This definition tests many of the identities
+that hold for link. They are done as a group to minimize
+computation.
+
+linkids IS OP A {
+  if not quiet then writescreen 'LINKIDS' endif;
+     linkA := link A;
+     contentA := content A;
+     and (linkA = link list A)
+         (link EACH link A = link linkA)
+         (tally linkA = sum EACH tally A)
+         (shape linkA = list tally linkA)
+         (valence linkA = 1)
+         (empty A implies( linkA = Null))
+         (and EACH empty A implies( linkA = Null))
+         (and EACH simple A implies( linkA = contentA))
+         (linkA = link EACH list A)
+         (simple A implies( linkA = list A) )
+         (contentA = link each content a) 
+         (contentA = content list a) 
+         (valence contentA = 1) 
+         (link solitary A = list A)
+       }
+
+
+reshapeids is op a{
+  if not quiet then writescreen 'RESHAPEIDS' endif;
+       and (shape a reshape a = a)
+           (shape a reshape list a = a)
+           (tally a reshape a = list a)
+           (shape a reshape (first a hitch rest a) = a)
+           (single A = (Null reshape solitary A))
+           (solitary A = ([1] reshape single A))
+           (post A = ([tally A,1] reshape A))
+           (post post A = post A)
+           (pair A = ([2] reshape A))
+           (pair pair A = pair A)
+           (not empty a implies( null reshape a = single first a) )
+           (isshape A implies( shape (A reshape 1) = A))
+           ([0] reshape A = Null)
+           (shape A = list shape A)
+       }
+
+reshapeids1 is op A B {
+  if not quiet then writescreen 'RESHAPEIDS1' endif;
+       and (A reshape B = (A reshape list B))
+           (isshape A implies( shape (A reshape B) = A))
+     }
+
+singleids is op a{ 
+  if not quiet then writescreen 'SINGLEIDS' endif;
+           and (first single a = a)
+               (shape single A = Null)
+               (single a equal a = atomic a)
+               (EACH single A equal A = simple A)
+               (sum single a = each (sum single) a)
+               (product single a = each (product single) a)
+               (and single a = each (and single) a)
+               (or single a = each (or single) a)
+               (max single a = each (max single) a) 
+               (min single a = each (min single) a)
+       }
+
+rowcolids is op a {
+  if not quiet then writescreen 'ROWCOLIDS' endif;
+        %and (not empty a implies( mix rows a = a));
+      (not empty a implies( mix rows a = a))
+            (shape rows A = front shape A)
+            (valence a >= 2 and not empty a and not empty rows a implies
+                     (shape first rows A = (-1 take shape A)))
+            (valence a = 2 and not empty a implies( cols a = pack rows a))
+            (valence a = 2 and not empty a implies( cols a = rows transpose a))
+            (rows a = (valence A - 1 max 0 raise A))
+            (valence A > 0 and not empty A implies
+                 ( cols a = (valence A - 2 max 0 split A)))
+            (valence A = 0 implies( cols a = (Null split A)))
+            (not empty A and equal EACH shape A and equal EACH type A implies
+               (valence A + axes first A blend A = mix A))
+            (not empty A and equal EACH shape A implies
+               (shape mix A = (shape A link shape first A)))
+    }
+
+# rowcolids is op a {
+  write "A (display a);
+  if not quiet then writescreen 'ROWCOLIDS' endif;
+            write "R1; R1 := (not empty a implies( mix rows a = a));
+            write "R2; R2 := (shape rows A = front shape A);
+            write "R3; R3 := (valence a >= 2 and not empty a and not empty rows a implies
+                     (shape first rows A = (-1 take shape A)));
+            write "R4; R4 := (valence a = 2 and not empty a implies( cols a = pack rows a));
+            write "R5; R5 := (valence a = 2 and not empty a implies( cols a = rows transpose a));
+            write "R6; R6 := (rows a = (valence A - 1 max 0 raise A));
+            write "R7; R7 := (valence A > 0 implies( cols a = (valence A - 2 max 0 split A)));
+            write "R8; R8 := (valence A = 0 implies( cols a = (Null split A)));
+            write "R9; 
+         write "A (display a);
+       R9 := (not empty A and equal EACH shape A and equal EACH type A implies
+               (valence A + axes first A blend A = mix A));
+            write "R10; R10 := (not empty A and equal EACH shape A implies
+               (shape mix A = (shape A link shape first A)));
+       and R1 R2 R3 R4 R5 R6 R7 R8 R9 R10 R11 )
+    }
+
+fuseids is op a {
+  if not quiet then writescreen 'FUSEIDS' endif;
+           and (transpose transpose A = A)
+               (shape transpose A = reverse shape A)
+               (transpose single A = single A)
+               (transpose list A = list A)
+               (transpose A = (reverse axes A fuse A))
+               (axes A fuse A = A)
+          }
+
+packids is op A { packA := pack A;
+  if not quiet then writescreen 'PACKIDS' endif;
+          and (pack pack packA = packA)
+              (equal EACH shape A and not empty packA implies( pack packA = A))
+              (simple A implies( packA = single A))
+              (empty A implies( packA = single A))
+         }
+
+splitblendids IS OP I A { 
+  if not quiet then writescreen 'SPLITBLENDIDS' endif;
+        and (and (not empty A)
+                 (diverse I) 
+                 (I allin axes A)  implies  
+                   and (shape (I split A) = (axes A except I choose shape A ))
+                       (shape first (I split A) = (list I choose shape A ))
+                       (I blend (I split A) = A))
+            (I in (axes A append valence A) and not empty A implies 
+                (mix (I raise A) = A))
+            (I in (axes A append valence A) implies 
+                 (shape (I raise A) = (I take shape A)))
+            (I in (axes A append valence A) and not empty A implies 
+                 (shape first (I raise A) = (I drop shape A)))
+            (I raise A faulteq( I drop axes A split A))
+      }
+
+measureids is op A {
+  if not quiet then writescreen 'MEASUREIDS' endif;
+          and (tally A = product shape A)
+              (isinteger tally A)
+              (valence A = tally shape A)
+              (grid A = tell (if valence A = 1 then tally A else shape A endif)) 
+              (diverse a implies (grid A = (A EACHLEFT find A)))
+              (IF isshape A THEN tell A = cart each tell A ELSE l ENDIF) 
+              (tell Null = single Null)
+              (tell tally A choose list A = list A)
+              (tally tally A = 1)
+              (tell 0 = Null)
+              (IF isinteger A and (A >= 0 = True) THEN
+                  tell (A+1) = (tell A append A)
+               ELSE
+                  l
+               ENDIF)
+         }
+
+pickids is op A {
+  if not quiet then writescreen 'PICKIDS' endif;
+          and (first A = ([0] pick list A))
+              (second A = ([1] pick list A))
+              (third A = ([2] pick list A) )
+              (first single A = A)
+              (first solitary A = A)
+              (first list A = first A)
+              (0 * shape A pick A = first A)
+              (grid A choose A = A)
+        }
+
+selectionids is OP I A {
+  if not quiet then writescreen 'SELECTIONIDS' endif;
+          and (I in grid A implies( I pick grid A = I))
+              (I pick A = (list I pick A))
+              (I choose A = (I EACHLEFT pick A))
+              (empty I implies ( I reach A = A))
+              (not empty I implies( I reach A faulteq (rest I reach (first I pick A))))
+              (I in grid A implies ( (I pick A) I place A = A))
+              (I allin grid A implies ( (I choose A) I placeall A = A))
+              (d := I reach A; d ~= ??path implies ( d I deepplace A = A) )
+}
+
+selectids1 is op I J A {
+  if not quiet then writescreen 'SELECTIDS1' endif;
+         and (I choose (J choose A) = ((I choose J) choose A))
+             (I pick (J choose A) = ((I pick J) pick A))
+             (I in grid A implies( shape (J I place A) = shape A))
+             (I allin grid A implies
+               (shape (J I placeall A) = shape A))
+             (J pick (I pick cart A) = (I pick (J pick A))) }
+
+arithids is OP A {
+  if not quiet then writescreen 'ARITHIDS' endif;
+    and (sum EACH sum A faulteq sum link A)
+        (product EACH product A faulteq product link A)
+        (empty A implies( sum A = 0))
+        (empty A implies( product A = 1) )
+        (ceiling A = opposite floor opposite A)
+        (opposite a = (0 - a))
+        (reciprocal a = (1.0 divide a))
+        (isinteger A implies( A mod 0 = A))
+        (isinteger A implies( A quotient 0 = 0))
+        (opposite opposite opposite A = opposite A)
+        (reciprocal reciprocal reciprocal A fuzzyeq reciprocal A)
+      }
+
+arithids1 is op A B {
+  if not quiet then writescreen 'ARITHIDS1' endif;
+         and (A + B = (B + A))
+             (A * B = (B * A))
+             (A - B faulteq (A + opposite B))
+             (A / B faulteq( A * reciprocal B))
+             (floor (a - (b * (a quotient b))) faulteq (a mod b))
+             (A quotient B faulteq floor (A divide B))
+       }
+
+logicids is OP A {
+  if not quiet then writescreen 'LOGICIDS' endif;
+         and (not or A faulteq and EACH not A)
+             (not and A faulteq or EACH not A)
+             (empty A implies( or A = False))
+             (empty A implies( and A = True) )
+             (not not not A = not A)
+         }
+
+logicids1 is OP A B {
+  if not quiet then writescreen 'LOGICIDS1' endif;
+         and (a and b faulteq not (not a or not b))
+             (a or b faulteq not (not a and not b))
+             (A or B = (B or A))
+             (A and B = (B and A))
+          }
+
+compareids is OP A B {
+  if not quiet then writescreen 'COMPAREIDS' endif;
+         and ( a <= b = ( b >= a ))
+             (a > b = ( b <= a and not (a <= b)))
+             (a > b = ( a >= b and not (a mate b)))
+             (a mate b = ( b <= a and (a <= b)))
+             (a < b = (a <= b and not (a mate b)))
+             (shape a = shape b and (a up b and (b up a)) = (a equal b))
+       }
+
+
+equalityids is OP A {
+  if not quiet then writescreen 'EQUALITYIDS' endif;
+           and (a equal a)
+               (pass a = a)
+               (unequal a = not equal a)
+               (a fuzzyeq execute display a) }
+
+
+cullids is op A {
+  if not quiet then writescreen 'CULLIDS' endif;
+     cullA := cull A;
+     and (grid A EACHLEFT in (A EACHLEFT find A) sublist A = cullA) 
+         (valence cullA = 1)
+         (diverse A = (cull A equal list A))
+         (diverse A = (diverse sortup A))
+         (sortup cull A = cull sortup A)
+     }
+
+
+
+suit is op a { if tally a = 1 then first a else a endif }
+
+seekids is OP A B {
+  if not quiet then writescreen 'SEEKIDS' endif;
+  Sb := sortup B;
+         and (first (A findall B append suit shape B) = (A find B))
+             (first (A findall Sb append suit shape B) = (A find Sb))
+             (or (A EACHRIGHT equal B) = (A in B)) 
+             (A EACHRIGHT equal B sublist grid B = (A findall B))
+             (A EACHRIGHT equal Sb sublist grid Sb faulteq (A findall Sb))
+             (A in B = (first (A seek B)))
+             (A find B = (second (A seek B)))
+             (A find Sb = (second (A seek Sb)))
+             (A in B = (A in Sb))
+             (A seek B = (A [in,find] B))
+             (A in B implies( A find B pick B = A))
+             (A in Sb implies( A find Sb pick Sb = A))
+             (A in grid B and diverse B implies ((A pick B find B) = A))
+             (empty B implies( not (A in B) ))
+             (A in solitary A)
+             (A in single A)
+             (A in (A hitch B))
+             (A in (A pair B))
+        }
+
+listids is op A {
+  if not quiet then writescreen 'LISTIDS' endif;
+        and (list list A = list A)
+            (shape list A = [tally A])
+            (list single A = solitary A)
+            (rest A = (1 drop list A))
+            (rest A = rest list A)
+            (shape rest A = [tally A - 1 max 0])
+            (rest Null = Null)
+            (first rest A = second A)
+            (last A faulteq first (-1 take list A))
+            (front A = (-1 drop list A))
+            (A hitch Null = solitary A)
+            (Null append A = solitary A)
+            (rest solitary A = Null)
+            (shape solitary A = [1])
+            (tally rest A = (tally A - 1 max 0))
+            (not empty A implies( first A hitch rest A = list A))
+          }
+
+listids1 is op A B {
+  if not quiet then writescreen 'LISTIDS1' endif;
+        and (A hitch B = (solitary A link list B))
+            (A append B = (list A link solitary B))
+            (A hitch B = (A hitch list B))
+            (valence (A hitch B) = 1)
+            (tally (A hitch B) = (1 + tally B))
+            (first (A hitch B) = A)
+            (rest (A hitch list B) = list B)
+    }
+
+simpleids is OP A {
+  if not quiet then writescreen 'SIMPLEIDS' endif;
+   and (simple A = (and EACH atomic A))
+       (simple A = (EACH single A = A))
+   }
+
+takedropids IS OP A B {
+  if not quiet then writescreen 'TAKEDROPIDS' endif;
+     and (0 times shape B drop B = B)
+         (shape B take B = B)
+         (A in count shape B implies( A take B = (tell A choose B)) )
+         (isshape abs A and (tally A = valence B) implies 
+           (and (abs A <= shape B) implies 
+            (abs A take B = reverse (opposite abs A take reverse B))))
+       }
+
+eachids is op A {
+  if not quiet then writescreen 'EACHIDS' endif;
+     Efa := EACH f A;
+      and (shape Efa = shape A)
+          (EfA = (shape A reshape (f first A hitch EACH f rest A)))
+          (EACH f single A = single f A)
+          (EACH f solitary A = solitary f A)
+          (empty A implies( Efa = A))
+          (EACH f list A = list EACH f A)
+          (EACH f link A = link EACH EACH f A)
+          (cart EACH EACH f A = EACH EACH f cart A)
+          ((EACH f)(EACH g) A = EACH (f g) A)
+          (EACHALL f A = EACH f pack A)
+    }
+
+eachids1 is op I A {
+  if not quiet then writescreen 'EACHIDS1' endif;
+     and 
+          (EACH f (I reshape  A) faulteq (I reshape EACH f A))
+          (I in grid A implies( I pick EACH f A = f (I pick A)))
+          (I allin grid A implies( EACH f (I choose A) = (I choose EACH f A)))
+          (I EACHLEFT f A = EACH (A CONVERSE f) I)
+          (I EACHRIGHT f A = EACH (I f) A)
+          (I EACHBOTH f A faulteq EACH f pack I A)
+          (I EACHLEFT f A = (I EACHBOTH f single A))
+          (I EACHRIGHT f A = (single I EACHBOTH f A))
+          (and EACH (not empty) I A implies
+             (I OUTER f A = mix (I EACHLEFT EACHRIGHT f A)))
+    }
+
+maxminids is OP A {
+  if not quiet then writescreen 'MAXMINIDS' endif;
+    and (max EACH max A faulteq max link A)
+        (empty A implies( max A = ??O))
+        (min EACH min A faulteq min link A)
+        (empty A implies( min A = ??I))
+    }
+
+maxminids1 is OP A B {
+  if not quiet then writescreen 'MAXMINIDS1' endif;
+    and (A max B = (B max A))
+        (A min B = (B min A))
+    }
+
+reverseids is op A {
+  if not quiet then writescreen 'REVERSEIDS' endif;
+     and (reverse list A = (tally A - count tally A choose list A))
+         (shape reverse A = shape A)
+         (reverse A = (shape A reshape reverse list A))
+         (reverse reverse A = A)
+         (front A = reverse rest reverse A)
+         (last A = first reverse A)
+    }
+
+rotateids is op N A {
+  if not quiet then writescreen 'ROTATEIDS' endif;
+     isinteger N implies  
+     and (shape (N rotate A) = shape A)
+         (N rotate A = (shape A reshape (N rotate list A)))
+         (N rotate A = (N mod tally A rotate A))
+         (N rotate A = (opposite (tally A - N) rotate A))
+        }
+
+sublistids is OP A B {
+  if not quiet then writescreen 'SUBLISTIDS' endif;
+    IF not empty A and and EACH isboolean A THEN
+    and (valence (A sublist B) = 1)
+        (not empty B implies( tally (A sublist B) = sum (tally B reshape A)))
+        (A sublist B = (A sublist list B))
+        (True sublist B faulteq list B)
+        (False sublist B faulteq Null)
+    ELSE
+      l
+    ENDIF }
+
+exceptids is OP A B {
+  if not quiet then writescreen 'EXCEPTIDS' endif;
+  Sa := sortup A; Sb := sortup B;
+     and (A except B = (A EACHLEFT notin B sublist A))
+         (A except B = (list A except list B))
+         (sortup (A except B) = (Sa except Sb))
+    }

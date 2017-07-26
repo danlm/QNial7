@@ -1,0 +1,69 @@
+
+# Add an item to the table both as the key and the value
+# and return the number of probes to perform the insert
+ 
+probe_add1 is OP T M {
+      	   T tset ([(phrase string), pass] M);
+	   tprobes T
+      }
+
+
+probe_add2 is OP T M {
+      	   T tset M;
+	   tprobes T
+      }
+
+
+# Add the integers from 1 to N to the table and
+# return some statistics. The second argument M is the 
+# initial table size
+#
+#    - the number of entries in the table
+#    - the total size of the table after adding
+#    - the average number of probes to insert an entry 
+#    - the maximum number of probes to add an entry
+
+ntables_test1 is OP N M {
+      write 'trying' N M;
+      t := tcreate M;
+      entries := (each [(phrase string), pass] (count N));
+      write 'entry count: ' (tally entries);
+      st := time;
+      p := t eachright probe_add2 entries;
+      durn := time - st;
+      if durn > 0 then
+        write ('inserts per second: ' link string (N/durn));
+      endif;
+      avg_p := (sum p)/(tally p);
+      write [(tcount t), (tsize t), avg_p, (max p)];
+      t
+}
+ 
+     
+# test adding and retrieving entries to a table.
+# N entries are added to the table and then retrieved in the 
+# reverse order. the number of correct retrievals is returned.
+
+ntables_test2 is OP N {
+	     t := tcreate 1;
+	     entries := each [(phrase string), pass] (count N); 
+	     t eachright tset entries;
+	     keys := each phrase (reverse count N);
+	     correct := 0;
+	     for i with reverse count N do
+	     	 key := phrase string i;
+		 if (t tget key) = i then
+		    correct := correct + 1;
+		 endif;
+	     endfor;
+             correct  
+}
+
+
+ntables_test1 100000 1;
+ntables_test1 100000 100000;
+%ntables_test1 1000000 1;
+
+bye
+
+		    

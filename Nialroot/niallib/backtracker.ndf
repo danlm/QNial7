@@ -1,0 +1,249 @@
+# BACKTRACKER.NDF
+
+# This workspace was developed by Lynn Sutherland March 1984  and modified
+  by Mike Jenkins in July 1987 to improve its generality.
+
+
+#                       General Backtracker
+  This is the generic setup for Lynn's backtracking algorithm.  The program
+  generates all paths through a network, checking certain conditions along
+  the way.
+  The user sets up a specific use of the algorithm by initializing the
+  network via the variables: Nodes and Reachablenodes.
+  The user directs the algorithm to find desired paths by supplying the
+  operations: haveapath and score, and the starting variable: Bestscore
+  and Bestpath.
+  The user may optionally supply the operations: terminalcondition and
+  heuristic to further guide the search.
+
+# Global Variables:
+       Nodes: a list of the nodes in the network.
+       Reachablenodes: a list of the reachable nodes corresponding
+              to each of the nodes in the list - Nodes.
+       Bestpath: a list of the nodes in the best path found so far.
+       Bestscore: a numeric value indicating the best score found
+              so far.  Bestscore = score Bestpath .
+
+# Provided Definitions:
+       search: the main backtracking operation.
+       start: an expression which prompts the use for a list
+              of possible starting nodes. These must be in the
+              form that nodes have for the network, and if only
+              one is given, it must be a list. For example,
+              if a node is a pair (as in the 8 Queen's example)
+              then a single starting value at node 1 0 must be
+              given as [1 0].
+
+# User provided definitions for the given problem
+       haveapath: a predicate that checks whether a path meets
+              the conditions for a desired path.
+       score: an operation which gives a value to a path and
+              sets the Bestpath and Bestscore variables.
+       reachablefrom: an operation which returns the nodes
+              reachable from a given node.
+       terminalcondition: a predicate which checks whether
+              the program should be terminated.
+       heuristic: an operation which re-orders and/or sublists
+              a list of reachable nodes so that the best choices
+              are at the beginning of the list.
+
+
+Quiet gets Falsehood;
+
+Nodes IS external variable
+
+Reachablenodes IS external variable
+
+Bestscore IS external variable
+
+Bestpath IS external variable
+
+haveapath IS external operation
+
+score IS external operation
+
+Init Is { NONLOCAL Bestpath Bestscore;
+  Bestpath gets Null;
+  Bestscore gets score Bestpath ;}
+
+Terminalcondition IS falsehood
+
+reachablefrom IS OPERATION Node ( first (Node find Nodes) pick Reachablenodes )
+
+heuristic IS reachablefrom last
+
+search IS OPERATION Currentpath Candidate {
+  IF not Quiet THEN write 'search' currentpath candidate; ENDIF;
+     IF not Terminalcondition THEN
+       IF not ( Candidate in Currentpath ) THEN
+         Newpath := Currentpath append Candidate;
+         IF haveapath Newpath THEN
+            score Newpath;
+         ELSE
+            ITERATE Newpath search (heuristic Newpath);
+         ENDIF;
+       ENDIF;
+     ENDIF;
+     }
+
+start IS {
+     startnodes gets read 'Starting nodes? ';
+     Init;
+     FOR Startnode WITH Startnodes DO
+         ITERATE [Startnode] search (heuristic [Startnode]);
+     ENDFOR;
+     write (phrase 'Best Score: ') Bestscore;
+     write (phrase 'Best Path: ') Bestpath;
+     }
+
+# The following part of the file is a special example of the use of the
+  backtracking algorithm based on determining the shortest distance between two
+  cities.
+
+#  The Travelling Salesman Problem for North American cities.
+
+#
+This example finds the shortest path between cities using the backtracking
+search algorithm.  The nodes are the cities that are in the system.
+The reachable nodes are those for which a direct connection exists.
+
+#
+The algorithm finds a shortest path by examining all possible paths
+that can satisfy the constraints. The search is guided by the heuristic
+described below.
+
+Nodes gets "Montreal "Toronto "Kingston "Calgary "Vancouver
+  "Boston "New_York "Washington "Chicago "San_Francisco "Los_Angeles ;
+
+Reachablenodes gets
+       ("Toronto "Kingston "Calgary "Boston "New_York "Chicago "Los_Angeles )
+       ("Montreal "Kingston "Calgary "Boston "New_York "Chicago "San_Francisco )
+       ("Toronto "Montreal )
+       ("Toronto "Montreal "Vancouver "New_York "Chicago )
+       ("Toronto "Calgary  "New_York "Chicago "Los_Angeles "San_Francisco )
+       ("Montreal "Toronto  "New_York "Chicago "Washington "San_Francisco )
+       ("Montreal "Toronto "Calgary "Boston "Chicago "Los_Angeles
+           "Washington "San_Francisco )
+       ("Boston "New_York "Chicago "Los_Angeles )
+       ("Toronto "Montreal "Calgary "Boston "New_York "San_Francisco )
+       ("Toronto "Montreal "Vancouver "New_York "Chicago "Los_Angeles )
+       ("Vancouver "Boston "New_York "Chicago "San_Francisco ) ;
+
+distab gets 11 11 reshape
+    0  6 3 40  0  9 10 0 15  0 70
+    6  0 3 30  0 11 12 0 13 41  0
+    3  3 0  0  0  0  0 0  0  0  0
+   33 30 0  0 10  0 35 0 40  0  0
+    0 40 0 10  0  0 50 0 30 10 12
+    9 10 0  0  0  0  2 5 12 50  0
+    9  9 0 40  0  2  0 2 12 45 40
+    0  0 0  0  0  5  2 0 20  0 48
+   15 13 0 30  0 15 18 0  0 35  0
+   46 40 0  0 10  0 40 0 25  0  6
+    0  0 0  0 16 50 52 0 35  6  0 ;
+
+pairs IS TR f OP a ( front a EACHBOTH f rest a )
+
+distance is op x y ( EACH first ((x find nodes) (y find nodes)) pick distab )
+
+score IS OP Path { nonlocal Bestscore Bestpath;
+     %writescreen link 'Found path: ' (sketch Path);
+     S gets sum PAIRS distance Path;
+     IF S < Bestscore THEN
+        Bestscore gets S;
+        Bestpath gets Path;
+     ENDIF;
+     }
+
+Destination is EXTERNAL variable;
+
+haveapath IS OP Path (
+     (last Path = Destination) )
+
+# heuristic is used to eliminate uninteresting searches (path already
+  too long), to select the destination if it is a candidate,
+  and to order the candidate node in ascending distance from the last
+  item in the path.
+
+heuristic is op path { if sum PAIRS distance path > bestscore then
+                           Null
+                       else
+                        candidates gets reachablefrom last path;
+                        if destination in candidates then
+                         solitary destination
+                        else
+                         gradeup (last path EACHRIGHT distance candidates)
+                          choose candidates
+                        endif
+                       endif
+                      }
+
+Init IS {
+  NONLOCAL Bestscore Bestpath;
+  Bestpath := Null;
+  Bestscore := 10000; }
+
+start IS { Nonlocal Destination ;
+     repeat
+     Init;
+     writescreen ' ';
+     Startnode gets phrase readscreen 'Starting city: ';
+     if startnode in nodes then
+        Destination gets phrase readscreen 'Ending city: ';
+        if destination in nodes then
+           ITERATE [Startnode] search (heuristic [Startnode]);
+           writescreen link 'Best Route: ' (sketch Bestpath);
+           writescreen link 'Total Distance: ' (sketch Bestscore)
+                                                 ' hundred kilometers';
+        else
+           writescreen 'I don''t know about that city';
+        endif;
+     else
+        writescreen 'I don''t know about that city';
+     endif;
+     more gets first readscreen 'Do you want to try another one? ';
+     until more = `n endrepeat;
+     }
+
+shortestpath is {
+   writescreen ' ';
+   writescreen '        Welcome to the Q''Nial Path Finding Program';
+   writescreen ' ';
+   writescreen 'This program will determine the shortest route to take when';
+   writescreen 'travelling among various North American cities.';
+   writescreen 'The initial set up will determine the shortest route between';
+   writescreen 'two cities that you name.  You can change the program, to';
+   writescreen 'solve your specific travel problems by changinging the';
+   writescreen 'definition of some of the Nial operations in the program.';
+   writescreen ' ';
+   writescreen 'The cities that are in the system are:  Montreal, Toronto,';
+   writescreen 'Kingston, Calgary, Vancouver, Boston, New_York,';
+   writescreen 'Washington, Chicago, San_Francisco, and Los_Angeles' ;
+   writescreen ' ';
+   start;
+}
+
+Latent is {
+   writescreen 'type shortestpath to run a back tracking solution for shortest path' ;
+}
+
+quiet gets Falsehood ;
+
+search is op currentpath candidate{
+   if not quiet then
+      p:=currentpath append candidate;
+      write "search p (sum pairs distance p);
+   endif;
+   if not terminalcondition then
+      if not(Candidate in currentpath) then
+         Newpath gets currentpath append candidate;
+         if haveapath newpath then
+            score newpath ;
+         else
+         ITERATE Newpath search (heuristic newpath);
+         endif;
+      endif;
+   endif;}
+
+Latent
+

@@ -1,0 +1,73 @@
+# Solving the nqueens problem with simulated annealing
+#
+
+loaddefs "sim_anneal;
+
+# Set the initial configuration and parameters
+
+init_temp := 30.0;
+fin_temp  := 0.05;
+niter     := 100;
+
+nq_cool is (0.99 sa_cool);
+
+
+# nq_tweak
+# --------
+#
+# permute two entries in the array
+#
+
+nq_tweak is op soln {
+	n := tally soln;
+	% Get two distinct random indices;
+	i j := floor (n * random 2);
+	if i = j then j := (j+1) mod n; endif;
+    x y := (i j) choose soln;
+	% swap the values;
+	(y x) (i j) placeall soln}
+
+
+# nq_cost
+# -------
+#
+# Use the number of conflicting queen positions as the 
+# energy/cost for the problem
+#
+
+nq_cost is op soln {
+  p := tell tally soln;
+  v1 := abs link (p eachright minus p);
+  v2 := abs link (soln eachright minus soln);
+  (sum ((not (0 match v1)) sublist (v1 match v2)))/2.0}
+
+
+# nq_finished
+# -----------
+#
+# finished if no conflicts
+#
+
+nq_finished is op cost soln model {
+	cost <= 0.00001}
+
+
+
+# Test run
+
+nq_test is op n {
+    t_start := time;
+	model := [count n, init_temp, fin_temp, niter];
+	res := sa_run [nq_tweak, nq_cost, nq_cool, nq_finished] model;
+	durn := time - t_start;
+	[durn, res]}
+
+
+duration result := nq_test 20;
+num_pass best_cost best_soln := result;
+
+write 'Number of queens: 20';
+write link 'Duration: ' (string duration);
+write link 'Passes: ' (string num_pass);
+write link 'Conflicts: ' (string best_cost);
+write link 'Solution: ' (display best_soln);

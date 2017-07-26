@@ -1,0 +1,20 @@
+# tests that push the limits of token size for constants and variables
+
+(and second second second parse scan 'llllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllll') = l
+
+
+(second second second parse scan '.3333333333333333333333333333333333333333333333333333333333333333333') = reciprocal 3
+
+(second second second parse scan '.33333333333333333333333333333333333333333333333333333333333333333j0') = reciprocal 3j0
+
+(second second second parse scan '.0000000000000000000000000000000000000000000000000000000000000001e30') = 1e-34
+
+(string second second second parse scan '"AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA') = toupper 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa'
+
+(tally string second second second parse scan '?bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb') = 67
+
+aa:=3;abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqr:=aa;5+abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqr = 8
+
+# an example of a multiple line comment
+
+(%(and second second parse scan 'llllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllll') = l (second second parse scan '10000000000000000000000000000000000000000000000000000000000000000000') = 1e67 (second second parse scan '.3333333333333333333333333333333333333333333333333333333333333333333') = reciprocal 3 (second second parse scan '.33333333333333333333333333333333333333333333333333333333333333333j0') = reciprocal 3j0 (second second parse scan '.0000000000000000000000000000000000000000000000000000000000000001e30') = 1e-34 (string second second parse scan '"AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA') = toupper 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa' (tally string second second parse scan '?bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb') = 67;) = ??noexpr

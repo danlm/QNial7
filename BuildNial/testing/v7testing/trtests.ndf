@@ -1,0 +1,287 @@
+# This set of tests checks that fundamental transformer identities
+are implemented correctly.
+
+# EACH definitions
+
+#EACH1 is tr f op a{
+   if empty a then
+     shape a reshape solitary f first a
+   else
+     shape a reshape (f first a hitch EACH1 f rest a)
+   endif }
+
+#CHECK1 is tr f (equal [EACH,EACH1] f)
+
+testid 'CHECK1 abs' Mixedargs
+
+testid 'CHECK1 second' Mixedargs
+
+testid 'CHECK1 (3 reshape)' Mixedargs
+
+testid 'CHECK1 solitary' Mixedargs
+
+testid 'CHECK1 link' Mixedargs
+
+testid 'CHECK1 sum' Mixedargs
+
+#EACHLEFT1 is tr f op a b {
+  EACH (b CONVERSE f) a }
+
+#CHECK2 is tr f (equal[EACHLEFT,EACHLEFT1] f)
+
+testid 'CHECK2 minus' Binaryargs
+
+testid 'CHECK2 hitch' Binaryargs
+
+testid 'CHECK2 pick' Binaryargs
+
+testid 'CHECK2 reshape' Binaryargs
+
+testid 'CHECK2 link' Binaryargs
+
+#EACHRIGHT1 is tr f op a b {
+  EACH (a f) b }
+
+#CHECK3 is tr f (equal[EACHRIGHT,EACHRIGHT1] f)
+
+testid 'CHECK3 minus' Binaryargs
+
+testid 'CHECK3 hitch' Binaryargs
+
+testid 'CHECK3 pick' Binaryargs
+
+testid 'CHECK3 reshape' Binaryargs
+
+testid 'CHECK3 link' Binaryargs
+
+#EACHBOTH1 is tr f op a b {
+   EACH f pack A B }
+
+#CHECK4 is tr f (equal[EACHBOTH,EACHBOTH1] f)
+
+testid 'CHECK4 minus' Binaryargs
+
+testid 'CHECK4 hitch' Binaryargs
+
+testid 'CHECK4 pick' Binaryargs
+
+testid 'CHECK4 reshape' Binaryargs
+
+testid 'CHECK4 link' Binaryargs
+
+#RANK1 IS TRANSFORMER f OPERATION N A { 
+   IF empty A THEN
+      A
+   ELSEIF N<0 or (N>valence A) THEN
+      fault 'left arg to RANK tranform out of range'
+   ELSEIF N=0 and (valence A=0) THEN
+      EACH f A
+   ELSE
+      mix EACH f (N lower A) 
+   ENDIF }
+
+#CHECK5 is tr f OP a b (equal [a RANK f b,a RANK1 f b])
+
+testid 'CHECK5 minus' Binaryargs
+
+testid 'CHECK5 hitch' Binaryargs
+
+testid 'CHECK5 pick' Binaryargs
+
+testid 'CHECK5 reshape' Binaryargs
+
+testid 'CHECK5 link' Binaryargs
+
+
+#ACCUMULATE1 is tr f op a{
+  heads is op a { count tally a eachleft take list a};
+  EACH REDUCE f heads A }
+
+#CHECK6 is tr f (equal [ACCUMULATE f,ACCUMULATE1 f])
+
+testid 'CHECK6 minus' Binaryargs
+
+testid 'CHECK6 hitch' Binaryargs
+
+testid 'CHECK6 pick' Binaryargs
+
+testid 'CHECK6 reshape' Binaryargs
+
+#CONVERSE1 is tr f op a b {b f a}
+
+#CHECK7 is tr f (equal [CONVERSE f,CONVERSE1 f])
+
+testid 'CHECK7 minus' Binaryargs
+
+testid 'CHECK7 hitch' Binaryargs
+
+testid 'CHECK7 pick' Binaryargs
+
+testid 'CHECK7 reshape' Binaryargs
+
+testid 'CHECK7 link' Binaryargs
+
+#EACHALL1 is tr f (EACH f pack)
+
+#CHECK8 is tr f (equal [EACHALL f,EACHALL1 f])
+
+testid 'CHECK8 abs' Mixedargs
+
+testid 'CHECK8 second' Mixedargs
+
+testid 'CHECK8 (3 reshape)' Mixedargs
+
+testid 'CHECK8 solitary' Mixedargs
+
+testid 'CHECK8 link' Mixedargs
+
+testid 'CHECK8 sum' Mixedargs
+
+#FOLD1 is tr f op N A {
+  IF isinteger N THEN
+   IF N > 0 THEN
+     N - 1 FOLD1 f (f A)
+   ELSE
+     A
+   ENDIF 
+  ELSE
+    fault '?first argument of FOLD must be an integer'
+  ENDIF }
+
+#CHECK9 is tr f (equal [FOLD f,FOLD1 f])
+
+testid 'CHECK9 minus' Binaryargs
+
+testid 'CHECK9 hitch' Binaryargs
+
+testid 'CHECK9 pick' Binaryargs
+
+testid 'CHECK9 reshape' Binaryargs
+
+testid 'CHECK9 link' Binaryargs
+
+
+# Fork is a primitive transformer which can take an arbitrary number
+of operations in its argument list. It cannot be directly
+simulated in general, but can be for a fixed number of arguments.
+
+#FORK3 is tr f g h op a {
+  if f a then g a else h a endif }
+
+#CHECK10 is tr f g h (equal [FORK [f,g,h],FORK3[f,g,h])
+
+testid 'CHECK10 [atomic,abs,opposite]' Mixedargs
+
+testid 'CHECK10 [simple,first,second]' Mixedargs
+
+testid 'CHECK10 [empty ,Null first,(3 reshape)]' Mixedargs
+
+testid 'CHECK10 [atomic,solitary,single]' Mixedargs
+
+testid 'CHECK10 [Null = shape,link,cart]' Mixedargs
+
+testid 'CHECK10 [simple,sum,max]' Mixedargs
+
+
+# grade and sort should obey these properties:
+
+#GSID1 is tr f op a {GRADE f A choose A = (SORT f A) }
+
+#GSID2 is tr f op A { SORT f (SORT f A) = SORT f A }
+
+testid 'GSID1 <= ' Mixedargs
+
+testid 'GSID1 >= ' Mixedargs
+
+testid 'GSID2 <= ' Mixedargs
+
+testid 'GSID2 >= ' Mixedargs
+
+#ITERATE1 is tr f op A {
+          FOR X WITH A DO f A ENDFOR }
+
+#CHECK11 is tr f (equal [ITERATE f, ITERATE1 f])
+
+testid 'CHECK11 abs' Mixedargs
+
+testid 'CHECK11 second' Mixedargs
+
+testid 'CHECK11 (3 reshape)' Mixedargs
+
+testid 'CHECK11 solitary' Mixedargs
+
+testid 'CHECK11 link' Mixedargs
+
+testid 'CHECK11 sum' Mixedargs
+
+# LEAF1 is tr f op a{
+   IF atomic A THEN
+	f A
+   ELSE
+	EACH (LEAF1 f) A
+   ENDIF }
+
+#CHECK12 is tr f (equal [LEAF f, LEAF1 f])
+
+testid 'CHECK12 abs' Mixedargs
+
+testid 'CHECK12 second' Mixedargs
+
+testid 'CHECK12 (3 reshape)' Mixedargs
+
+testid 'CHECK12 solitary' Mixedargs
+
+testid 'CHECK12 link' Mixedargs
+
+testid 'CHECK12 sum' Mixedargs
+
+#TWIG1 is tr f op a{
+   IF simple A THEN
+	f A
+   ELSE
+	EACH (TWIG1 f) A
+   ENDIF }
+
+#OUTER1 is tr f (EACH f cart)
+
+#CHECK13 is tr f (equal [TWIG f, TWIG1 f])
+
+testid 'CHECK13 abs' Mixedargs
+
+testid 'CHECK13 second' Mixedargs
+
+testid 'CHECK13 (3 reshape)' Mixedargs
+
+testid 'CHECK13 solitary' Mixedargs
+
+testid 'CHECK13 link' Mixedargs
+
+testid 'CHECK13 sum' Mixedargs
+
+#REDUCE1 is tr f op a {
+  IF empty a THEN
+	quiet_fault 'identity'
+  ELSE
+    Res := last A;
+    FOR B WITH reverse front A DO
+	Res := B f Res
+    ENDFOR
+  ENDIF }
+
+#CHECK14 is tr f (equal [REDUCE f, REDUCE1 f])
+
+testid 'CHECK14 minus' Binaryargs
+
+testid 'CHECK14 hitch' Binaryargs
+
+testid 'CHECK14 pick' Binaryargs
+
+testid 'CHECK14 reshape' Binaryargs
+
+
+# team is a primitive tr that can take an arbitrary number of
+functions. It cannot be simulated.
+
+#TEAMID1 is tr f g h  op A B C { TEAM[f,g,h] A B C faulteq [f A,g B,h C]) }
+
+testid 'TEAMID1 [hitch,first,rest] (3 reshape)' Mixedargs

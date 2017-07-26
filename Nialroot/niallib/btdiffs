@@ -1,0 +1,9 @@
+208c208
+< latent is {
+---
+> shortestpath is {
+225a226,229
+> Latent is {
+>    writescreen 'type shortestpath to run a back tracking solution for shortest path' ;
+> }
+> 

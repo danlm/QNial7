@@ -1,0 +1,130 @@
+# This set of tests checks that fundamental transformer identities
+are implemented correctly.
+
+# EACH definitions
+
+EACH1 is tr f op a{
+   if empty a then
+     shape a reshape solitary f first a
+   else
+     shape a reshape (f first a hitch EACH1 f rest a)
+   endif }
+
+CHECK1 is tr f (equal [EACH f,EACH1 f])
+
+EACHLEFT1 is tr f op a b {
+  EACH (b CONVERSE f) a }
+
+CHECK2 is tr f (equal[EACHLEFT f,EACHLEFT1 f])
+
+EACHRIGHT1 is tr f op a b {
+  EACH (a f) b }
+
+CHECK3 is tr f (equal[EACHRIGHT f,EACHRIGHT1 f])
+
+EACHBOTH1 is tr f op a b {
+   EACH f pack A B }
+
+CHECK4 is tr f (faulteq[EACHBOTH f,EACHBOTH1 f])
+
+RANK1 IS TRANSFORMER f OPERATION N A { 
+   IF empty A THEN
+      A
+   ELSEIF not isinteger N THEN
+      fault '?left arg to RANK transform not an integer'
+   ELSEIF N<0 or (N>valence A) THEN
+      fault 'left arg to RANK tranform out of range'
+   ELSEIF N=0 and (valence A=0) THEN
+      EACH f A
+   ELSE
+      mix EACH f (N lower A) 
+   ENDIF }
+
+loaddefs"faulteq
+
+CHECK5 is tr f (faulteq [RANK f,RANK1 f])
+
+ACCUMULATE1 is tr f op a{
+  heads is op a { count tally a eachleft take list a};
+  EACH REDUCE f heads A }
+
+CHECK6 is tr f (equal [ACCUMULATE f,ACCUMULATE1 f])
+
+CONVERSE1 is tr f op a b {b f a}
+
+CHECK7 is tr f (equal [CONVERSE f,CONVERSE1 f])
+
+EACHALL1 is tr f (EACH f pack)
+
+CHECK8 is tr f (equal [EACHALL f,EACHALL1 f])
+
+FOLD1 is tr f op N A {
+  IF isinteger N THEN
+   IF N > 0 THEN
+     N - 1 FOLD1 f (f A)
+   ELSE
+     A
+   ENDIF 
+  ELSE
+    fault '?first argument of FOLD must be an integer'
+  ENDIF }
+
+CHECK9 is tr f (equal [FOLD f,FOLD1 f])
+
+# Fork is a primitive transformer which can take an arbitrary number
+of operations in its argument list. It cannot be directly
+simulated in general, but can be for a fixed number of arguments.
+
+FORK3 is tr f g h op a {
+  if f a then g a else h a endif }
+
+CHECK10 is tr f g h (equal [FORK [f,g,h],FORK3[f,g,h]])
+
+
+# grade and sort should obey these properties:
+
+GSID1 is tr f op a {GRADE f A choose A faulteq (SORT f A) }
+
+GSID2 is tr f op A { SORT f (SORT f A) faulteq SORT f A }
+
+ITERATE1 is tr f op A {
+          FOR X WITH A DO f X ENDFOR }
+
+CHECK11 is tr f (equal [ITERATE f, ITERATE1 f])
+
+LEAF1 is tr f op a{
+   IF atomic A THEN
+	f A
+   ELSE
+	EACH (LEAF1 f) A
+   ENDIF }
+
+CHECK12 is tr f (equal [LEAF f, LEAF1 f])
+
+TWIG1 is tr f op a{
+   IF simple A THEN
+	f A
+   ELSE
+	EACH (TWIG1 f) A
+   ENDIF }
+
+OUTER1 is tr f (EACH f cart)
+
+CHECK13 is tr f (equal [TWIG f, TWIG1 f])
+
+REDUCE1 is tr f op a {
+  IF empty a THEN
+	quiet_fault 'identity'
+  ELSE
+    Res := last A;
+    FOR B WITH reverse front A DO
+	Res := B f Res
+    ENDFOR
+  ENDIF }
+
+CHECK14 is tr f (equal [REDUCE f, REDUCE1 f])
+
+# team is a primitive tr that can take an arbitrary number of
+functions. It cannot be simulated.
+
+TEAMID1 is tr f g h  op A B C { TEAM[f,g,h]A B C faulteq [f A,g B,h C] }

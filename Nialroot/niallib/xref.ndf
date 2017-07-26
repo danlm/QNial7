@@ -1,0 +1,129 @@
+#
+Operation: xref File [Switch]
+File: xref.ndf
+
+# The xref operation writes a cross reference listing of all the definitions in the
+  current workspace to file "File".
+  The result gives a list, in alphabetical order, of each array, expression, 
+  operation, and transformer is listed showing the functional objects in which 
+  they occur.  
+  If Switch is present, then Predefined names are not included in the listing.  
+  The value of switch can be any atom; it is tested merely to see if it is present.
+
+xref IS OPERATION __File__ {
+   __getdef__ is op __nm__ { getdef __nm__ };
+   __tocanon__ IS OPERATION Name Kinds {
+      CASE Kinds FROM
+            "expr :
+               Strid := string Name ;
+               link ( first Strid ) ( tolower rest Strid )
+               END
+            "op :
+               tolower string Name
+               END
+            "tr :
+               toupper string Name
+               END
+            "var :
+               Strid := string Name ;
+               link ( first Strid ) ( tolower rest Strid )
+               END
+            "ident :
+               toupper string Name
+               END
+      ENDCASE } ;
+  { % block to isolate local names from use of getdef above;
+   Switch := tally __File__ ;
+   Filename := first __File__ ;
+   Oldsetting := settrigger o;
+   Filenumber := open Filename "w ;
+   IF isfault Filenumber THEN
+      settrigger Oldsetting;
+      Filenumber
+   ELSE
+      settrigger Oldsetting;
+      writefile Filenumber '     Cross Reference List' ;
+      writefile Filenumber ' ' ;
+      Names Kinds := pack symbols 0 ;
+      Allnames Allkinds := pack symbols 1 ;
+      IF Switch = 2 THEN
+         % Do not include predefined names in lists;
+         Predefined := Allnames except Names ;
+      ELSE
+         Predefined := "XREF ;
+      ENDIF ;
+      Records := '' ;
+      FOR Index WITH grid Names DO
+         Name := Names @ Index ;
+         K := Kinds @ Index ;
+         IF K ~= "var and ( Name ~= "XREF ) THEN
+            Tokenstream := rest deparse __getdef__ Name ;
+            Code Item := cols ( ( tally Tokenstream quotient 2 ) 2 reshape
+            Tokenstream ) ;
+            Itemlist := cull ( Code match 2 sublist Item ) ;
+            Records := Records append EACH ( phrase toupper string ) Itemlist ;
+         ELSEIF K = "var THEN
+            Kinds @ Index := phrase 'Global Variable' ;
+            Records := Records append Name ;
+         ELSE
+            Records := Records append Null ;
+         ENDIF ;
+      ENDFOR ;
+      Ids := SORT <= cull content Records except Predefined ;
+      FOR Id WITH Ids DO
+         Strid := string Id ;
+         There Where := seek Id Allnames ;
+         IF There THEN
+            IF Allkinds @ Where = "var THEN
+               Canonical_id := link ( first Strid ) ( tolower rest Strid ) ;
+            ELSE
+               Canonical_id := string __tocanon__ Id ( Allkinds @ Where ) ;
+            ENDIF ;
+            Th Wh := seek Id Names ;
+            IF Th THEN
+               Pid := link Canonical_id ' (' ( string ( Kinds @ Wh ) ) ')' ;
+            ELSE
+               Pid := link Canonical_id ' (Predefined ' ( string ( Allkinds @
+               Where ) ) ')' ;
+            ENDIF ;
+         ELSE
+            Canonical_id := link ( first Strid ) ( tolower rest Strid ) ;
+            Pid := link Canonical_id ' (Local)' ;
+         ENDIF ;
+         writefile Filenumber Pid ;
+         Pattern := Id EACHRIGHT in Records ;
+         Refs := SORT <= ( Pattern sublist Names except ( Id "XREF ) ) ;
+         IF not empty Refs THEN
+            Maxref := 1 + max EACH tally ( EACH string Refs ) ;
+         ELSE
+            Maxref := 80 ;
+         ENDIF ;
+         Quantity := tally Refs ;
+         Number_per_line := max 1 ( 80 quotient Maxref ) ;
+         REPEAT
+            IF Quantity > Number_per_line THEN
+               Refgroup := Number_per_line take Refs ;
+            ELSE
+               Refgroup := Quantity take Refs ;
+            ENDIF ;
+            Refgroup := Refgroup EACHBOTH __tocanon__ ( Allkinds # ( Refgroup
+            EACHLEFT find Allnames ) ) ;
+            Line := link ( Maxref EACHRIGHT take Refgroup ) ;
+            writefile Filenumber Line ;
+            Refs := Number_per_line drop Refs ;
+            Quantity := Quantity - Number_per_line ;
+         UNTIL Quantity <= 0
+         ENDREPEAT ;
+         writefile Filenumber ' ' ;
+      ENDFOR ;
+      close Filenumber ;
+   ENDIF }
+  }
+
+# Example of usage to cross reference the definitions in the library file utils.ndf.
+    nial -i
+    library "utils.ndf
+    library "xref 
+    xref "utils_xref_all.txt 
+    xref "utils_xref_not_predefined.txt l
+    

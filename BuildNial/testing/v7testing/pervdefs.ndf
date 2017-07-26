@@ -1,0 +1,15 @@
+# file containing transformers that express general operation properities
+  and tests that validate the property for each operation with that
+  property.
+
+
+MULTIPERVASIVE IS TR f OP A (f A = EACH f pack A)
+
+UNARYPERVASIVE IS TR F op A (f A = EACH f A)
+
+BINARYPERVASIVE IS TR f OP A B (A f B faulteq EACH f (A pack B))
+
+#commutative test
+
+COMMUTATIVE is TR f OP A B ((A f B) = (B f A))
+

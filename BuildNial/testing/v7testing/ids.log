@@ -1,0 +1,927 @@
+916694 885743 28 1000000 10000 10000 1000
+  IF isfault (2 power 32) THEN
+  write 'Skipping large int tests';
+ ELSE
+  testid 'largintids1' Largeintargs;
+  testid 'largintids2' Largeintpairargs;
+ ENDIF;
+starting largintids1
+finished largintids1
+starting largintids2
+finished largintids2
+
+testid 'cartids' Allargs
+starting cartids
+finished cartids
+
+testid 'linkids' Allargs
+starting linkids
+finished linkids
+
+testid 'reshapeids' Allargs
+starting reshapeids
+finished reshapeids
+
+testid 'reshapeids1' (Binaryargs append 'pickargs')
+starting reshapeids1
+finished reshapeids1
+
+testid 'singleids' Allargs
+starting singleids
+finished singleids
+
+testid 'rowcolids' Allargs
+starting rowcolids
+finished rowcolids
+
+testid 'fuseids' Allargs
+starting fuseids
+finished fuseids
+
+testid 'packids' Allargs
+starting packids
+finished packids
+
+testid 'splitblendids' (Binaryargs append 'pickargs')
+starting splitblendids
+finished splitblendids
+
+testid 'measureids' Allargs
+starting measureids
+finished measureids
+
+testid 'pickids' Allargs
+starting pickids
+finished pickids
+
+testid 'selectionids' ['pickargs' , 'chooseargs' , 'reachargs']
+starting selectionids
+finished selectionids
+
+testid 'selectids1' ['picktriples']
+starting selectids1
+finished selectids1
+
+testid 'arithids' Numargs
+starting arithids
+finished arithids
+
+testid 'arithids1' Binaryargs
+starting arithids1
+finished arithids1
+
+testid 'logicids' Bitargs
+starting logicids
+finished logicids
+
+testid 'logicids1' Binaryargs
+starting logicids1
+finished logicids1
+
+testid 'compareids' Binaryargs
+starting compareids
+finished compareids
+
+testid 'equalityids' Allargs
+starting equalityids
+finished equalityids
+
+testid 'cullids' Allargs
+starting cullids
+finished cullids
+
+testid 'seekids' Binaryargs
+starting seekids
+finished seekids
+
+testid 'listids' Allargs
+starting listids
+finished listids
+
+testid 'listids1' Binaryargs
+starting listids1
+finished listids1
+
+testid 'simpleids' Allargs
+starting simpleids
+finished simpleids
+
+testid 'eachids' Allargs
+starting eachids
+finished eachids
+
+testid 'eachids1' Binaryargs
+starting eachids1
+finished eachids1
+
+testid 'maxminids' Allargs
+starting maxminids
+finished maxminids
+
+testid 'maxminids1' Binaryargs
+starting maxminids1
+finished maxminids1
+
+testid 'reverseids' Allargs
+starting reverseids
+finished reverseids
+
+testid 'rotateids' (Binaryargs append 'pickargs')
+starting rotateids
+finished rotateids
+
+testid 'sublistids' Binaryargs
+starting sublistids
+finished sublistids
+
+testid 'exceptids' Binaryargs
+starting exceptids
+finished exceptids
+
+testid 'takedropids' (Binaryargs append 'pickargs')
+starting takedropids
+finished takedropids
+
+# file containing transformers that express general operation properities
+  and tests that validate the property for each operation with that
+  property.
+
+#MULTIPERVASIVE IS TR f OP A (f A = EACH f pack A)
+
+# The reductive pervasive operations 
+
+testid 'MULTIPERVASIVE and' Multiargs
+starting MULTIPERVASIVE and
+finished MULTIPERVASIVE and
+
+testid 'MULTIPERVASIVE or' Multiargs
+starting MULTIPERVASIVE or
+finished MULTIPERVASIVE or
+
+testid 'MULTIPERVASIVE sum' Multiargs
+starting MULTIPERVASIVE sum
+finished MULTIPERVASIVE sum
+
+testid 'MULTIPERVASIVE product' Multiargs
+starting MULTIPERVASIVE product
+finished MULTIPERVASIVE product
+
+testid 'MULTIPERVASIVE max' Multiargs
+starting MULTIPERVASIVE max
+finished MULTIPERVASIVE max
+
+testid 'MULTIPERVASIVE min' Multiargs
+starting MULTIPERVASIVE min
+finished MULTIPERVASIVE min
+
+#UNARYPERVASIVE IS TR F op A (f A = EACH f A)
+
+# The unary pervasive operations
+
+testid 'UNARYPERVASIVE abs' Multiargs
+starting UNARYPERVASIVE abs
+finished UNARYPERVASIVE abs
+
+testid 'UNARYPERVASIVE arccos' Multiargs
+starting UNARYPERVASIVE arccos
+finished UNARYPERVASIVE arccos
+
+testid 'UNARYPERVASIVE arcsin' Multiargs
+starting UNARYPERVASIVE arcsin
+finished UNARYPERVASIVE arcsin
+
+testid 'UNARYPERVASIVE arctan' Multiargs
+starting UNARYPERVASIVE arctan
+finished UNARYPERVASIVE arctan
+
+testid 'UNARYPERVASIVE ceiling' Multiargs
+starting UNARYPERVASIVE ceiling
+finished UNARYPERVASIVE ceiling
+
+testid 'UNARYPERVASIVE char' Multiargs
+starting UNARYPERVASIVE char
+finished UNARYPERVASIVE char
+
+testid 'UNARYPERVASIVE charrep' Multiargs
+starting UNARYPERVASIVE charrep
+finished UNARYPERVASIVE charrep
+
+testid 'UNARYPERVASIVE cos' Multiargs
+starting UNARYPERVASIVE cos
+finished UNARYPERVASIVE cos
+
+testid 'UNARYPERVASIVE cosh' Multiargs
+starting UNARYPERVASIVE cosh
+finished UNARYPERVASIVE cosh
+
+testid 'UNARYPERVASIVE exp' Multiargs
+starting UNARYPERVASIVE exp
+finished UNARYPERVASIVE exp
+
+testid 'UNARYPERVASIVE floor' Multiargs
+starting UNARYPERVASIVE floor
+finished UNARYPERVASIVE floor
+
+testid 'UNARYPERVASIVE ln' Multiargs
+starting UNARYPERVASIVE ln
+finished UNARYPERVASIVE ln
+
+testid 'UNARYPERVASIVE log' Multiargs
+starting UNARYPERVASIVE log
+finished UNARYPERVASIVE log
+
+testid 'UNARYPERVASIVE not' Multiargs
+starting UNARYPERVASIVE not
+finished UNARYPERVASIVE not
+
+testid 'UNARYPERVASIVE opposite' Multiargs
+starting UNARYPERVASIVE opposite
+finished UNARYPERVASIVE opposite
+
+testid 'UNARYPERVASIVE pass' Multiargs
+starting UNARYPERVASIVE pass
+finished UNARYPERVASIVE pass
+
+testid 'UNARYPERVASIVE reciprocal' Multiargs
+starting UNARYPERVASIVE reciprocal
+finished UNARYPERVASIVE reciprocal
+
+testid 'UNARYPERVASIVE sin' Multiargs
+starting UNARYPERVASIVE sin
+finished UNARYPERVASIVE sin
+
+testid 'UNARYPERVASIVE sinh' Multiargs
+starting UNARYPERVASIVE sinh
+finished UNARYPERVASIVE sinh
+
+testid 'UNARYPERVASIVE sqrt' Multiargs
+starting UNARYPERVASIVE sqrt
+finished UNARYPERVASIVE sqrt
+
+testid 'UNARYPERVASIVE tan' Multiargs
+starting UNARYPERVASIVE tan
+finished UNARYPERVASIVE tan
+
+testid 'UNARYPERVASIVE tanh' Multiargs
+starting UNARYPERVASIVE tanh
+finished UNARYPERVASIVE tanh
+
+testid 'UNARYPERVASIVE type' Multiargs
+starting UNARYPERVASIVE type
+finished UNARYPERVASIVE type
+
+#BINARYPERVASIVE IS TR f OP A B (A f B = EACH f (A pack B))
+
+# the binary pervasive operations
+
+testid 'BINARYPERVASIVE divide' Binaryargs
+starting BINARYPERVASIVE divide
+finished BINARYPERVASIVE divide
+
+testid 'BINARYPERVASIVE match' Binaryargs
+starting BINARYPERVASIVE match
+finished BINARYPERVASIVE match
+
+testid 'BINARYPERVASIVE mate' Binaryargs
+starting BINARYPERVASIVE mate
+finished BINARYPERVASIVE mate
+
+testid 'BINARYPERVASIVE minus' Binaryargs
+starting BINARYPERVASIVE minus
+finished BINARYPERVASIVE minus
+
+testid 'BINARYPERVASIVE mod' Binaryargs
+starting BINARYPERVASIVE mod
+finished BINARYPERVASIVE mod
+
+testid 'BINARYPERVASIVE plus' Binaryargs
+starting BINARYPERVASIVE plus
+finished BINARYPERVASIVE plus
+
+testid 'BINARYPERVASIVE power' Binaryargs
+starting BINARYPERVASIVE power
+finished BINARYPERVASIVE power
+
+testid 'BINARYPERVASIVE quotient' Binaryargs
+starting BINARYPERVASIVE quotient
+finished BINARYPERVASIVE quotient
+
+testid 'BINARYPERVASIVE times' Binaryargs
+starting BINARYPERVASIVE times
+finished BINARYPERVASIVE times
+
+testid 'BINARYPERVASIVE <' Binaryargs
+starting BINARYPERVASIVE <
+finished BINARYPERVASIVE <
+
+testid 'BINARYPERVASIVE <=' Binaryargs
+starting BINARYPERVASIVE <=
+finished BINARYPERVASIVE <=
+
+testid 'BINARYPERVASIVE >' Binaryargs
+starting BINARYPERVASIVE >
+finished BINARYPERVASIVE >
+
+testid 'BINARYPERVASIVE >=' Binaryargs
+starting BINARYPERVASIVE >=
+finished BINARYPERVASIVE >=
+
+#commutative test
+
+#COMMUTATIVE is TR f OP A B (A f B = . B f A)
+
+testid 'COMMUTATIVE  plus' Binaryargs
+starting COMMUTATIVE  plus
+finished COMMUTATIVE  plus
+
+testid 'COMMUTATIVE  times' Binaryargs
+starting COMMUTATIVE  times
+finished COMMUTATIVE  times
+
+testid 'COMMUTATIVE  max' Binaryargs
+starting COMMUTATIVE  max
+finished COMMUTATIVE  max
+
+testid 'COMMUTATIVE  min' Binaryargs
+starting COMMUTATIVE  min
+finished COMMUTATIVE  min
+
+testid 'COMMUTATIVE  and' Binaryargs
+starting COMMUTATIVE  and
+finished COMMUTATIVE  and
+
+testid 'COMMUTATIVE  or' Binaryargs
+starting COMMUTATIVE  or
+finished COMMUTATIVE  or
+
+# tests for consistency checks
+
+testid 'CHECK abs' ['Args']
+starting CHECK abs
+finished CHECK abs
+
+testid 'CHECK arccos' ['Args']
+starting CHECK arccos
+finished CHECK arccos
+
+testid 'CHECK arcsin' ['Args']
+starting CHECK arcsin
+finished CHECK arcsin
+
+testid 'CHECK1 arctan' ['Args']
+starting CHECK1 arctan
+finished CHECK1 arctan
+
+testid 'CHECK cos' ['Args']
+starting CHECK cos
+finished CHECK cos
+
+testid 'CHECK cosh' ['Args']
+starting CHECK cosh
+finished CHECK cosh
+
+testid 'CHECK exp' ['Args']
+starting CHECK exp
+finished CHECK exp
+
+testid 'CHECK ln' ['Args']
+starting CHECK ln
+finished CHECK ln
+
+testid 'CHECK log' ['Args']
+starting CHECK log
+finished CHECK log
+
+testid 'CHECK opposite' ['Args']
+starting CHECK opposite
+finished CHECK opposite
+
+testid 'CHECK pass' ['Args']
+starting CHECK pass
+finished CHECK pass
+
+testid 'CHECK reciprocal' ['Args']
+starting CHECK reciprocal
+finished CHECK reciprocal
+
+testid 'CHECK sin' ['Args']
+starting CHECK sin
+finished CHECK sin
+
+testid 'CHECK sinh' ['Args']
+starting CHECK sinh
+finished CHECK sinh
+
+testid 'CHECK sqrt' ['Args']
+starting CHECK sqrt
+finished CHECK sqrt
+
+testid 'CHECK tan' ['Args']
+starting CHECK tan
+finished CHECK tan
+
+testid 'CHECK tanh' ['Args']
+starting CHECK tanh
+finished CHECK tanh
+
+testid 'CHECK type' ['Args']
+starting CHECK type
+finished CHECK type
+
+# checking binaries
+
+testid 'CHECK divide' ['Binargs']
+starting CHECK divide
+finished CHECK divide
+
+testid 'CHECK mate' ['Binargs']
+starting CHECK mate
+finished CHECK mate
+
+testid 'CHECK minus' ['Binargs']
+starting CHECK minus
+finished CHECK minus
+
+testid 'CHECK plus' ['Binargs']
+starting CHECK plus
+finished CHECK plus
+
+testid 'CHECK power' ['Binargs']
+starting CHECK power
+finished CHECK power
+
+testid 'CHECK times' ['Binargs']
+starting CHECK times
+finished CHECK times
+
+testid 'CHECK <' ['Binargs']
+starting CHECK <
+finished CHECK <
+
+testid 'CHECK <=' ['Binargs']
+starting CHECK <=
+finished CHECK <=
+
+testid 'CHECK >' ['Binargs']
+starting CHECK >
+finished CHECK >
+
+testid 'CHECK >=' ['Binargs']
+starting CHECK >=
+finished CHECK >=
+
+# change values to test mod and quotient
+
+testid 'CHECK mod' ['Binargs1']
+starting CHECK mod
+finished CHECK mod
+
+testid 'CHECK quotient' ['Binargs1']
+starting CHECK quotient
+finished CHECK quotient
+
+# This set of tests checks that fundamental transformer identities
+are implemented correctly.
+
+# EACH definitions
+
+#EACH1 is tr f op a{
+   if empty a then
+     shape a reshape solitary f first a
+   else
+     shape a reshape (f first a hitch EACH1 f rest a)
+   endif }
+
+#CHECK1 is tr f (equal [EACH,EACH1] f)
+
+testid 'CHECK1 abs' Mixedargs
+starting CHECK1 abs
+finished CHECK1 abs
+
+testid 'CHECK1 second' Mixedargs
+starting CHECK1 second
+finished CHECK1 second
+
+testid 'CHECK1 (3 reshape)' Mixedargs
+starting CHECK1 (3 reshape)
+finished CHECK1 (3 reshape)
+
+testid 'CHECK1 solitary' Mixedargs
+starting CHECK1 solitary
+finished CHECK1 solitary
+
+testid 'CHECK1 link' Mixedargs
+starting CHECK1 link
+finished CHECK1 link
+
+testid 'CHECK1 sum' Mixedargs
+starting CHECK1 sum
+finished CHECK1 sum
+
+#EACHLEFT1 is tr f op a b {
+  EACH (b CONVERSE f) a }
+
+#CHECK2 is tr f (equal[EACHLEFT,EACHLEFT1] f)
+
+testid 'CHECK2 minus' Binaryargs
+starting CHECK2 minus
+finished CHECK2 minus
+
+testid 'CHECK2 hitch' Binaryargs
+starting CHECK2 hitch
+finished CHECK2 hitch
+
+testid 'CHECK2 pick' Binaryargs
+starting CHECK2 pick
+finished CHECK2 pick
+
+testid 'CHECK2 reshape' Binaryargs
+starting CHECK2 reshape
+finished CHECK2 reshape
+
+testid 'CHECK2 link' Binaryargs
+starting CHECK2 link
+finished CHECK2 link
+
+#EACHRIGHT1 is tr f op a b {
+  EACH (a f) b }
+
+#CHECK3 is tr f (equal[EACHRIGHT,EACHRIGHT1] f)
+
+testid 'CHECK3 minus' Binaryargs
+starting CHECK3 minus
+finished CHECK3 minus
+
+testid 'CHECK3 hitch' Binaryargs
+starting CHECK3 hitch
+finished CHECK3 hitch
+
+testid 'CHECK3 pick' Binaryargs
+starting CHECK3 pick
+finished CHECK3 pick
+
+testid 'CHECK3 reshape' Binaryargs
+starting CHECK3 reshape
+finished CHECK3 reshape
+
+testid 'CHECK3 link' Binaryargs
+starting CHECK3 link
+finished CHECK3 link
+
+#EACHBOTH1 is tr f op a b {
+   EACH f pack A B }
+
+#CHECK4 is tr f (equal[EACHBOTH,EACHBOTH1] f)
+
+testid 'CHECK4 minus' Binaryargs
+starting CHECK4 minus
+finished CHECK4 minus
+
+testid 'CHECK4 hitch' Binaryargs
+starting CHECK4 hitch
+finished CHECK4 hitch
+
+testid 'CHECK4 pick' Binaryargs
+starting CHECK4 pick
+finished CHECK4 pick
+
+testid 'CHECK4 reshape' Binaryargs
+starting CHECK4 reshape
+finished CHECK4 reshape
+
+testid 'CHECK4 link' Binaryargs
+starting CHECK4 link
+finished CHECK4 link
+
+#RANK1 IS TRANSFORMER f OPERATION N A { 
+   IF empty A THEN
+      A
+   ELSEIF N<0 or (N>valence A) THEN
+      fault 'left arg to RANK tranform out of range'
+   ELSEIF N=0 and (valence A=0) THEN
+      EACH f A
+   ELSE
+      mix EACH f (N lower A) 
+   ENDIF }
+
+#CHECK5 is tr f OP a b (equal [a RANK f b,a RANK1 f b])
+
+testid 'CHECK5 minus' Binaryargs
+starting CHECK5 minus
+finished CHECK5 minus
+
+testid 'CHECK5 hitch' Binaryargs
+starting CHECK5 hitch
+finished CHECK5 hitch
+
+testid 'CHECK5 pick' Binaryargs
+starting CHECK5 pick
+finished CHECK5 pick
+
+testid 'CHECK5 reshape' Binaryargs
+starting CHECK5 reshape
+finished CHECK5 reshape
+
+testid 'CHECK5 link' Binaryargs
+starting CHECK5 link
+finished CHECK5 link
+
+#ACCUMULATE1 is tr f op a{
+  heads is op a { count tally a eachleft take list a};
+  EACH REDUCE f heads A }
+
+#CHECK6 is tr f (equal [ACCUMULATE f,ACCUMULATE1 f])
+
+testid 'CHECK6 minus' Binaryargs
+starting CHECK6 minus
+finished CHECK6 minus
+
+testid 'CHECK6 hitch' Binaryargs
+starting CHECK6 hitch
+finished CHECK6 hitch
+
+testid 'CHECK6 pick' Binaryargs
+starting CHECK6 pick
+finished CHECK6 pick
+
+testid 'CHECK6 reshape' Binaryargs
+starting CHECK6 reshape
+finished CHECK6 reshape
+
+#CONVERSE1 is tr f op a b {b f a}
+
+#CHECK7 is tr f (equal [CONVERSE f,CONVERSE1 f])
+
+testid 'CHECK7 minus' Binaryargs
+starting CHECK7 minus
+finished CHECK7 minus
+
+testid 'CHECK7 hitch' Binaryargs
+starting CHECK7 hitch
+finished CHECK7 hitch
+
+testid 'CHECK7 pick' Binaryargs
+starting CHECK7 pick
+finished CHECK7 pick
+
+testid 'CHECK7 reshape' Binaryargs
+starting CHECK7 reshape
+finished CHECK7 reshape
+
+testid 'CHECK7 link' Binaryargs
+starting CHECK7 link
+finished CHECK7 link
+
+#EACHALL1 is tr f (EACH f pack)
+
+#CHECK8 is tr f (equal [EACHALL f,EACHALL1 f])
+
+testid 'CHECK8 abs' Mixedargs
+starting CHECK8 abs
+finished CHECK8 abs
+
+testid 'CHECK8 second' Mixedargs
+starting CHECK8 second
+finished CHECK8 second
+
+testid 'CHECK8 (3 reshape)' Mixedargs
+starting CHECK8 (3 reshape)
+finished CHECK8 (3 reshape)
+
+testid 'CHECK8 solitary' Mixedargs
+starting CHECK8 solitary
+finished CHECK8 solitary
+
+testid 'CHECK8 link' Mixedargs
+starting CHECK8 link
+finished CHECK8 link
+
+testid 'CHECK8 sum' Mixedargs
+starting CHECK8 sum
+finished CHECK8 sum
+
+#FOLD1 is tr f op N A {
+  IF isinteger N THEN
+   IF N > 0 THEN
+     N - 1 FOLD1 f (f A)
+   ELSE
+     A
+   ENDIF 
+  ELSE
+    fault '?first argument of FOLD must be an integer'
+  ENDIF }
+
+#CHECK9 is tr f (equal [FOLD f,FOLD1 f])
+
+testid 'CHECK9 minus' Binaryargs
+starting CHECK9 minus
+finished CHECK9 minus
+
+testid 'CHECK9 hitch' Binaryargs
+starting CHECK9 hitch
+finished CHECK9 hitch
+
+testid 'CHECK9 pick' Binaryargs
+starting CHECK9 pick
+finished CHECK9 pick
+
+testid 'CHECK9 reshape' Binaryargs
+starting CHECK9 reshape
+finished CHECK9 reshape
+
+testid 'CHECK9 link' Binaryargs
+starting CHECK9 link
+finished CHECK9 link
+
+# Fork is a primitive transformer which can take an arbitrary number
+of operations in its argument list. It cannot be directly
+simulated in general, but can be for a fixed number of arguments.
+
+#FORK3 is tr f g h op a {
+  if f a then g a else h a endif }
+
+#CHECK10 is tr f g h (equal [FORK [f,g,h],FORK3[f,g,h])
+
+testid 'CHECK10 [atomic,abs,opposite]' Mixedargs
+starting CHECK10 [atomic,abs,opposite]
+finished CHECK10 [atomic,abs,opposite]
+
+testid 'CHECK10 [simple,first,second]' Mixedargs
+starting CHECK10 [simple,first,second]
+finished CHECK10 [simple,first,second]
+
+testid 'CHECK10 [empty ,Null first,(3 reshape)]' Mixedargs
+starting CHECK10 [empty ,Null first,(3 reshape)]
+finished CHECK10 [empty ,Null first,(3 reshape)]
+
+testid 'CHECK10 [atomic,solitary,single]' Mixedargs
+starting CHECK10 [atomic,solitary,single]
+finished CHECK10 [atomic,solitary,single]
+
+testid 'CHECK10 [Null = shape,link,cart]' Mixedargs
+starting CHECK10 [Null = shape,link,cart]
+finished CHECK10 [Null = shape,link,cart]
+
+testid 'CHECK10 [simple,sum,max]' Mixedargs
+starting CHECK10 [simple,sum,max]
+finished CHECK10 [simple,sum,max]
+
+# grade and sort should obey these properties:
+
+#GSID1 is tr f op a {GRADE f A choose A = (SORT f A) }
+
+#GSID2 is tr f op A { SORT f (SORT f A) = SORT f A }
+
+testid 'GSID1 <= ' Mixedargs
+starting GSID1 <= 
+finished GSID1 <= 
+
+testid 'GSID1 >= ' Mixedargs
+starting GSID1 >= 
+finished GSID1 >= 
+
+testid 'GSID2 <= ' Mixedargs
+starting GSID2 <= 
+finished GSID2 <= 
+
+testid 'GSID2 >= ' Mixedargs
+starting GSID2 >= 
+finished GSID2 >= 
+
+#ITERATE1 is tr f op A {
+          FOR X WITH A DO f A ENDFOR }
+
+#CHECK11 is tr f (equal [ITERATE f, ITERATE1 f])
+
+testid 'CHECK11 abs' Mixedargs
+starting CHECK11 abs
+finished CHECK11 abs
+
+testid 'CHECK11 second' Mixedargs
+starting CHECK11 second
+finished CHECK11 second
+
+testid 'CHECK11 (3 reshape)' Mixedargs
+starting CHECK11 (3 reshape)
+finished CHECK11 (3 reshape)
+
+testid 'CHECK11 solitary' Mixedargs
+starting CHECK11 solitary
+finished CHECK11 solitary
+
+testid 'CHECK11 link' Mixedargs
+starting CHECK11 link
+finished CHECK11 link
+
+testid 'CHECK11 sum' Mixedargs
+starting CHECK11 sum
+finished CHECK11 sum
+
+# LEAF1 is tr f op a{
+   IF atomic A THEN
+	f A
+   ELSE
+	EACH (LEAF1 f) A
+   ENDIF }
+
+#CHECK12 is tr f (equal [LEAF f, LEAF1 f])
+
+testid 'CHECK12 abs' Mixedargs
+starting CHECK12 abs
+finished CHECK12 abs
+
+testid 'CHECK12 second' Mixedargs
+starting CHECK12 second
+finished CHECK12 second
+
+testid 'CHECK12 (3 reshape)' Mixedargs
+starting CHECK12 (3 reshape)
+finished CHECK12 (3 reshape)
+
+testid 'CHECK12 solitary' Mixedargs
+starting CHECK12 solitary
+finished CHECK12 solitary
+
+testid 'CHECK12 link' Mixedargs
+starting CHECK12 link
+finished CHECK12 link
+
+testid 'CHECK12 sum' Mixedargs
+starting CHECK12 sum
+finished CHECK12 sum
+
+#TWIG1 is tr f op a{
+   IF simple A THEN
+	f A
+   ELSE
+	EACH (TWIG1 f) A
+   ENDIF }
+
+#OUTER1 is tr f (EACH f cart)
+
+#CHECK13 is tr f (equal [TWIG f, TWIG1 f])
+
+testid 'CHECK13 abs' Mixedargs
+starting CHECK13 abs
+finished CHECK13 abs
+
+testid 'CHECK13 second' Mixedargs
+starting CHECK13 second
+finished CHECK13 second
+
+testid 'CHECK13 (3 reshape)' Mixedargs
+starting CHECK13 (3 reshape)
+finished CHECK13 (3 reshape)
+
+testid 'CHECK13 solitary' Mixedargs
+starting CHECK13 solitary
+finished CHECK13 solitary
+
+testid 'CHECK13 link' Mixedargs
+starting CHECK13 link
+finished CHECK13 link
+
+testid 'CHECK13 sum' Mixedargs
+starting CHECK13 sum
+finished CHECK13 sum
+
+#REDUCE1 is tr f op a {
+  IF empty a THEN
+	quiet_fault 'identity'
+  ELSE
+    Res := last A;
+    FOR B WITH reverse front A DO
+	Res := B f Res
+    ENDFOR
+  ENDIF }
+
+#CHECK14 is tr f (equal [REDUCE f, REDUCE1 f])
+
+testid 'CHECK14 minus' Binaryargs
+starting CHECK14 minus
+finished CHECK14 minus
+
+testid 'CHECK14 hitch' Binaryargs
+starting CHECK14 hitch
+finished CHECK14 hitch
+
+testid 'CHECK14 pick' Binaryargs
+starting CHECK14 pick
+finished CHECK14 pick
+
+testid 'CHECK14 reshape' Binaryargs
+starting CHECK14 reshape
+finished CHECK14 reshape
+
+# team is a primitive tr that can take an arbitrary number of
+functions. It cannot be simulated.
+
+#TEAMID1 is tr f g h  op A B C { TEAM[f,g,h] A B C faulteq [f A,g B,h C]) }
+
+testid 'TEAMID1 [hitch,first,rest] (3 reshape)' Mixedargs
+starting TEAMID1 [hitch,first,rest] (3 reshape)
+finished TEAMID1 [hitch,first,rest] (3 reshape)
+
+Done
+859816 858734 9 1000000 10000 10000 1000
+total space lost: 0

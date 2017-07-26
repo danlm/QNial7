@@ -1,0 +1,67 @@
+failCount := 0;
+successCount := 0;
+
+square is op A {
+       A*A
+}
+
+assert is op TName Res {
+       	    nonlocal failCount successCount;
+	    if Res then
+	       successCount := successCount + 1;
+	       write link TName ' succeeded';
+	    else
+	      failCount := failCount + 1;
+	      write link TName ' failed';
+	    endif;
+	    l
+}
+
+
+almost_zero is op Delta A {
+	    (tally A) = sum (Delta > (abs A))
+}
+
+
+almost_one is op Delta A {
+	   (tally A) = sum (Delta > (abs (1.0 - A)))
+}
+
+
+
+is_identical_to is op A B {
+		and (A = B)
+}
+
+
+
+# Trig functions
+----------------
+
+'trig1' assert (1.0e-5 almost_one ((square sin count 1024) + (square cos count 1024)));
+
+
+# Basic arithmetic
+------------------
+
+'arith1' assert (1.0e-5 almost_one ((count 1024)/(count 1024)));
+
+
+# Comparison tests
+------------------
+
+'simple test' assert ((count 1024) = count 1024);
+
+
+# Selection tests
+-----------------
+
+'selection1' assert (((512.5 > (count 1024)) sublist (count 1024)) is_identical_to (count 512)); 
+
+# Tidy up
+---------
+
+write (link 'Success count: ' (string successCount));
+write (link 'Failure count: ' (string failCount));
+
+bye

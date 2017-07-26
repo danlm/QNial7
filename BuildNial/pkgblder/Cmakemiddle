@@ -1,0 +1,42 @@
+
+          )
+
+
+# ---------------- Standard Libraries --------------------
+
+# Linux specific settings
+if (CMAKE_SYSTEM_NAME MATCHES "Linux")
+	set (NIAL_LIBS m util dl rt)
+endif (CMAKE_SYSTEM_NAME MATCHES "Linux")
+
+# Cygwin specific settings
+if (CMAKE_SYSTEM_NAME MATCHES "CYGWIN")
+	set (NIAL_LIBS m util dl rt)
+endif (CMAKE_SYSTEM_NAME MATCHES "CYGWIN")
+
+# OSX specific flags
+if (CMAKE_SYSTEM_NAME MATCHES "Darwin")
+	set (NIAL_LIBS m util dl)
+endif (CMAKE_SYSTEM_NAME MATCHES "Darwin")
+
+# Windows specific flags
+if (CMAKE_SYSTEM_NAME MATCHES "Windows")
+	set (NIAL_LIBS "")
+endif (CMAKE_SYSTEM_NAME MATCHES "Windows")
+
+# ---------------- Extension Options ---------------------
+
+# Compilation options for 32 bit system
+if (USE_INTS32)
+  set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -DINTS32")
+endif (USE_INTS32)
+
+# Compilation options for 64 bit system
+if (USE_INTS64)
+  set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -DINTS64")
+endif (USE_INTS64)
+
+
+
+
+

@@ -1,0 +1,10 @@
+
+
+# ---------------- Nial Executable -------------------------
+
+
+add_executable(nial ${NIAL_SRCS})
+target_link_libraries(nial ${NIAL_LIBS})
+
+
+

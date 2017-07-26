@@ -1,0 +1,120 @@
+# file containing transformers that express general operation properities
+  and tests that validate the property for each operation with that
+  property.
+
+
+#MULTIPERVASIVE IS TR f OP A (f A = EACH f pack A)
+
+# The reductive pervasive operations 
+
+testid 'MULTIPERVASIVE and' Multiargs
+
+testid 'MULTIPERVASIVE or' Multiargs
+
+testid 'MULTIPERVASIVE sum' Multiargs
+
+testid 'MULTIPERVASIVE product' Multiargs
+
+testid 'MULTIPERVASIVE max' Multiargs
+
+testid 'MULTIPERVASIVE min' Multiargs
+
+
+
+#UNARYPERVASIVE IS TR F op A (f A = EACH f A)
+
+# The unary pervasive operations
+
+testid 'UNARYPERVASIVE abs' Multiargs
+
+testid 'UNARYPERVASIVE arccos' Multiargs
+
+testid 'UNARYPERVASIVE arcsin' Multiargs
+
+testid 'UNARYPERVASIVE arctan' Multiargs
+
+testid 'UNARYPERVASIVE ceiling' Multiargs
+
+testid 'UNARYPERVASIVE char' Multiargs
+
+testid 'UNARYPERVASIVE charrep' Multiargs
+
+testid 'UNARYPERVASIVE cos' Multiargs
+
+testid 'UNARYPERVASIVE cosh' Multiargs
+
+testid 'UNARYPERVASIVE exp' Multiargs
+
+testid 'UNARYPERVASIVE floor' Multiargs
+
+testid 'UNARYPERVASIVE ln' Multiargs
+
+testid 'UNARYPERVASIVE log' Multiargs
+
+testid 'UNARYPERVASIVE not' Multiargs
+
+testid 'UNARYPERVASIVE opposite' Multiargs
+
+testid 'UNARYPERVASIVE pass' Multiargs
+
+testid 'UNARYPERVASIVE reciprocal' Multiargs
+
+testid 'UNARYPERVASIVE sin' Multiargs
+
+testid 'UNARYPERVASIVE sinh' Multiargs
+
+testid 'UNARYPERVASIVE sqrt' Multiargs
+
+testid 'UNARYPERVASIVE tan' Multiargs
+
+testid 'UNARYPERVASIVE tanh' Multiargs
+
+testid 'UNARYPERVASIVE type' Multiargs
+
+
+#BINARYPERVASIVE IS TR f OP A B (A f B = EACH f (A pack B))
+
+# the binary pervasive operations
+
+testid 'BINARYPERVASIVE divide' Binaryargs
+
+testid 'BINARYPERVASIVE match' Binaryargs
+
+testid 'BINARYPERVASIVE mate' Binaryargs
+
+testid 'BINARYPERVASIVE minus' Binaryargs
+
+testid 'BINARYPERVASIVE mod' Binaryargs
+
+testid 'BINARYPERVASIVE plus' Binaryargs
+
+testid 'BINARYPERVASIVE power' Binaryargs
+
+testid 'BINARYPERVASIVE quotient' Binaryargs
+
+testid 'BINARYPERVASIVE times' Binaryargs
+
+testid 'BINARYPERVASIVE <' Binaryargs
+
+testid 'BINARYPERVASIVE <=' Binaryargs
+
+testid 'BINARYPERVASIVE >' Binaryargs
+
+testid 'BINARYPERVASIVE >=' Binaryargs
+
+
+#commutative test
+
+#COMMUTATIVE is TR f OP A B (A f B = . B f A)
+
+testid 'COMMUTATIVE  plus' Binaryargs
+
+testid 'COMMUTATIVE  times' Binaryargs
+
+testid 'COMMUTATIVE  max' Binaryargs
+
+testid 'COMMUTATIVE  min' Binaryargs
+
+testid 'COMMUTATIVE  and' Binaryargs
+
+testid 'COMMUTATIVE  or' Binaryargs

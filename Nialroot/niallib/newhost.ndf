@@ -1,0 +1,34 @@
+#
+Operation: newhost Command
+File: newhost.ndf
+
+# This is an alternative for the operation host.
+# The difference is that the
+# results of the command are returned as an array of
+# strings.  It uses pipes and is efficient.
+
+# The result is a list of the lines produced by the command.
+  If you wish them to be displayed use:
+       ITERATE write newhost Cmd
+
+
+newhost IS OPERATION Cmd { 
+       Svt := settrigger o;
+       Fh := open Cmd 'pr' ; 
+       IF not isfault Fh THEN 
+          Res := Null ; 
+          WHILE not isfault ( Line := readfile Fh ) DO 
+             Res := Res append Line ; 
+          ENDWHILE ; 
+          close Fh ; 
+          settrigger Svt ; 
+          Res
+       ELSE 
+          settrigger Svt ; 
+          fault ( link '?Failed to open pipe to: ' Cmd ) 
+       ENDIF 
+    } 
+
+# example that displays the Nial definition files in the current directory
+     newhost 'ls *.ndf'
+

@@ -1,0 +1,81 @@
+# routines to support generation of HTML pages
+
+# generic SELECT input generator
+    Selectnm is the Name given to the Selection
+    Selectpairs is a list of pairs: first the VALUE field that
+       is returned and second the text to be displayed. 
+    Posn is the position of the default value to be displayed.
+
+buildHTMLselect IS OP Selectnm Selectpairs Posn {
+  buildoption IS OP Optionpr Isposn {
+  Seltext := IF Isposn THEN 'SELECTED ' ELSE ' ' ENDIF;
+  link '<OPTION ' Seltext 'VALUE="' (first Optionpr) '">' (second Optionpr)
+  '</OPTION>' };
+    (link '<SELECT NAME="' Selectnm '">') hitch
+    (Selectpairs EACHBOTH buildoption (Posn match grid Selectpairs))
+    append '</SELECT>' }
+
+# generic check box input generator.
+Assumes one per line. 
+If checks is a boolean then replicate it so all are checked or none are checked.
+
+buildcheckbox IS OP CBName CBVals CBTexts Checks {
+   Lines := tally CBvals reshape Null;
+   Checks := tally CBvals reshape Checks;
+   FOR I WITH grid CBvals DO
+      Chkstring := IF Checks@I THEN ' checked ' ELSE ' ' ENDIF;
+      Lines@I := link '<INPUT type="checkbox" name=' CBName 
+        ' value="' CBVals@I '"' Chkstring '> ' CBTexts@I '<br><br>';
+   ENDFOR;
+   Lines }
+   
+# generic radio select input generator.
+Assumes one per line, with Posn indicating the one to be set.
+
+buildradioselect IS OP RadName RadVals RadTexts Posn {
+   Lines := tally Radvals reshape Null;
+   FOR I WITH grid Radvals DO
+      Chkstring := IF I = Posn THEN ' checked ' ELSE ' ' ENDIF;
+      Lines@I := link '<INPUT type="radio" name=' RadName 
+        ' value="' RadVals@I '"' Chkstring '> ' RadTexts@I '<br><br>';
+   ENDFOR;
+   Lines }
+   
+
+# utility routine to drop trailing blanks in a string.
+
+drop_trailing_blanks IS OP Str {
+   Test Posn := o seek reverse (` match Str);
+   IF Test THEN
+      tally Str - Posn take Str
+   ELSE
+      ''
+   ENDIF }
+
+# routine to drop blanks before and after a string of text
+
+dropblanks IS OPERATION Str {
+   Str := list Str;
+   Str := False find (`  match Str) drop Str;
+   Str1 := reverse Str;
+   Str1 := False find (`  match Str1) drop Str1;
+   reverse Str1 }
+
+
+# utility to return a list of files (under UNIX) given a pattern.
+# The pattern should include the full path to the source files.
+
+getfilelist IS OP Pattern {
+  pgetfile is OP Command { %routine to get the output of a command;
+    Fh := open Command "pr;
+    Result := Null;
+    Rc := readfile Fh;
+    WHILE not isfault Rc DO
+      Result := Result append Rc;
+      Rc := readfile Fh;
+    ENDWHILE;
+    close Fh;
+    Result
+  };
+  pgetfile link '\ls ' (string Pattern)
+}

@@ -1,0 +1,32 @@
+# Some simple examples of 2d and 3d plotting fro Nial using
+# GNUPlot.
+
+loaddefs "gplot;
+
+# A simple 2D plot
+
+demo2d is op n {
+   gplot 'set title "DEMONSTRATION PLOT"' ;
+   gplot 'set xlabel "time"' ;
+   gplot 'set ylabel "amplitude"' ;
+   gplot 'set style data lines' ;
+   x := tell n / n ;
+   y := sin ( 17 * pi * x ) + ( 0.3 * sin ( 23 * pi * x ) ) ;
+   gplot_xy x y
+}
+
+# A simple surface plot
+
+demo3d is op nx ny {
+   gplot 'set title "DEMONSTRATION SURFACE PLOT"' ;
+   gplot 'set xlabel "cosine squared"' ;
+   gplot 'set ylabel "sine squared"' ;
+   gplot 'set style data lines' ;
+   x := tell nx / nx ;
+   y := tell ny / ny ;
+   z := ( sin ( 4 * pi * x ) power 2 ) outer + ( cos( 3 * pi * y ) power 2 ) ;
+   mat := gplot_fmt3d x y z ;
+   gplot_writedata mat "DEMO3D.dat ;
+   gplot 'splot "DEMO3D.dat" nonuniform matrix u 1:2:3 w l' ;
+   "DEMO3D.dat
+}

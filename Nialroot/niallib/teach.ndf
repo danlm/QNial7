@@ -1,0 +1,242 @@
+# teach.ndf
+
+# This program drives a number of example texts that are stored in *.dat
+files within the tutorial directory.
+
+Demoinfo := [
+"TOPIC "NAME,
+"----- "----,
+"Introduction "intro,
+"Data "data,
+(phrase 'Easy Operations') "ops,
+"Arithmetic "arith,
+"Syntax "syntax,
+(phrase 'Control Structures') "control,
+"Pervasive "pervasive,
+(phrase 'APL-like Operations') "apl,
+(phrase 'LISP-like Features') "lisp,
+(phrase 'Set Operations') "set,
+(phrase 'Artificial Intelligence') "ai,
+(phrase 'Host System Interface') "system,
+(phrase 'File Operations') "file,
+"Quit "quit];
+
+Clrscrn IS { writescreen (15 1 reshape ' '); }
+
+library "towords
+
+# definitions used by ai.dat
+
+Animalfacts := ["cow "goat "cat "horse "dog,["brown (phrase 'gives milk'),(
+phrase 'gives milk') "white,"black "unlucky,"black (phrase '
+carries a rider'),"brown (phrase 'wags tail') (phrase 'pulls
+ a sled')]];
+
+add_assoc IS OPERATION Alist Association {
+      Symbol Val := Association ;
+      IF ischar first Val THEN
+         Val := phrase Val ;
+      ENDIF ;
+      Test Pos := seek Symbol ( first Alist ) ;
+      IF Test THEN
+         % Add this association to the list for the item matched.;
+         Values := Pos pick second Alist ;
+         IF Val notin Values THEN
+            Alist @ @ ( 1 Pos ) := Values append Val ;
+         ENDIF ;
+      ELSE
+         % This is a new item for the list.  Add it to the list.;
+         Alist := Alist EACHBOTH append Symbol [ Val ] ;
+      ENDIF ;
+      Alist }
+
+has_assoc IS OPERATION Alist Assoc {
+      Symbol Val := Assoc ;
+      IF ischar first Val THEN
+         Val := phrase Val ;
+      ENDIF ;
+      Test Pos := seek Symbol ( first Alist ) ;
+      IF Test THEN
+         %   Display the association list;
+         Val in ( Pos pick second Alist )
+      ELSE
+         o
+      ENDIF }
+
+lookup IS OPERATION Alist Symbol {
+      Test Pos := seek Symbol ( first Alist ) ;
+      IF Test THEN
+         Pos pick second Alist
+      ELSE
+         ??notfound
+      ENDIF }
+
+remove_assoc IS OPERATION Alist Assoc {
+      Symbol Val := Assoc ;
+      IF ischar first Val THEN
+         Val := phrase Val ;
+      ENDIF ;
+      Test Pos := seek Symbol ( first Alist ) ;
+      IF Test THEN
+         % Drop the association from the list of associated items;
+         Values := Pos pick second Alist ;
+         Alist @ @ ( 1 Pos ) := Values except Val ;
+      ENDIF ;
+      Alist }
+
+Start_assoc IS {
+      ( phrase '') ( phrase '') }
+
+sortdown IS SORT >=
+
+# utility routine
+
+fixquotes IS OP Str {
+  IF not empty Str THEN
+    Strs := `' match Str cutall Str;
+    Strs := `' EACHRIGHT hitch Strs;
+    IF first Str = `' THEN
+       link `' (link Strs) `' 
+    ELSE
+       (link Strs) append `' 
+    ENDIF
+  ELSE
+    `' `'
+  ENDIF }
+
+
+# routine to process the lesson files one line at a time.
+
+process IS OPERATION __Lines {
+      Clrscrn ;
+      __Done := o ;
+      __I := 0;
+      WHILE not __Done and (__I < tally __Lines) DO
+         __Nextline := __Lines@__I ;
+         __I := __I + 1;
+         IF tally __Nextline = 0 THEN
+            writescreen ' ' ;
+         ELSE
+            IF first __Nextline = `. THEN
+               __Expart := 2 drop __Nextline ;
+               CASE second __Nextline FROM
+                     `r :
+                        writescreen __Expart ;
+                        END
+                     `n :
+                        writescreen link '   ' __Expart ;
+                        IF `' in __Expart THEN 
+                          __R := execute execute fixquotes __Expart;
+                        ELSE
+                          __R := execute __Expart ;
+                        ENDIF;
+                        IF __R ~= ??noexpr THEN
+                           write __R ;
+                        ENDIF ;
+                        END
+                     `b :
+                        writescreen link '    ' __Expart ;
+                        REPEAT
+                           __Nextline := __Lines@__I;
+                           __I := __I + 1;
+                           __Expart := link __Expart ' ' ( 2 drop __Nextline ) ;
+                           writescreen link '    ' ( 2 drop __Nextline ) ;
+                        UNTIL 2 take __Nextline = '.e'
+                        ENDREPEAT ;
+                        R := execute __Expart ;
+                        IF R ~= ??noexpr THEN
+                           write R ;
+                        ENDIF ;
+                        END
+                     `c :
+                        writescreen link ( 78 - tally __Expart quotient 2 reshape
+ ' ' ) __Expart ;
+                        END
+                     `s :
+                        execute __Expart ;
+                        END
+                     `p :
+                        writescreen ' ' ;
+                        R := readscreen
+ 'Press <Enter> to continue, <b> to backup, <n> for nial, <q> to quit: ' ;
+                        IF first R in 'qQ' THEN
+                           __Done := l ;
+                        ELSEIF first R in 'nN' THEN
+                             Writescreen null;
+                             Writescreen 'Enter some NIAL code and press enter';
+                             Writescreen '(Press Enter with no text to continue)';
+                             REPEAT 
+                               code := Readscreen '    >';
+                               IF not empty code THEN
+                                 res := execute code;
+                                 writescreen picture res;
+                               ENDIF;
+                             UNTIL
+				 empty code
+                             ENDREPEAT;
+                        ELSEIF first R in 'bB' THEN
+                           % get back to beginning of this page;
+                           __I := __I - 1; 
+                           WHILE 2 take __Lines@(__I - 1) ~= '.p' DO 
+                              __I := __I - 1; 
+                              IF __I < 0 THEN __I := 0; EXIT 0 ENDIF; 
+                           ENDWHILE;
+                           % get back to beginning of previous page;
+                           __I := __I - 1; 
+                           IF __I > 0 THEN
+                              WHILE 2 take __Lines@(__I - 1) ~= '.p' DO 
+                                 __I := __I - 1; 
+                                 IF __I < 0 THEN __I := 0; EXIT 0 ENDIF; 
+                              ENDWHILE;
+                           ENDIF;
+                        ENDIF ;
+                        Clrscrn;
+                        END
+                     `q :
+                        __Done := l ;
+                        END
+               ENDCASE ;
+            ELSE
+               writescreen __Nextline;
+            ENDIF ;
+         ENDIF ;
+      ENDWHILE ;
+      }
+
+#Main menu driver for the teaching program
+
+Teach IS {
+      settrigger o ;
+      Again := l ;
+      Mode := set "sketch ;
+      WHILE Again DO
+         set "sketch ;
+         set "nodecor ;
+         Clrscrn ;
+         EACH write ['Q''Nial EXAMPLES', ' ', ( mix Demoinfo ), ' '] ;
+         Filename := phrase tolower readscreen
+ 'ENTER the name of the desired demonstration and press <RETURN> : ' ;
+         IF ( Filename in "quit "q "QUIT "Q ) THEN
+            Again := o ;
+         ELSEIF Filename in EACH second Demoinfo THEN
+            Filepath := link NialRoot Os_Path_Separator 'tutorial' Os_Path_Separator (string Filename) '.dat';
+            Lines := getfile Filepath;
+            IF isfault Lines THEN
+               write link ' *** ' ( sketch Filename ) ' not found ***' ;
+               readscreen ' Press <Enter> to choose again. ' ;
+            ELSE
+               process Lines ;
+            ENDIF ;
+         ELSE
+            readscreen 'Unknown demo name.  Press <Enter> to choose again. ';
+         ENDIF ;
+      ENDWHILE ;
+      set Mode ;
+      }
+
+
+Latent is Teach
+
+
+Latent
+

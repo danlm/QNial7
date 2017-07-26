@@ -1,0 +1,39 @@
+# INTEGRATE f A B Eps
+
+# Find the integral of the function f over the interval A to B using
+  Adapative Simpson's Integration. Eps is the relative accuracy sought
+  in the answer.  This technique works well on functions that are not
+  smooth throughout the region. It adapts the amount of subdivision to
+  the requirements of the area of the curve.  See "romberg.ndf" for
+  an alternative integration routine.
+
+SIMPSON IS TRANSFORMER f
+    OPERATION A C B Fa Fc Fb S Eps {
+       X := ( A + C ) / 2 ;
+       Fx := f X ;
+       H := X - A ;
+       Left_s := H / 3 * ( Fa + ( 4 * Fx ) + Fc ) ;
+       Y := ( C + B ) / 2 ;
+       Fy := f Y ;
+       Right_s := H / 3 * ( Fc + ( 4 * Fy ) + Fb ) ;
+       New_s := Left_s + Right_s ;
+       IF abs ( New_s - S ) <= ( Eps * New_s ) THEN
+          New_s
+       ELSE
+          sum ( SIMPSON f A X C Fa Fx Fc Left_s Eps ) ( SIMPSON f C Y
+          B Fc Fy Fb Right_s Eps )
+       ENDIF }
+
+INTEGRATE IS TRANSFORMER f
+    OPERATION A B Eps {
+       C := ( A + B ) / 2 ;
+       H := C - A ;
+       Fa Fb Fc := EACH f A B C ;
+       S := H / 3 * ( Fa + ( 4 * Fc ) + Fb ) ;
+       SIMPSON f A C B Fa Fc Fb S Eps }
+
+# EXAMPLES:  
+     INTEGRATE exp -1 1 1e-6
+2.3504
+     INTEGRATE sin 0 pi 1e-6
+2.

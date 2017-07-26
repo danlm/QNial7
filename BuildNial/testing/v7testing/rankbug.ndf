@@ -1,0 +1,22 @@
+
+# Identity Testing Program.
+
+# This program drives the testing of the identity given as an
+  argument string. It is expected to be run by loading
+  a file like "idtests.ndf" that gives a call to the operation
+  "idtest" with arguments the description of the id and the list of
+  names of data sets to which it is to be applied.
+
+  Quiet := l;
+
+loaddefs "datagen
+
+   loaddefs "testid
+
+   loaddefs "ids  
+
+   loaddefs "trdefs  
+
+setlogname "ids.log; set "log;
+
+  loaddefs "check10 l

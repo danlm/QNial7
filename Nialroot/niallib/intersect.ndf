@@ -1,0 +1,15 @@
+# intersect.ndf
+
+
+intersect IS OPERATION A {
+   IF empty A THEN
+      Null
+   ELSE
+      EACH and ( first A EACHLEFT EACHRIGHT in A ) sublist first A
+   ENDIF }
+
+#Example:
+     Friends := "Mary "Ludwig "Hercule "Tom "Sarah ;
+     Pals:= "Jack "Tony "Rick "Tom "Kalev;
+     intersect Friends Pals
+Tom

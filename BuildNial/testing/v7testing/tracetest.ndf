@@ -1,0 +1,143 @@
+# a file with some definitions to test tracing with.
+
+set"log
+
+exp1 is {  
+  a := 3 4 5;
+  b gets reverse a;
+  a + b }
+
+exp2 is {
+  c := "abc;
+  d gets exp1;
+  c d }
+
+foo is op a { b gets count a + 5; reverse b}
+
+goo is op d e { d + foo e }
+
+test is {
+  a := 3 4 5;
+  set "trace;
+  b gets a + (reverse a) * a;
+  set"notrace;
+  c := b + 1;
+  c }
+
+T is tr f op a {g gets 3;f (g+a) }
+
+
+# begin by testing on expressions;
+
+#without trace
+
+  tell 3 4;exp1
+
+  count 20;exp2
+
+#with trace
+
+  set "trace;
+
+  tell 3 4;exp1
+
+  count 20;exp2
+
+#without trace again
+
+  set "notrace;
+
+  tell 3 4;exp1
+
+  count 20;exp2
+
+# trace exp2 but not exp1;
+
+  setdeftrace "exp2 l
+
+  exp2
+
+# trace exp2 and exp1;
+
+  setdeftrace "exp1 l
+
+  exp2
+
+# trace exp1 but not exp2;
+
+  setdeftrace "exp2 o
+
+  exp2
+
+# trace neither
+
+  setdeftrace "exp1 o
+
+  exp2
+
+#  test on operations;
+
+# testing with trace on and off
+
+set "trace
+
+setdeftrace "foo l
+
+x gets 3; goo 4 5; y gets 100
+
+set"notrace
+
+x gets 3; goo 4 5; y gets 100
+
+# turn on tracing in goo
+
+setdeftrace"goo l
+
+x gets 3; goo 4 5; y gets 100
+
+# turn off tracing in foo
+
+setdeftrace"foo o
+
+x gets 3; goo 4 5; y gets 100
+
+# turn off tracing in goo
+
+setdeftrace"goo o
+
+x gets 3; goo 4 5; y gets 100
+
+# test of tracing in the middle of an expr seq. It should monitor
+the computation of B.
+
+test
+
+# test of tracing a trform
+
+# no trace
+
+T foo 1 2
+
+#with trace on T but not on foo
+
+setdeftrace "T l
+
+T foo 1 2
+
+#with trace on T and on foo
+
+setdeftrace "foo l
+
+T foo 1 2
+
+#with trace only on foo
+
+setdeftrace "T o
+
+T foo 1 2
+
+#with trace off again
+
+setdeftrace "foo o
+
+T foo 1 2

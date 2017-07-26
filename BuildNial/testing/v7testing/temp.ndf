@@ -1,0 +1,12 @@
+# CROSSOVER testing
+
+foo is OP N M{
+    X gets floor (10000 * random N);
+    Y  gets count M * 5 Max N;
+  res1 := X except Y;
+  res2 := X oldexcept Y;
+  res1 = res2
+}
+
+
+

@@ -1,0 +1,65 @@
+# tests for consistency checks
+
+testid 'CHECK abs' ['Args']
+
+testid 'CHECK arccos' ['Args']
+
+testid 'CHECK arcsin' ['Args']
+
+testid 'CHECK1 arctan' ['Args']
+
+testid 'CHECK cos' ['Args']
+
+testid 'CHECK cosh' ['Args']
+
+testid 'CHECK exp' ['Args']
+
+testid 'CHECK ln' ['Args']
+
+testid 'CHECK log' ['Args']
+
+testid 'CHECK opposite' ['Args']
+
+testid 'CHECK pass' ['Args']
+
+testid 'CHECK reciprocal' ['Args']
+
+testid 'CHECK sin' ['Args']
+
+testid 'CHECK sinh' ['Args']
+
+testid 'CHECK sqrt' ['Args']
+
+testid 'CHECK tan' ['Args']
+
+testid 'CHECK tanh' ['Args']
+
+testid 'CHECK type' ['Args']
+
+# checking binaries
+
+testid 'CHECK divide' ['Binargs']
+
+testid 'CHECK mate' ['Binargs']
+
+testid 'CHECK minus' ['Binargs']
+
+testid 'CHECK plus' ['Binargs']
+
+testid 'CHECK power' ['Binargs']
+
+testid 'CHECK times' ['Binargs']
+
+testid 'CHECK <' ['Binargs']
+
+testid 'CHECK <=' ['Binargs']
+
+testid 'CHECK >' ['Binargs']
+
+testid 'CHECK >=' ['Binargs']
+
+# change values to test mod and quotient
+
+testid 'CHECK mod' ['Binargs1']
+
+testid 'CHECK quotient' ['Binargs1']

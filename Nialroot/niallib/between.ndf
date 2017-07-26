@@ -1,0 +1,16 @@
+#
+Operation: between Value Range
+File: between.ndf
+
+# This operation tests whether or not an atomic value is in the interval given
+  by a pair of values.  It can be used on numbers, characters or phrases. If
+  the argument on the left is an array of values, the result has the same shape
+  as the argument on the left.
+
+between IS OPERATION Item Range {
+   ( Item >= first Range ) and ( Item <= second Range ) }
+
+# Example:
+
+#        2 between 0 9
+l

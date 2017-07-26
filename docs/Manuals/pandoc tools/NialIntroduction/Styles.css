@@ -1,0 +1,50 @@
+/* This defines styles and classes used in the book */
+body {
+  margin: 5%;
+  text-align: justify;
+  font-size: medium;
+}
+code {
+  font-family: monospace;
+  font-size: smaller;
+  color: Black;
+  display: block;
+  border: solid;
+  border-width: 1px;
+  margin: 5px;
+  padding: 5px;
+  background-color: #FFFFCC;
+}
+h1 {
+  text-align: left;
+  color: Blue;
+}
+h2 {
+  text-align: left;
+  color: Blue;
+}
+h3 {
+  text-align: left;
+  color: Blue;
+}
+h4 {
+  text-align: left;
+  color: Blue;
+}
+h5 {
+  text-align: left;
+  color: Blue;
+}
+h6 {
+  text-align: left;
+  color: Blue;
+}
+ol.toc {
+  padding: 0;
+  margin-left: 1em;
+}
+ol.toc li {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+}

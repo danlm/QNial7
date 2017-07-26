@@ -1,0 +1,174 @@
+Q'Nial V7.0 Open Source Edition Intel x86 64bit Mac OSX Sep 23 2016
+Copyright (c) NIAL Systems Limited
+clear workspace created
+     loaddefs "catch_throw_tests l
+# examples of the CATCH throw mechanism
+# In each example the routine that uses a CATCH is called "bar*"
+# and the routines that do computations are called "foo*"
+
+# simple CATCH throw test to illustrate the idea
+
+bar is OP a b {
+  write 'in bar';
+  if b =  (10 * a) then
+     write 'trying a throw in bar';
+     throw 'doing a throw'
+  else
+    write 'no throw made in bar';
+    "no_throw
+  endif }
+
+foo is op a b {
+  write 'in foo';
+  res := CATCH bar a b;
+  write 'CATCH result' res;
+  "donefoo
+}
+
+foo 5 10
+in foo
+in bar
+no throw made in bar
++------------+--------+
+|CATCH result|no_throw|
++------------+--------+
+donefoo
+
+foo 5 50
+in foo
+in bar
+trying a throw in bar
++------------+-------------+
+|CATCH result|doing a throw|
++------------+-------------+
+donefoo
+
+# example of catch/throw as it would be used with a one level call
+
+bar1 is OP  a b {
+  write 'in bar1';
+  if b =  (10 * a) then
+     throw  'error condition met';
+  else
+    sum count b
+  endif }
+
+foo1 is op a b {
+  res := CATCH bar1 a b;
+  write 'CATCH result' res;
+}
+
+foo1 5 10
+in bar1
++------------+--+
+|CATCH result|55|
++------------+--+
+
+foo1 5 50
+in bar1
++------------+-------------------+
+|CATCH result|error condition met|
++------------+-------------------+
+
+# example of catch/throw as it would be used with a two level call
+
+bar2 is OP  a b {
+  write 'in bar2';
+  if b =  (10 * a) then
+     throw  'error condition met';
+  else
+    sum count b
+  endif }
+
+bar2_1 IS OP a b {
+    write 'in bar2_1';
+    bar2 a b }
+
+foo2 is op a b {
+  res := CATCH bar2_1 a b;
+  write 'CATCH result' res;
+}
+
+foo2 5 10
+in bar2_1
+in bar2
++------------+--+
+|CATCH result|55|
++------------+--+
+
+foo2 5 50
+in bar2_1
+in bar2
++------------+-------------------+
+|CATCH result|error condition met|
++------------+-------------------+
+
+# example of catch/throw where it returns a quiet fault
+
+bar3 is OP  a b {
+  write 'in bar3';
+  if b =  (10 * a) then
+     throw  quiet_fault '?error condition met';
+  else
+    sum COUNT b
+  endif }
+
+foo3 is op a b {
+  write 'in foo3';
+  res := CATCH bar3 a b;
+  write 'CATCH result' res;
+}
+
+foo3 1 50
+in foo3
+in bar3
++------------+----+
+|CATCH result|1275|
++------------+----+
+
+foo2 3 50
+in bar2_1
+in bar2
++------------+----+
+|CATCH result|1275|
++------------+----+
+
+# example of triggering an interrupt by returning a fault if catch returns
+  a quiet one.
+
+bar4 is OP  a b {
+  write 'in bar4';
+  if b =  (10 * a) then
+     throw  quiet_fault '?error condition met';
+  else
+    sum count b
+  endif }
+
+foo4 is op a b {
+  write ' in foo4';
+  res := CATCH bar4 a b;
+  if isfault res then
+    write 'creating a fault outside catch';
+    fault '?fault created in routine after a CATCH. Causes an interrupt';
+  else
+    write "res res;
+  endif;
+}
+
+foo4 1 50
+ in foo4
+in bar4
+res 1275
+
+foo4 5 50
+ in foo4
+in bar4
+creating a fault outside catch
+-------------------------------------------------------------
+    Fault interruption loop:  enter expressions or 
+      type: <Return>   to jump to top level
+    current call stack :
+foo4
+      ?fault created in routine after a CATCH. Causes an interrupt triggered in : ... fault '?fault created in routine after a CATCH. Causes an interrupt'
+-------------------------------------------------------------
+>>>      bye

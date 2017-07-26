@@ -1,0 +1,29 @@
+
+
+ordered is op A (
+  and (front A <= rest A))
+
+largeintids1 IS op A {
+ and (
+ (ceiling A = opposite floor opposite A)
+ (diverse A = (diverse sortup A))
+ (sortup cull A = cull sortup A)
+ (grid A EACHLEFT in (A EACHLEFT find A) sublist A = cull A)
+ (diverse A = (cull A equal list A))
+ (diverse A implies (grid A = (A EACHLEFT find A)))
+ (ordered sortup A)
+   ) }
+
+largeintids2 IS op A B {
+ and (
+ (floor (A - (B * (A quotient B))) faulteq (A mod B))
+ (A quotient B faulteq floor (A divide B))
+ (A except B = (A EACHLEFT notin B sublist A))
+ (A except B = (list A except list B))
+ (sortup (A except B) = (sortup A except sortup B))
+   ) }
+
+
+
+
+

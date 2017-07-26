@@ -1,0 +1,14 @@
+# count_all.ndf
+
+# Count the number of characters, words and line in a file.
+
+count_all IS OPERATION Filename {
+   Records := getfile Filename ;
+   Lines Characters := [tally, sum EACH tally] Records ;
+   Words := sum (EACH tally ((Records EACHLEFT match ` ) EACHBOTH cut Records));
+   Characters Words Lines }
+
+#Example:
+     count_all (Nialroot link '/niallib/average.ndf')
+189 38 13
+

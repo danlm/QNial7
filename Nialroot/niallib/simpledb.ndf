@@ -1,0 +1,135 @@
+# This is a set of operations to manage a simple
+database stored using the direct access files
+of Q'Nial.  It can manage any number of databases,
+but only one can be open at a time.  It uses the
+following global variables to store the database
+information in the workspace while the database is
+open.
+
+Fieldnames is external variable
+
+Keys is external variable
+
+Indices is external variable
+
+slots is external variable
+
+Db_fnm is external variable
+
+create_db is operation dbname fieldnames {
+   Db_fnm := open Dbname "d ;
+   IF isfault Db_fnm THEN
+      Db_fnm
+   ELSEIF filetally Db_fnm ~= 0 THEN
+      fault '?database already exists';
+   ELSE
+      writearray Db_fnm [0,1,2,3] [Fieldnames,Null,Null,Null];
+      close Db_fnm;
+      Truth
+    ENDIF }
+
+open_db is operation Dbname {
+   NONLOCAL Fieldnames Keys Indices Slots Db_fnm ;
+   Db_fnm := open Dbname "d ;
+   IF isfault Db_fnm THEN
+      Db_fnm
+   ELSE
+      Fieldnames Keys Indices Slots := readarray Db_fnm [0,1,2,3] ;
+       Truth
+   ENDIF }
+
+close_db is {
+   writearray Db_fnm [0,1,2,3] [Fieldnames,Keys,Indices,Slots];
+   close Db_fnm;
+   EACH erase "Fieldnames "Keys "Indices "Slots "Db_fnm; }
+
+get_field is operation key fieldname {
+   Test Posn := Key seek Keys;
+   IF Test THEN
+      Index := Indices @ Posn;
+      Test fieldposn := Fieldname seek Fieldnames;
+      IF Test THEN
+         readarray Db_fnm (Index + Fieldposn)
+      ELSE
+         fault '?incorrect field name'
+      ENDIF
+   ELSE
+      fault '?key not found'
+   ENDIF }
+
+put_field is operation key fieldname fieldvalue {
+   Test Posn := key seek keys ;
+   IF Test THEN
+      Index := Indices @ posn;
+      Test Fieldposn := fieldname seek fieldnames;
+      IF test THEN
+         writearray Db_fnm (Index + Fieldposn) Fieldvalue ;
+      ELSE
+         fault '?incorrect field name'
+      ENDIF
+   ELSE
+      fault '?key not found'
+   ENDIF }
+
+get_record is operation Key {
+   Test posn := Key seek Keys;
+IF Test THEN
+      Index := Indices @ Posn ;
+      readarray Db_fnm (Index + EACH first (grid fieldnames))
+   ELSE
+      fault '?key not found'
+   ENDIF }
+
+add_record is operation key fields {
+   nonlocal keys indices slots ;
+   test posn := key seek keys ;
+   if test then
+      fault '?key already exists'
+   else
+      if empty slots then
+         index := filetally db_fnm;
+      else
+         index slots := [first,rest] slots ;
+      endif ;
+    keys gets keys append key;
+    indices gets indices append index;
+    writearray Db_fnm (index + EACH first (grid fields))(fields);
+    Truth
+   ENDIF }
+
+put_record is operation key fields {
+   test posn := key seek keys;
+   if test then
+      writearray Db_fnm (indices@posn + EACH first (grid fields)) Fields ;
+      Truth
+   else
+      add_record key fields
+   endif}
+
+delete_record is operation Key {
+   nonlocal Keys indices slots ;
+   test posn := key seek keys;
+   If test then
+      index := indices @ posn;
+      writearray Db_fnm (Index + EACH first (grid Fieldnames))
+         (tally Fieldnames reshape single '');
+      slots := slots append index;
+      pattern := not (posn match EACH first (grid keys));
+      keys := pattern sublist keys;
+      indices := pattern sublist indices;
+      Truth
+   else fault '?key not found' endif}
+
+# script that tests the database functionality. It creates the database "friends" 
+  in the local directory.
+#
+create_db "friends ["name,"phone,"city];
+open_db "friends; 
+add_record "Henry ['Henry Meyer','613-542-2222','Kingston'];
+add_record "Wendell ['Wendell Smith','623-888-7777','Ottawa'];
+close_db; 
+open_db "friends; 
+A gets get_record "Henry; 
+write "Henry A; 
+close_db; 
+

@@ -1,0 +1,31 @@
+testid is op Idstr _Args_ {
+  NONLOCAL spacelost;
+  IDstr := string Idstr;
+  write link 'starting ' Idstr ;
+  freespace := first status;
+  FOR Arg WITH _Args_ DO
+     { % put in a block so that locals will be freed;
+     % write link 'trying ' Idstr ' on ' Arg;
+     Vals gets execute Arg;
+     if isfault Vals THEN
+        Msg := link Arg ' evaluated to fault ' (string Vals);
+        write Msg;
+        appendfile "ids.out Msg;
+     else
+         fn := parse scan Idstr;
+         for Val with Vals DO
+            Resa := fn apply Val;
+            If not Resa THEN
+               write link Idstr ' failed on arg:';
+               write Val;
+               Msg := link Idstr ' failed on arg:';
+               appendfile "ids.out Msg;
+               appendfile "ids.out (display Val);
+            endif;
+         endfor;
+     endif;
+     % write link 'completed ' Arg;
+     };
+  ENDFOR;
+  write link 'finished ' Idstr;
+}

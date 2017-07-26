@@ -1,0 +1,228 @@
+.s setformat '%g'; set "sketch;
+Syntax (the Grammar of Q'Nial)
+
+We begin by describing the two list notations in Nial:
+Strand notation describes a list by writing the items one after the other, 
+separated by one or more spaces. Items can be grouped by parentheses.
+
+.n 2 3 (4+5) (6 7)
+
+Brackets notation describes a list by  writing the items one after the other, 
+separated by commas and bounded by square brackets [ ]. The brackets notation
+provides a way of describing a list with one item or a list with no items.
+
+.n [2,3,4+5,[6,7]]
+.n [[],[1],[1,2]]
+.p
+Both strand and bracket notation can be used in the same list.
+
+.n 23 'abc' [2,3,"Now] 5 [] [3,"Then,4 5 6]
+
+The items in the list are:
+
+       Item              Description
+
+       23                The number 23
+       'abc'             The string abc
+       [2,3,"Now]        Brackets notation for a list of three items
+       5                 The number 5
+       []                An empty list
+       [3,"Then,4 5 6]   Brackets notation for a list of three items, the
+                         third item being a list of three items in strand
+                         notation
+.p
+An operation can be used in both prefix and infix notation.
+In prefix notation you write the operation first and its argument second.
+
+.n sin 1.047197
+.n sum 2 3 5 7 11
+.n pack 'abcd' 'efgh' 'ijkl'
+.n link (2 3) (4 5 6) (7 8)
+.n hitch 'abc' 'defgh'
+.n append 'abcde' 'fgh'
+.n not llloolll
+.p
+In infix notation you write the operation between its two arguments.
+
+.n 23 + 72 55 32
+.n 3 4 reshape 'abcde'
+.n "abc hitch 4 5 6
+
+The infix notation has the same meaning as applying the operation to
+the pair formed by the two arguments.
+
+.n plus 23 (72 55 32)
+.n hitch ["abc,4 5 6]
+
+Some operations, such as "hitch" and "reshape" expect a pair as an
+argument and hence are frequently written in infix notation.
+.p
+Two or more operations may be written in sequence. In this case, the
+rightmost one is applied first and then the next one to the left is
+applied to the result of the previous operation. This is easily
+understood by inserting the words "of the" between the operations.
+
+The "first rest 4 5 6 7" can be read "the first of the rest of 4 5 6 7".
+The rest of 4 5 6 7 returns 5 6 7 and the first of 5 6 7 is 5.
+
+.n rest 4 5 6 7
+
+.n first 5 6 7
+
+.n first rest 4 5 6 7
+.p
+A Nial expression can mix infix and prefix notation. For example,
+
+.n 20 + rest 34 58 62 79
+
+is evaluated as though it were:
+
+.n 20 + (rest (34 58 62 79))
+
+The rules used here are
+ (i) evaluating a list in strand notation precedes operation application.
+ (ii) the infix use of + has as its right argument the simple expression
+    to its right which includes the prefix application of "rest".
+Similarly,
+
+.n first 4 5 6 hitch 8 9 10 100
+
+evaluates as
+
+.n (first 4 5 6) hitch 8 9 10 100
+.p
+A transform is an operation resulting from applying a transformer to an
+operation. Thus "EACH second" is a transform. It finds the second item
+of each of the items in the array.
+
+.n EACH second (4 5 6 7) 'abcd' ("xxx "yyy "zzz)
+
+"EACHBOTH reshape" applies the corresponding items in both arguments.
+
+.n 2 3 EACHBOTH reshape "abc "xyzz
+
+"EACHLEFT EACHRIGHT equal" applies equal in turn to all pairs of items.
+
+.n 'ri' EACHLEFT EACHRIGHT equal 'There is a tide in the affairs of men'
+.p
+The word "gets" and the symbol pair ":=" mean "is assigned the value of".
+
+.n An_array gets (4 5) ("abc "xxxx `z)
+
+Lowercase letters in an identifier are automatically translated into
+uppercase before the value of the identifier is looked up in the internal
+table in Q'Nial. Thus, an_array, An_Array and AN_ARRay have the same value.
+
+.n  an_array        An_Array        AN_ARRay
+
+.p
+The convention of writing a variable with a leading capital letter,
+an operation in lowercase and transformers and reserved words in
+uppercase is simply to make it easy to identify the role of a name in
+an expression. The operation "see" displays a definition in a structured form,
+indenting where necessary and following the naming conventions.
+
+The following is a definition written with no regard to upper case.
+
+.n loop is op a{for i with grid a do write a@i;endfor}
+
+Q'Nial does the work of making it structured.
+
+.n see "loop
+.p
+Several variables can be assigned in one expression.
+
+.n Able Baker Charlie := 4 5 6
+
+.n Baker
+
+.n Able Baker := 4 5 6
+
+The ?assignment fault indicates that the number of items on the
+right hand side of ":=" did not match the number of variables.
+.p
+.n A := tell 5
+
+.n A gets tell 100; 
+
+.n sum A
+
+The display of large intermediate results (tell 100) is time consuming.
+The semi-colon at the end of the expression prevents the display.
+.p
+An expression sequence is a number of expressions separated by semi-colons.
+The value returned is the value of the last expression.
+
+.n 3;4
+
+.n Numbers gets 4 5 6; sum Numbers
+
+.n Num gets 23 45 67 89; S gets sum Num; T gets tally Num; Ave gets S/T
+
+.n Num S T Ave
+
+The normal way to write a program in Nial is to write a sequence of
+expressions that end up with the result desired.
+.p
+In the following expression, the value of A is computed and then this
+value used in the second expression. The computed value of A + 3 becomes
+the left argument to the reshape operation.
+
+.n (A gets tell 3; A + 3) reshape `z
+
+Since "A is tell 3", "A + 3" is "(0 1 2) + 3" which is "3 4 5".
+
+.n                  3 4 5  reshape `z
+.p
+The keyword "IS" is used in the definition of named expressions,
+operations and transformers.
+
+One way to define a new operation is to name a composition of other ones.
+
+.n second_last IS second reverse
+
+.n second_last 4 5 6 7 8 9
+
+An operation form is a form for defining operations which has the form:
+
+Operation_name IS OPERATION Parameters {expression sequence}
+.p
+An example is
+
+.n tagwith IS OPERATION Tag Data {Tag hitch Data}
+
+.n see "tagwith
+
+Here is an application of tagwith:
+
+.n "circle tagwith ("center [35,45]) ("radius 20)
+
+In applying this operation, "Tag" is replaced by the phrase "circle",
+and "Data" is replaced by "("center [35,45]) ("radius 20)".
+.p
+A second example of the use of tagwith is:
+
+.n "Car tagwith ("Manufacturer 'Ford Motor Company') ("Price '$8,999.00')
+.p
+In the following statistical operations, each definition is built using
+an operation previously defined.
+
+.n average IS OPERATION A (sum A / tally A)
+
+.n deviates IS OPERATION A (A minus average A)
+
+.n variance IS OPERATION A ((sum (deviates A power 2)) divide (tally A - 1))
+
+.n standard_deviation IS OPERATION A (variance A power 0.5)
+.p
+.s fmt := setformat '%5.2f';
+Use of the statistical operations:
+
+.n N := 22 44 66 28 36 49 17 39 47 58 28 57; average N
+
+.n deviates N
+
+.b mix pack ('Average ' 'Variance' 'St. Dev ')
+.e            ([average,variance,standard_deviation] N)
+.s setformat fmt;
+.p

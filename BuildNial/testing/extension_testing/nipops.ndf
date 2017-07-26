@@ -1,0 +1,3 @@
+nip_dump is op A {
+	 A eachright nip_getword ((count (nip_blocksize A)) - 1)
+}

@@ -1,0 +1,67 @@
+#
+Operation: wsdump Fileroot
+File: wsdump.ndf
+
+# Wsdump saves the workspace in a form that it can be reloaded using loaddefs.
+  The argument filename is a phrase or string without the ".ndf" extension.
+  The operation does not save itself.
+
+wsdump IS OPERATION __Filename__ {
+   __getval__ is op __nm__ { value __nm__};
+   __getdef__ is op __nm__ { getdef __nm__};
+   __savevars__ IS OPERATION Fno Vars {
+      FOR Name WITH SORT <= Vars DO
+         Str := list display __getval__ Name ;
+         Linelength := 60 ;
+         Lines := [];
+         WHILE not empty Str DO
+           Line Str := Linelength min tally Str [take,drop] Str;
+           WHILE and (Line match ` ) DO
+             Piece Str := 5 [take,drop] Str;
+             Line := Line link Piece;
+           ENDWHILE;
+           Lines := Lines append Line;
+         ENDWHILE;
+         Lines@0 := link '''' (string Name) ''' assign (' Lines@0;
+         N := tally Lines - 1;
+         Lines@N := link Lines@N ');';
+         ITERATE ( Fno writefile ) Lines ;
+         Fno writefile '' ;
+      ENDFOR ; } ;
+   __savedefs__ IS OPERATION Fno Exprs Ops Trs {
+      ITERATE ( Fno writefile ) link ( ( EACH string Exprs EACHLEFT link
+      ' IS EXTERNAL EXPRESSION' ) EACHLEFT pair '' ) ;
+      ITERATE ( Fno writefile ) link ( ( EACH string Ops EACHLEFT link
+      ' IS EXTERNAL OPERATION' ) EACHLEFT pair '' ) ;
+      ITERATE ( Fno writefile ) link ( ( EACH string Trs EACHLEFT link
+      ' IS EXTERNAL TRANSFORMER' ) EACHLEFT pair '' ) ;
+      FOR Name WITH SORT <= link Exprs Ops Trs DO
+         Def := descan deparse __getdef__ Name ;
+         ITERATE ( Fno writefile ) Def ;
+         Fno writefile '' ;
+      ENDFOR ; } ;
+   IF `. notin string __Filename__ THEN
+      __Filename__ := string __Filename__  link '.ndf' ;
+   ENDIF;
+   { % block to isolate names from the uses of value and getdef above;
+     Oldsetting := settrigger o;
+     Fno := open __Filename__  "w ;
+     IF not isfault Fno THEN
+        settrigger Oldsetting;
+        Names Types := pack symbols 0 ;
+        Vars Exprs Ops Trs := Types EACHRIGHT match "var "expr "op "tr
+        EACHLEFT sublist Names ;
+        Ops := Ops except [ "WSDUMP ] ;
+        Oldformat := setformat '%25.17g' ;
+        __savevars__ Fno Vars ;
+        __savedefs__ Fno Exprs Ops Trs ;
+        setformat Oldformat ;
+        close Fno ;
+     ELSE
+        settrigger Oldsetting;
+        Fno
+     ENDIF } }
+
+# Example:
+
+#        wsdump "myfile

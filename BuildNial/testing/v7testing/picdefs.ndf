@@ -1,0 +1,131 @@
+# file of picture definitions used in autopic.ndf 
+
+isnumeric is or[isboolean,isinteger,isreal]
+
+ishomonumeric is or[and each isboolean,and each isinteger,
+                    and each isreal]
+
+just is op a{ IF atomic A then
+                 IF isnumeric a THEN 2 ELSE 0 ENDIF
+              ELSE
+                 0
+              ENDIF
+            }
+
+rowtable is op a{ 1 (tally a) reshape a }
+
+decoron is { res := set"decor;set res; res = "decor }
+
+_diagram IS OPERATION A {
+   IF atomic A THEN
+      X := IF not decoron or isnumeric A THEN sketch A ELSE display A ENDIF;
+      [ 1 , tally X ] reshape X
+   ELSE
+      IF empty a THEN
+        IF 0 in (-2 drop shape a) THEN
+          1 0 reshape ` 
+        ELSE
+          Svdecor := set"nodecor;
+          IF shape a = [0] THEN
+            a gets 1 0 reshape a;
+          ENDIF;
+          sa := -2 take shape a;
+          Pieces := 
+          IF sa = 0 0 THEN
+            1 1 reshape first _diagram ["x]
+          ELSEIF first sa = 0 THEN
+            rowtable first rows _diagram (1 (second sa max 1) reshape "x)
+          ELSE
+            post first cols _diagram ((first sa) 1 reshape "x)
+          ENDIF;
+          set Svdecor;
+          IF valence a <=2 THEN
+            Pieces
+          ELSE
+            Pieces := -2 drop shape a reshape solitary Pieces;
+            [ 1 , 2 , 0 , 0 , 0 , 0] paste Pieces
+          ENDIF
+        ENDIF
+      ELSE
+        Pieces := EACH _diagram A ;
+        Composite := [ 0 , 0 , 1 , 1 , 0 , each just a] paste Pieces ;
+        IF valence A = 0 THEN
+           Composite @ [ 0 , 0 ] := `o ;
+        ENDIF ;
+        Composite
+      ENDIF
+   ENDIF
+   }
+
+#check_diagram IS OPERATION A {
+  Pict :=
+   IF decoron and empty A THEN
+      X := _diagram solitary first A;
+      X@[0,0] := `\
+   ELSEIF atomic A THEN
+      X := IF not decoron or isnumeric A THEN sketch A ELSE display A ENDIF;
+      [ 1 , tally X ] reshape X
+   ELSE
+      IF empty a THEN
+        IF 0 in (-2 drop shape a) THEN
+          1 0 reshape ` 
+        ELSE
+          IF shape a = 0 THEN
+            a gets 1 0 reshape a;
+          ENDIF;
+          sa := -2 take shape a;
+          Pieces := 
+          IF sa = 0 0 THEN
+            1 1 reshape first _diagram ["x]
+          ELSEIF first sa = 0 THEN
+            rowtable first rows _diagram (1 (second sa max 1) reshape "x)
+          ELSE
+            post first cols _diagram ((first sa) 1 reshape "x)
+          ENDIF;
+          IF valence a <=2 THEN
+            Pieces
+          ELSE
+            Pieces := -2 drop shape a reshape solitary Pieces;
+            [ 1 , 2 , 0 , 0 , 0 , 0] paste Pieces
+          ENDIF
+        ENDIF
+      ELSE
+        Pieces := EACH _diagram A ;
+        Composite := [ 0 , 0 , 1 , 1 , 0 , each just a] paste Pieces ;
+        IF valence A = 0 THEN
+           Composite @ [ 0 , 0 ] := `o ;
+        ENDIF ;
+        Composite
+      ENDIF
+   ENDIF;
+   IF Pict ~= diagram A THEN
+   write Pict (diagram A);
+   ENDIF;
+   Pict
+   }
+
+_sketch IS OPERATION A {
+   IF empty A THEN
+     1 0 reshape ''
+   ELSEIF atomic A THEN
+      X := IF not decoron or isnumeric A THEN sketch A ELSE display A ENDIF;
+      [ 1 , tally X ] reshape X
+   ELSEIF decoron and (isstring A or (shape A = [1] and atomic first A)) THEN
+      X := display A;
+      [ 1 , tally X ] reshape X
+   ELSE
+     IF simple A THEN
+       hpad := IF and EACH isboolean A or 
+                  and EACH ischar A THEN 0 ELSE 1 ENDIF;
+       Linesw := 0;
+     ELSE
+       hpad := abs simple A;
+       Linesw := abs not simple A;
+     ENDIF;
+     Pieces := EACH _sketch A;
+     Composite := [0 , hpad, Linesw , linesw , 0 , each just a] paste Pieces;
+     IF valence A = 0 THEN
+       Composite @ [ 0 , 0 ] := `o ;
+     ENDIF ;
+     Composite 
+   ENDIF }

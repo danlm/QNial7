@@ -1,0 +1,48 @@
+# this file does the testing of randomly generated arrays
+# It does not create a log so that large tests can be run without 
+# eating up disk space.
+ 
+loaddefs ‘rtemp.ndf’ l
+
+noisy := o;
+
+quiet := l;
+
+Tries := 0;
+
+ setlogname "rand.log; 
+ set"log; write status; set "nolog;
+
+
+%seed .5;
+%Limit := 2000;
+
+seed .9362837;
+%Limit := 5000;
+
+%seed .314159;
+%Limit := 500;
+
+%seed .31323334;
+Limit := 2505;
+
+ set"log; write status; set "nolog;
+
+settrigger o;
+
+Starters := random Limit ;
+
+  Spacelost := 0;
+
+onerandtest
+
+%restarting 540 550
+
+ set"log; 
+  write status; 
+  write link 'total space lost: ' (string spacelost);
+
+set "nolog;
+
+#Bye
+

@@ -1,0 +1,17 @@
+# an equality test that considers its arguments equal 
+  if they are equal within roundof error, if one of them is a fault, or they
+  are of the same shape and their items are equal within the
+  same constraints.
+
+faulteq IS OP A B {
+     IF A fuzzyeq B THEN
+       True
+     ELSEIF or EACH isfault A B THEN
+       True
+     ELSEIF or EACH atomic A B THEN
+       A = B
+     ELSEIF shape A = shape B THEN
+        and EACHBOTH faulteq A B
+     ELSE
+        False
+     ENDIF }

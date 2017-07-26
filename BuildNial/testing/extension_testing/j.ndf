@@ -1,0 +1,19 @@
+    case state from
+      "start : {
+        if ch = 'i' then 
+          state := "number;
+        elseif ch = 'l' then 
+          state := "list;
+        elseif ch = 'd' then 
+          state := "dictionary;
+        elseif ((ch <= 'z') and (ch >= 'a')) then  
+          buf := ch;
+          state := "count;   
+        else
+          write 'invalid input';
+        endif
+      }
+      else {
+        write 'not handled';
+      }
+    endcase;

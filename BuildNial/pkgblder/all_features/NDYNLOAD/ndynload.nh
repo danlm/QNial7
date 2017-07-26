@@ -1,0 +1,5 @@
+NDYNLOAD U ndlLoad indlLoad
+NDYNLOAD U ndlError indlError
+NDYNLOAD U ndlGetsym indlGetsym
+NDYNLOAD U ndlClose indlClose
+NDYNLOAD U ndlCall indlCall

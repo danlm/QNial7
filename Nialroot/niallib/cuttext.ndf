@@ -1,0 +1,33 @@
+# cuttext.ndf
+
+# a routine to cut text into lines of equal length broken on word boundaries.
+
+cuttext IS OPERATION Text Width {
+    T := '' ;
+    WHILE tally Text > Width DO
+       Where := findall `  Text ;
+       IF not empty Where THEN
+          Last_blank := Where@(o find (Width > Where) - 1 max 0);
+          T := T append ( Width take (Last_blank take Text) ) ;
+          Text := Last_blank + 1 drop Text ;
+       ELSE
+          T := fault '?Width too small';
+          Text := '';
+       ENDIF;
+    ENDWHILE ;
+    IF tally Text > 0 THEN
+       T := T append ( Width take Text ) ;
+    ENDIF ;
+    T }
+
+# Example
+
+#
+Txt := 'Now is the time for all good men to come to the aid of the party.' ;
+
+#
+    cuttext txt 18
++------------------+------------------+------------------+------------------+
+|Now is the time   |for all good men  |to come to the    |aid of the party. |
++------------------+------------------+------------------+------------------+
+

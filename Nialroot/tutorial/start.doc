@@ -1,0 +1,175 @@
+Getting Started with Q'Nial on a Fixed Disk IBM PC (DOS).
+
+
+Q'Nial is provided in an archived format that compresses the files.
+To use Q'Nial, the files must be removed from the archives and
+placed on the fixed disk.
+
+Step 1.  Extract the Q'Nial Files
+
+The ADD90.bat file is used to extract and copy the files onto the fixed disk.
+
+Batch File  Actions
+
+ADD90.BAT   Extract files from Diskette 90.  Place Diskette 90 in the A Drive.
+            With the default directory at the root for the fixed disk
+            (eg. C:\), type:
+
+            a:add90 <Return>
+
+
+Step 2.  Run Q'Nial.
+
+To run Q'Nial, change the default directory to v41root, run sample.bat,
+and then run nial.  Type:
+
+                  cd v41root <Enter>
+                  sample     <Enter>
+                  nial       <Enter>
+
+After a few seconds, initial.nbs is loaded and the Q'Nial Version and Copyright
+messages are displayed.  The messages clearws and profile loading appear and
+then the Q'Nial Tutorial screen is displayed.
+
+To change the background or text colors on the screen, change the values of
+the following variables:
+
+              __bgrd   which is initially equal to 1 representing Blue
+                       on a color terminal and reverse video on a monochrome
+                       one (used in: man "tally) ;
+
+              __text   which is initially equal to 4 representing White on
+                       a color terminal and "not underlined and not bold"
+                       on a monochrome display (used in: man "tally).
+
+              __cbck   initially equal to 10 representing Brightred on a
+                       a color terminal and "not underlined and not bold"
+                       on a monochrome display (used in: man "t).
+
+              __ctxt   initially equal to 12 representing Brightwhite on
+                       a color terminal and "not underlined and not bold"
+                       on a monochrome display (used in: man "t).
+
+If you would prefer a different colored background, type:
+
+              __bgrd := 6 ; man "link <Enter>
+
+and the background should become purple.  Each number from 0 to 15 has a color
+associated with it as follows:
+
+                Number  Color      Number  Color
+
+                   0    Black         8    Grey
+                   1    Blue          9    Bright Blue
+                   2    Red          10    Bright Red
+                   3    Yellow       11    Bright Yellow
+                   4    White        12    Bright White
+                   5    Light Blue   13    Sky Blue
+                   6    Purple       14    Mauve
+                   7    Green        15    Bright Green
+
+The code may vary on non-IBM PC computers or with different graphics cards.
+
+You give the color attribute to the variable by "assigning" a value.  This
+is done either with ":=" or with the word "gets" as in:
+
+         __text __bgrd gets 2 7 ; man "readscreen <Enter>
+
+Experiment with these colors until you are satisfied with them.
+
+On monochrome terminals, the three digits of the control tuple , which are
+coded in this program as (__text __bgrd 0) represent:
+
+       character type:
+                              0  normal
+                              1  underlined
+                              2  bold
+                              3  bold and underlined
+
+        reverse video state:
+                              0  not reverse video
+                              1  reverse video
+
+        blinking:
+                              0  not blinking
+                              1  blinking
+
+Thus the initial values of (4 1 0) for (__text __bgrd 0) represent normal
+display, reverse video, not blinking.
+
+To get help on "tell" type:
+
+                        man "tell <Enter>
+
+A window of twelve lines and fifty columns is created in the upper right
+corner of the screen.  An brief explanation of "tell" appears.  In the full
+version of Q'Nial, if you typed
+
+                         more <Return>
+
+after reading the help message, you would receive a full screen message
+providing more help on "tell".  The "more" option can be used again and
+again to see more help.  However, it is not provided in this evaluation copy.
+
+Type:
+
+                         count <Enter>
+
+the help message for "count" is displayed.
+
+Now that "count" and "tell" are known, you can try using them.  For a starter,
+display the addresses of an array having one axis and fifty items.  (That
+would be a list of fifty items.)  The expression is:
+
+                          tell 50 <Enter>
+
+Now you can experiment with "count".  It returns numbers that are one greater
+than the numbers produced by "tell".  Type:
+
+                           count 50 <Enter>
+
+Now see what the addresses are for a three dimensional table having 3 planes of
+tables of 3 by 3 numbers.  Type:
+
+                           tell 3 3 3 <Enter>
+
+After reviewing this result, type:
+
+                           tell 4 4 4 4 <Enter>
+
+Type the following operation definition:
+
+         mycalc is operation a b c x {a * x + b * x + c } <Enter>
+
+or, if you are more at home writing business applications, type:
+(the \ lets you continue the definition on the next line.)
+
+         mycalc is operation Hours Rate Deductions { \  <Enter>
+            Hours times Rate minus (sum Deductions) }   <Enter>
+
+Now, you wish to use this operation.  If you entered the first operation, then
+type:
+
+           Result := mycalc 2. 3. 4. (count 10) <Enter>
+
+If you entered the second one, type:
+
+           Result := mycalc 40. 50. (100. 200. 300.) <Enter>
+
+In either case, an interesting result should appear.  As with other Q'Nial
+operations, the operation is applied to an array and returns an array result.
+
+For further information, call Nial Systems at (613) 234-4188 or (800) 465-1798.
+
+The mailing address is:
+
+Nial Systems Limited
+155 Queen Street, Ninth Floor
+Ottawa  ON  K1P 5C9
+
+FAX: 613-563-9596
+
+We hope to hear from you.
+
+Bill Jenkins
+

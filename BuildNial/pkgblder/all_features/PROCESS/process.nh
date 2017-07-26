@@ -1,0 +1,7 @@
+PROCESS_CONTROL E process_fork iprocess_fork
+PROCESS_CONTROL U authenticate iauthenticate
+PROCESS_CONTROL U crypt icrypt
+PROCESS_CONTROL E getpid igetpid
+PROCESS_CONTROL E getgid igetgid
+PROCESS_CONTROL U setpgid isetpgid
+PROCESS_CONTROL U killpg ikillpg

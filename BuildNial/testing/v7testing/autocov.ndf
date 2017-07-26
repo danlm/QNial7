@@ -1,0 +1,16 @@
+# automated coverage tests
+
+Spacelost := 0;
+
+loaddefs "coverops
+
+Startunary 
+
+Startbinary 
+
+Startpict
+
+write link 'total space lost: '(string Spacelost);
+
+Bye
+

@@ -1,0 +1,51 @@
+System operations for keyboard input in interactive mode:
+
+The operation "readscreen" displays the string argument as a prompt
+and stops, awaiting an entry. It accepts all text typed until the
+<RETURN> as the input and assigns it to "Name" as a string.
+
+.n Name gets readscreen 'Please type your name: ';
+
+.n Name
+
+The operation "read" displays the string argument as a prompt
+and stops, awaiting an entry. The text entered is executed, which
+causes a string representing numbers to be converted to numbers
+or a string representing a Q'Nial expression to be evaluated.
+
+.n X Y gets read 'X Y coordinates (Type 2 numbers): ' ;
+
+.n X Y
+.p
+System operations to write to the screen in interactive mode:
+
+The operation "writescreen" writes a string to the screen. 
+
+.n writescreen 'Correct answer';
+
+The operation "write" formats its argument as a character table and displays
+the result on one or more lines.
+
+.n write "Coordinates: X Y ;
+.n write  "Coordinates: X Y (3 4 5)
+
+The operation "writechars" writes a string to the screen without a newline:
+
+.n writechars 'abc'; writescreen ' more text';
+
+
+.p
+The operation "edit" is used to edit a text file. It's argument is the name of
+a file in the current directory as a phrase or string. For example:
+
+    edit "test.ndf
+
+would open the file test.ndf using the designated editor on the host 
+operating system. If the file did not exist it is created as an empty 
+file for the ditor.
+
+Alternatively the argument can be a string that forms a path to file to be edited.
+    edit "~/test1.ndf"
+.p
+
+

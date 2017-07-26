@@ -1,0 +1,15 @@
+#
+Transformer: findby Predicate Array
+File: findby.ndf
+
+# Findby is a transformer that returns the addresses of items of a given array
+  which satisfy the predicate.
+
+FINDBY IS TRANSFORMER f ( sublist [ EACH f , grid ] )
+
+# Examples:
+
+#         FINDBY atomic (2 (3 4) 5)
+0 2
+         FINDBY ("dog =) ("cat "dog "horse)
+1

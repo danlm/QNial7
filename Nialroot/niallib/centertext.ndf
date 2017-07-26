@@ -1,0 +1,16 @@
+#
+Operation: centertext String Field_width
+File: centertext.ndf
+
+# This operation centers a string of characters within a field of specified
+  width.
+
+centertext IS OPERATION Text Width {
+   Text := string Text ;
+   Left := Width minus tally Text quotient 2 ;
+   Width take ( Left reshape ' ' link Text ) }
+
+# Example:
+
+#        centertext 'TITLE' 80
+                                    TITLE

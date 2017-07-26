@@ -1,0 +1,115 @@
+# tests on blocks and scope
+
+{3} = 3
+{3;} = ??noexpr
+(x:=3;{x}) = 3
+(x:=3;{x:=4}) = 4
+(x:=3;{x:=4};x) = 3
+(x:=3;{NONLOCAL x;x:=4};x) = 4
+(x:=3;{LOCAL x;x:=4};x) = 3
+(x:=3;{x:=4;{x:=5}}) = 5
+(x:=3;{x:=4;{x:=5};x}) = 4
+(x:=3;{x:=4;{x:=5}};x) = 3
+(x:=3;{x:=4;{NONLOCAL x;x:=5};x}) = 5
+(x:=3;{x:=4;{NONLOCAL x;x:=5}};x) = 3
+(x:=3;{x:=4;{LOCAL x;x:=5};x}) = 4
+(x:=3;{x:=4;{LOCAL x;x:=5}};x) = 3
+(x:=3;{NONLOCAL x;x:=4;{NONLOCAL x;x:=5};x}) = 5
+(x:=3;{NONLOCAL x;x:=4;{NONLOCAL x;x:=5}};x) = 5
+(x:=3;{NONLOCAL x;x:=4;{LOCAL x;x:=5};x}) = 4
+(x:=3;{NONLOCAL x;x:=4;{LOCAL x;x:=5}};x) = 4
+(x:=3;{LOCAL x;x:=4;{NONLOCAL x;x:=5};x}) = 5
+(x:=3;{LOCAL x;x:=4;{NONLOCAL x;x:=5}};x) = 3
+(x:=3;{LOCAL x;x:=4;{LOCAL x;x:=5};x}) = 4
+(x:=3;{LOCAL x;x:=4;{LOCAL x;x:=5}};x) = 3
+
+# placing of comments in blocks
+
+{%;%;1} = 1
+{%;f is 1+;f 1} = 2
+{%;f is 1+;%;f f 1} = 3
+{%f;f is 1+;%;T is tr f(f f);%;f 1;%;T f 1} = 3
+
+# opforms
+((op a(a)) 5) = 5
+((op a{a}) 5) = 5
+((op a b{a+b}) 5 7) = 12
+((op a b{a:= 1;a+b}) 5 7) = 8
+(x:=3;(op a b{a:= 1;a+b}) x 7) = 8
+(x:=3;(op a b{a:= 1;a+b}) x 7;x) = 3
+(x:=3;(op a b{a:= a+1;a+b}) x 7) = 11
+(x:=3;(op a b{a:= a+1;a+b}) x 7;x) = 3
+(x:=3;(op a b(a:= a+1;a+b)) x 7) = 11
+(x:=3;(op a b(a:= a+1;a+b)) x 7;x) = 3
+(x:=3;(op a b{NONLOCAL X;X:= a+1;a+b}) x 7;x) = 4
+(x:=3;(op a b{LOCAL X;X:= a+1;a+b}) x 7;x) = 3
+
+# trforms
+
+{T1 is tr f(f); (T1 (1+) 3) = 4}
+{T1 is tr f(f f); (T1 (1+) 3) = 5}
+{T1 is tr f op a(f f a); (T1 (1+) 3) = 5}
+{local x; T1 is tr f op a(a := a+x;f f a); x:= 10; T1 (1+) 3} = 15
+{local x; T1 is tr f op a(x := a+x;f f a); x:= 10; T1 (1+) 3} = 5
+{local x; T1 is tr f op a(x := a+x;f f a); x:= 10; T1 (1+) 3;x} = 13
+{local x; T1 is tr f op a{x := 2*a;f f a}; x:= 10; T1 (1+) 3} = 5
+{local x; T1 is tr f op a{x := 2*a;f f a}; x:= 10; T1 (1+) 3;x} = 10
+{local x; T1 is tr f op a(a := a+x;f f a); x:= 10; T1 (x+) 3} = 33
+{local x; T1 is tr f op a(x := a+x;f f a); x:= 10; T1 (x+) 3} = 29
+{local x; T1 is tr f op a(x := a+x;f f a); x:= 10; T1 (x+) 3;x} = 13
+{local x; T1 is tr f op a{x := 2*a;f f a}; x:= 10; T1 (x+) 3} = 23
+{local x; T1 is tr f op a{x := 2*a;f f a}; x:= 10; T1 (x+) 3;x} = 10
+{local x; T1 is tr f op a(a := a+x;f f a); x:= 10; T1 ((x:=x+100)+) 3} = 333
+{local x; T1 is tr f op a(x := a+x;f f a); x:= 10; T1 ((x:=x+100)+) 3} = 329
+{local x; T1 is tr f op a(x := a+x;f f a); x:= 10; T1 ((x:=x+100)+) 3;x} = 213
+{local x; T1 is tr f op a{x := 2*a;f f a}; x:= 10; T1 ((x:=x+100)+) 3} = 323
+{local x; T1 is tr f op a{x := 2*a;f f a}; x:= 10; T1 ((x:=x+100)+) 3;x} = 210
+
+# tests from an earlier testing file, modified to meet the changes
+
+(x1 gets 10;{x gets 20;x+x1}) = 30
+({nonlocal x;x gets 3};x) = 3
+((x gets 3);x) = 3
+
+# localization of global op name as variable
+({local choose; choose gets 5} choose ( 10 + tell 10)) = 15
+({choose gets 5} choose ( 10 + tell 10)) = 15
+
+# localization of global variable as local op
+(h gets 3;{h is first rest; h 3 4 5}+h) = 7
+
+# dynamic use of local variable
+(x gets 10;{x gets 5; execute 'x'}) = 5
+(x gets 10;{x gets 5; value "x }) = 5
+
+# dynamic assignment of local variable
+({x gets 5; execute 'x gets x+10'; x}) = 15
+({x gets 5; assign "x (x+10); x}) = 15
+
+# local operation definition
+({g is second; g 2 3 4}) = 3
+({g is second; "g apply 2 3 4}) = 3
+
+# local operation replacement dynamically
+({ f is second; execute 'f is third'; f tell 10}) = 2
+
+# dynamic assignment to nonlocal in a closed block
+(y gets 10;{ x gets 3; execute 'y gets 4'};y) = 4
+
+# dynamic creation of new variable in closed block
+({x gets 3; execute 'newvar gets 20';}) = ??noexpr
+newvar = 20
+({y gets 5;{x gets 3; execute 'newvar1 gets 20';}}) = ??noexpr
+newvar1 = 20
+
+# dynamic uplevel modification
+({ y gets 3;{x gets 4; execute 'y gets 10'};y}) = 10
+
+# nonlocal test
+({ nonlocal z; x gets 3; z gets 4;x}+z) = 7
+
+# multiple parameters
+
+fff is op a b c {nxx yyy gets 2 3; a b c nxx yyy}; fff 4 5 6 = 4 5 6 2 3
+fff is op a b c {nonlocal nxx yyy;nxx yyy gets 2 3; a b c nxx yyy}; fff 4 5 6 = 4 5 6 2 3
+

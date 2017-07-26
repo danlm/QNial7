@@ -1,0 +1,16 @@
+#
+Operation: select Paths A
+File: select.ndf
+
+# This operation selects arrays nested within A using the paths given by Paths.
+  The result has the same shape as Paths. 
+
+select IS OPERATION Paths A {
+   Paths EACHLEFT reach A }
+
+# Example:
+
+#        [1 2,1] [1 1] select count 4 5
++-+---+
+|3|2 2|
++-+---+

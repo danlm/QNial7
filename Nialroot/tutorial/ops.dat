@@ -1,0 +1,106 @@
+.s setformat '%8.2f'; set "sketch;
+                          Simple Operations
+
+We assign a variable A with a list of numbers and show some simple
+data operations on it.
+
+.n A gets 95 98 99 102 107
+.n first A 
+.n last A
+
+.n front A
+.n rest A
+
+The "rest of A" includes all but the first item of A; the "front of A" 
+is all but the last. An example of the use of these operations is in 
+computing the differences in the numbers.
+
+.n Differences := rest A - front A
+.p
+We generate the integers from 1 to 10 and assign them to B.
+
+.n B gets count 10
+
+There are four ways to combine two lists:
+.n A link B
+
+"link" makes a new list out of the items of A and B.
+
+.n A hitch B
+
+"hitch" puts A as an item at the start of a list followed by the items of B.
+.p
+.n A append B
+
+"append" places B as an item at the end of a list preceded by the items of A.
+
+.n A pair B
+
+"pair" makes a list of 2 items with A the first and B the second.
+.p
+The operation "reshape" produces an array with shape of the left
+argument made out of the items in the right argument.
+
+.n 2 3 reshape 55 (1 2 3) "Lucy 4.5 `a 'cat'
+
+.n Array := 2 3 2 8 reshape 'abcdefghijklmnopqrstuvwxyz'
+
+.n shape Array
+
+The items of the array are used cyclicly until the required shape is filled.
+.p
+For a list, the operation "take" is like "reshape" except that it fills
+with items that are the "type" of the first item of the array.
+
+.n 5 take 2 3 4
+
+.n 3 5 take (2 4 reshape 'abcdefgh')
+.p
+The operation "take" can be used to adjust data so it is all the same size.
+The use of a negative value in the first argument of take, means to
+take from the other end.
+
+.s set "sketch;
+
+.n Accounts := (15 take 'Travel') (15 take 'Entertainment')
+
+.n Amounts := (-12 take '$455.56') (-12 take '$3,456.78')
+
+.n mix pack Accounts Amounts
+.p
+Operations appearing in a sequence behave like an operation composition,
+they are applied in right to left order.
+
+.n A
+
+.n first rest A
+
+.n first rest rest A
+
+.n sum count 6
+.p
+"EACH" causes the operation to apply to each item of an array.
+"EACHRIGHT" and "EACHLEFT" are used to have the operation loop through the
+the items of the array on the right or left respectively. These
+transformers provide a very powerful looping capability.
+
+.b frequency IS OPERATION Values A {
+.e   EACH sum (Values EACHLEFT EACHRIGHT = A)}
+
+.n frequency 'aeiou' 'The boy stood on the burning deck.'
+
+In this example, frequency shows how many times each vowel occurs.
+
+.n frequency `3 (link EACH string count 100)
+
+There are 20 three's in the digits of the numbers from 1 to 100.
+.p
+.s set "sketch;
+The operation "take", used for display of reports and EACH or EACHRIGHT
+
+.n Accounts := 15 EACHRIGHT take 'Travel' 'Entertainment' 'Telephone'
+
+.n Amounts  := -12 EACHRIGHT take '$455.56' '$3,456.78' '$34.56'
+
+.n mix pack Accounts Amounts
+.p

@@ -1,0 +1,15 @@
+#This file tests the depth of Nial recursions that are possible
+in a given version. There are two tests:
+recur_n 	recurs until n is reached.
+deeprecur   recurs until the system fails or recursion is stopped.
+
+recur_n is op i n {
+  IF i=n THEN 
+     n
+  ELSE
+     recur_n [i + 1,n]
+  ENDIF
+}
+
+deeprecur is op i { write i; deeprecur (i + 1) }
+

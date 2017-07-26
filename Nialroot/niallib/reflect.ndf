@@ -1,0 +1,19 @@
+#
+Operation: reflect Array
+File: reflect.ndf
+
+# Reflect a given table along the vertical axis.
+
+reflect IS mix ( EACH reverse rows )
+
+# Example:
+
+#        A := 2 3 reshape 'abcdef'
+abc
+def
+
+#        A (reflect A)
++---+---+
+|abc|cba|
+|def|fed|
++---+---+
