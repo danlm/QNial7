@@ -6,7 +6,7 @@
 
 ==================================================================*/
 
-#define NOLINES 371
+#define NOLINES 1
 
 static char *defsndf[1] = {
 "#NIALCORE.NDF - definitions included in nialcore build",
