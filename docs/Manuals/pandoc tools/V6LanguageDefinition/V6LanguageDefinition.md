@@ -60,11 +60,7 @@ on its experience with the practical use in many application areas.
 University, Kingston that implements the Nial language. It was used to
 support research in computer science on programming languages,
 knowledge-based systems and other topics at Queen's and other
-universities. NIAL Systems Limited has took over responsibility for the
-development and marketing of Q'Nial and delivered it to customers in
-many countries. Mike Jenkins continues to use Q'Nial and has made it
-freely available through the company web site at www.nial.com.
-
+universities. 
 
 Q'Nial is intended for use as both a rapid prototyping tool for
 exploring how to design a program to address a particular problem, and
