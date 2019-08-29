@@ -240,7 +240,7 @@ main(int argc, char *memin[], char **envp)
     }
     else
     if (strcmp(memin[i], "-defs") == 0) {
-      if (i < argc && memin[i+1] != '\0') {
+      if (i < argc && memin[i+1] != NULL) {
         /* explicit defs file name given */
         defssw = true;
         strcpy(indefsfnm, memin[i + 1]);
@@ -252,7 +252,7 @@ main(int argc, char *memin[], char **envp)
     else
     if (strcmp(memin[i], "-lws") == 0) {
         
-      if (i < argc && memin[i+1] != '\0') {
+      if (i < argc && memin[i+1] != NULL) {
         /* explicit ws file name given */
         loadsw = true;
         strcpy(inwsfnm, memin[i + 1]);

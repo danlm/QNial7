@@ -287,6 +287,30 @@ isetinterrupts()
 enum {
 MCPY_TORAW = 0, MCPY_FROMRAW = 1};
 
+#if __BYTE_ORDER__==__ORDER_LITTLE_ENDIAN__
+
+/** 
+ * Support routines for toraw in the case of char arrays and little endian
+ * processors
+ */
+
+void c_to_w_copy(nialint *dest, unsigned char *src, nialint len) {
+  const nialint nw_size = sizeof(nialint);    /* Nial word size */
+  nialint t = 0, i ,j, nw = (len+nw_size-1)/nw_size;
+
+  /* process pure word blocks of chars */
+  for (i = 0; i < nw; i++) {
+    t = 0;
+    for (j = 0; j < nw_size; j++)
+      t = (t << 8) | *src++;
+    *dest++ = t;
+  }
+
+  return;
+}
+
+#endif
+
 
 
 /* routine to implement the Nial primitive: toraw
@@ -361,8 +385,12 @@ itoraw(void)
     case chartype:
     case phrasetype:
     case faulttype:
-        memcpy(pfirstchar(res), pfirstchar(z), bits / 8);
-        break;
+#if __BYTE_ORDER__==__ORDER_LITTLE_ENDIAN__
+      c_to_w_copy(pfirstint(res), (unsigned char *)pfirstchar(z), bits/8);
+#else
+      memcpy(pfirstchar(res), pfirstchar(z), bits / 8);
+#endif
+      break;
   }
 
 
@@ -476,7 +504,11 @@ ifromraw(void)
     case chartype:
     case phrasetype:
     case faulttype:
+#if __BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__
+      c_to_w_copy(pfirstint(res), (unsigned char *)pfirstchar(bools), tally(bools)/8);
+#else
         memcpy(pfirstchar(res), pfirstchar(bools), tally(bools) / 8);
+#endif
         break;
   }
 
