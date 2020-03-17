@@ -17,7 +17,7 @@ functional programming concepts from FP. THe interpreter, originally
 developed for Unix, was small enough to run on the then newly released 
 IBM PC and portable enough to execute on IBM mainframes computers. 
 
-Nial Systems limited licensed the interpreter from Queen's Uinversity and 
+Nial Systems limited licensed the interpreter from Queen's University and 
 marketed it widely. Mike Jenkins continued to refine both the language and
 its implementation. In 2006 Mike released Version 6.3 as an open source 
 project to encourage continued development of Nial.
