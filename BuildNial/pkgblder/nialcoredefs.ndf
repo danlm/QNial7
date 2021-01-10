@@ -229,8 +229,10 @@ makefilepath IS OP Items {
 
 # set Nialroot to this default MAJ: need to figure out problem
 
-Nialroot := makefilepath OS_Home_Directory 'QNial7' 'Nialroot';
-
+Nialroot := getenv 'NIALROOT';
+IF empty Nialroot THEN
+  Nialroot := link [ OS_Home_Directory, OS_Path_Separator, 'QNial7' ];
+ENDIF;
 
 # operation to create file paths
 
