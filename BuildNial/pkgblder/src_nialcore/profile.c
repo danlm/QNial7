@@ -237,7 +237,7 @@ profilelookup(nialptr sym, nialptr entr, int sysnames)
     return;
   if (!sym_flag(entr) || sysnames) {
     nialptr     osn = sym_name(entr);
-    nialint     osr = sym_role(entr);
+    int     osr = sym_role(entr);
 
     switch (osr) {
       case Rexpr:
@@ -1093,8 +1093,21 @@ void
 profile_ops_start(nialptr entr)
 {
   struct node *childnode;
+  int fc = find_child(current_node, entr);
+  
+  /*
+  fprintf(stderr, "*** Profile ops start\n");
+  fprintf(stderr, "entr: %ld\n", entr);
+  fprintf(stderr, "current node: %ld\n", current_node);
+  fprintf(stderr, "children: %ld\n", current_node->children);
+  fflush(stderr);
 
-  childnode = current_node->children[find_child(current_node, entr)];
+  fc = find_child(current_node, entr);
+  fprintf(stderr, "fc: %ld\n", fc);
+  fflush(stderr);
+  */
+  
+  childnode = current_node->children[fc];
   set_start_time(childnode, profile_time());
   current_node = childnode;
 }
