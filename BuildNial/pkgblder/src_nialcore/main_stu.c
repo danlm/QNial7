@@ -221,6 +221,11 @@ main(int argc, char *memin[], char **envp)
     
   i = 1;
   while (i < argc) {
+    if (strcmp(memin[i], "--") == 0) {
+      /* Arguments after this point are not to be processed by the interpreter */
+      break;
+    }
+    else
     if (strcmp(memin[i], "-size") == 0) {
       /* set iniital size and allow expansion */
       initmemsize = get_memsize(memin[i + 1]);

@@ -231,5 +231,6 @@ CORE E clearprofile iclearprofile
 CORE E profiletree iprofiletree
 CORE E profiletable iprofiletable
 CORE U GetEnv iGetEnv
+CORE E sys_argv isys_argv
 CORE T catch icatch
 CORE U throw ithrow

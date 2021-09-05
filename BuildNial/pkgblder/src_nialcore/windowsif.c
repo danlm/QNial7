@@ -659,6 +659,27 @@ iGetEnv(void)
 /* end of GetEnv ) */
 
 
+/* Allow nial code to access command line arguments */
+
+extern int nial_argc;
+extern char **nial_argv;
+
+void isys_argv(void) {
+  nialint i, reslen = nial_argc;
+  nialptr res = new_create_array(atype, 1, 0, &reslen);
+
+  for (i = 0; i < nial_argc; i++) {
+    nialptr s = makestring(nial_argv[i]);
+
+    store_array(res, i, s);
+  }
+
+  apush(res);
+  return;
+}
+
+  
+
 
 #endif /* WINNIAL */
 

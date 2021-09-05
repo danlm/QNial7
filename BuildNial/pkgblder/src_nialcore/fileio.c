@@ -1841,11 +1841,11 @@ compressfile(nialint portno)
              *fpr = ioports[portno],
              *newfpx = 0,
              *newfpr = 0;
-  char        fname[200],
-              tpndx[200],
-              tprec[200],
-              fnndx[200],
-              fnrec[200];
+  char        fname[2048],
+              tpndx[2048],
+              tprec[2048],
+              fnndx[2048],
+              fnrec[2048];
   int         i;
   float       ratio;
   long        newstart = 0L;
