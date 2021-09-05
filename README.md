@@ -130,8 +130,21 @@ Follow the directions given in the README.md file in BuildCore.
 If you are building for a new platform or want to add features to QNial7
 that are not in the executable you have then you use directory BuildNial. 
 The README.md in BuildNial describes the process for selecting additional features 
-already available. There is also an explanation of how a new feature can be
+already available. There is also an explanation of how a new feature can becommity
 implemented and added to QNial7.
 
+
+## Nial Community Links
+
+The following links are for online discussion groups relating to Nial. 
+
+### Discord
+
+There is a discord server for APL inspired languages and it includes a Nial discussion channel
+
+       https://discord.gg/NYxAVx9d
+
+Join in and discuss aspects of Nial that interest you, problems you are having with Nial and
+directions you would like to see Nial go.
 
 
