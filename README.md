@@ -13,7 +13,7 @@ The language combines Trenchard More's theory of nested arrays with Mike's
 ideas on how to build an interactive programming system. The goal was to 
 combine the strengths of APL array-based programming with implementation 
 concepts borrowed from LISP, structured programming ideas from Algol, and
-functional programming concepts from FP. THe interpreter, originally 
+functional programming concepts from FP. The interpreter, originally 
 developed for Unix, was small enough to run on the then newly released 
 IBM PC and portable enough to execute on IBM mainframes computers. 
 
@@ -130,7 +130,7 @@ Follow the directions given in the README.md file in BuildCore.
 If you are building for a new platform or want to add features to QNial7
 that are not in the executable you have then you use directory BuildNial. 
 The README.md in BuildNial describes the process for selecting additional features 
-already available. There is also an explanation of how a new feature can becommity
+already available. There is also an explanation of how a new feature can be 
 implemented and added to QNial7.
 
 

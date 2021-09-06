@@ -217,7 +217,7 @@ divide       division of numbers
 .p
 Multi Pervasive
 
-A multi pervasive operation maps an arrays with items having having
+A multi pervasive operation maps an arrays with items having
 identical structure to one with the same structure, applying the operation
 to atoms in corresponding positions in the items.
 
